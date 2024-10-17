@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.vscode/
+.worker-next/
+.wrangler/
+tmp/
+bin/
+app/
+public/

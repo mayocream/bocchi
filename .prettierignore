@@ -1,0 +1,15 @@
+.next/
+.vercel/
+.wrangler/
+node_modules/
+
+# ignore shadcn/ui components
+app/components/ui/
+app/hooks/
+components.json
+
+# ignore generated files
+env.d.ts
+next-env.d.ts
+
+pnpm-lock.yaml
