@@ -54,7 +54,7 @@ const Hero = () => (
           style={{ maxWidth: '20ch' }}
         >
           <GradientText gradient='linear-gradient(135deg, #4CAF50, #8BC34A, #2E8B57)'>
-            クリエイターのためのWeb
+            クリエイターのための Twitter
           </GradientText>
         </Text>
       </motion.div>
@@ -69,8 +69,11 @@ const Hero = () => (
           style={{ maxWidth: '50ch' }}
           className={NotoSansJP.className}
         >
-          E.ki は、クリエイターのためのWeb技術を提供するプラットフォーム。
-          世界を塗りけよう。
+          Twitter JP
+          は、クリエイターのための新しいソーシャルメディアプラットフォームです。
+          <p>
+            <b>昔ながらの Twitter とおなじように。</b>
+          </p>
         </Text>
       </motion.div>
       <Flex gap='4' wrap='wrap' justify='center'>
@@ -197,7 +200,7 @@ const Footer = () => (
       <Flex gap='4'>
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Button asChild variant='ghost' size='2' style={{ color: '#2E8B57' }}>
-            <a href='https://github.com/mayocream'>GitHub</a>
+            <a href='https://github.com/mayocream/twitter'>GitHub</a>
           </Button>
         </motion.div>
       </Flex>
@@ -224,7 +227,7 @@ export default function Home() {
               style={{ color: '#2E8B57' }}
             >
               <GradientText gradient='linear-gradient(135deg, #2E8B57, #4CAF50)'>
-                E.ki
+                Twitter
               </GradientText>
             </Text>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
