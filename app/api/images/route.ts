@@ -1,9 +1,14 @@
-import { NextRequest } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { nanoid } from 'nanoid'
-import { withAuth } from '@/app/lib/auth'
+import { getSession } from '@/app/lib/auth'
 
-export const POST = withAuth(async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {
+  const session = await getSession()
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 })
+  }
+
   const contentType = request.headers.get('content-type')
   if (!contentType?.startsWith('image/')) {
     return new Response('Invalid content type', { status: 400 })
@@ -15,12 +20,13 @@ export const POST = withAuth(async (request: NextRequest) => {
 
   const { env } = await getCloudflareContext()
   const id = nanoid()
-  await env.R2.put(id, request.body, {
+  const imageUrl = `${process.env.NEXT_PUBLIC_IMAGE_URL}/${session.id}/${id}`
+  await env.IMAGES.put(id, request.body, {
     httpMetadata: {
       contentType,
       cacheControl: 'public, max-age=31536000',
     },
   })
 
-  return new Response(id, { status: 201 })
-})
+  return new Response(imageUrl, { status: 201 })
+}

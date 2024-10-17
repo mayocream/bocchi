@@ -17,5 +17,9 @@ routes = [
 
 [vars]
 
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "twitter"
+
 [observability]
 enabled = true
