@@ -7,6 +7,10 @@ var rootCmd = &cobra.Command{
 	Short: "Twitter is a CLI tool for Twitter",
 }
 
+func init() {
+	rootCmd.AddCommand(serverCmd)
+}
+
 func Execute() {
 	rootCmd.Execute()
 }
