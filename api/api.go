@@ -12,21 +12,14 @@ type Api struct {
 	DB  *ent.Client
 }
 
-func NewApi(db *ent.Client) *Api {
-	return &Api{
-		App: fiber.New(fiber.Config{
-			StructValidator: validator.NewValidator(),
-		}),
-		DB: db,
-	}
+func NewApi(db *ent.Client, validator *validator.Validator) *fiber.App {
+	return fiber.New(fiber.Config{
+		StructValidator: validator,
+	})
 }
 
-func (api *Api) Register() {
-
-}
-
-func (api *Api) Run(port string) error {
-	return api.App.Listen(port, fiber.ListenConfig{
-		DisableStartupMessage: true,
+func RegisterRoutes(app *fiber.App) {
+	app.Get("/", func(c fiber.Ctx) error {
+		return c.SendString("Hello, World!")
 	})
 }
