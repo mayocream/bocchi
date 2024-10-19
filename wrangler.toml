@@ -12,7 +12,8 @@ minify = true
 assets = { directory = ".worker-next/assets", binding = "ASSETS" }
 
 routes = [
-    { pattern = "twitter.co.jp", custom_domain = true }
+    { pattern = "twitter.co.jp", custom_domain = true },
+    { pattern = "twitter.e.ki", custom_domain = true }
 ]
 
 [vars]
