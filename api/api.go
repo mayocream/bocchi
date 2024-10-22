@@ -24,7 +24,10 @@ func RegisterRoutes(app *fiber.App, db *ent.Client, config *config.Config) {
 		DB:     db,
 		Config: config,
 	}
-	app.Post("/email/verification", h.EmailVerificationRequest)
 	app.Post("/auth/register", h.UserRegister)
 	app.Post("/auth/login", h.UserLogin)
+
+	app.Use(h.Authentication)
+
+	app.Post("/email/verification", h.EmailVerificationRequest)
 }

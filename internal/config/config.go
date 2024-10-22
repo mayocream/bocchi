@@ -13,6 +13,7 @@ import (
 type Config struct {
 	DatabaseURL  string
 	JWTSecretKey ed25519.PrivateKey
+	JWTSecretPub ed25519.PublicKey
 	BaseURL      string
 	APIBaseURL   string
 	SiteName     string
@@ -34,5 +35,6 @@ func NewConfig() (*Config, error) {
 		APIBaseURL:   viper.GetString("NEXT_PUBLIC_API_BASE_URL"),
 		SiteName:     viper.GetString("SITE_NAME"),
 		JWTSecretKey: jwtSecretKey.(ed25519.PrivateKey),
+		JWTSecretPub: jwtSecretKey.(ed25519.PrivateKey).Public().(ed25519.PublicKey),
 	}, nil
 }
