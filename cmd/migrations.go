@@ -6,8 +6,8 @@ import (
 	"github.com/mayocream/twitter/ent"
 	"github.com/mayocream/twitter/internal/config"
 	"github.com/mayocream/twitter/internal/database"
-	"go.uber.org/fx"
 
+	"go.uber.org/fx"
 	"github.com/spf13/cobra"
 )
 

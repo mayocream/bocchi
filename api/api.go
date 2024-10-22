@@ -7,11 +7,6 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-type Api struct {
-	App *fiber.App
-	DB  *ent.Client
-}
-
 func NewApi(db *ent.Client, validator *validator.Validator) *fiber.App {
 	return fiber.New(fiber.Config{
 		StructValidator: validator,

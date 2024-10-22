@@ -24,6 +24,7 @@ var serverCmd = &cobra.Command{
 				database.NewClient,
 				validator.NewValidator,
 				api.NewApi,
+				api.RegisterRoutes,
 			),
 			fx.Invoke(func(lc fx.Lifecycle, app *fiber.App) {
 				lc.Append(fx.Hook{
