@@ -24,20 +24,21 @@ var serverCmd = &cobra.Command{
 				database.NewClient,
 				validator.NewValidator,
 				api.NewApi,
-				api.RegisterRoutes,
 			),
-			fx.Invoke(func(lc fx.Lifecycle, app *fiber.App) {
-				lc.Append(fx.Hook{
-					OnStart: func(context.Context) error {
-						go app.Listen(port)
-						return nil
-					},
-					OnStop: func(context.Context) error {
-						return app.Shutdown()
-					},
-				})
-			}),
-		)
+			fx.Invoke(api.RegisterRoutes),
+			fx.Invoke(
+				func(lc fx.Lifecycle, app *fiber.App) {
+					lc.Append(fx.Hook{
+						OnStart: func(context.Context) error {
+							go app.Listen(port)
+							return nil
+						},
+						OnStop: func(context.Context) error {
+							return app.Shutdown()
+						},
+					})
+				}),
+		).Run()
 	},
 }
 
