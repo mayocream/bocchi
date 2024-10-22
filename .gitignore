@@ -28,3 +28,7 @@ node_modules/
 .next/
 .wrangler/
 .worker-next/
+
+# generated keys
+/*.pub
+/*.pem
