@@ -17,7 +17,6 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /app
 
 COPY --from=builder /app/twitter .
-COPY --from=builder /app/.env .
 
 EXPOSE 8080
 
