@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"context"
-
 	"github.com/mayocream/twitter/ent"
 	"github.com/mayocream/twitter/internal/config"
 	"github.com/mayocream/twitter/internal/database"
@@ -19,16 +17,22 @@ var migrationsCmd = &cobra.Command{
 var migrationsApplyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Apply database migrations",
-	Run: func(cmd *cobra.Command, args []string) {
-		fx.New(
+	RunE: func(cmd *cobra.Command, args []string) error {
+		app := fx.New(
 			fx.Provide(
 				config.NewConfig,
 				database.NewClient,
 			),
 			fx.Invoke(func(database *ent.Client) error {
-				return database.Schema.Create(context.Background())
+				return database.Schema.Create(cmd.Context())
 			}),
-		).Run()
+		)
+
+		if err := app.Start(cmd.Context()); err != nil {
+			return err
+		}
+
+		return app.Stop(cmd.Context())
 	},
 }
 
