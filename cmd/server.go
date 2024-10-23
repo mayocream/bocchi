@@ -37,6 +37,6 @@ var serverCmd = &cobra.Command{
 }
 
 func init() {
-	serverCmd.Flags().StringP("port", "p", ":8080", "address to listen on")
+	serverCmd.Flags().IntP("port", "p", 8080, "Port to run the server on")
 	viper.BindPFlag("SERVER_PORT", serverCmd.Flags().Lookup("port"))
 }
