@@ -1,9 +1,10 @@
 package api
 
 import (
-	"github.com/gofiber/fiber/v3"
 	"github.com/mayocream/twitter/ent"
 	"github.com/mayocream/twitter/ent/tweet"
+
+	"github.com/gofiber/fiber/v3"
 )
 
 type TimelineHandler struct {

@@ -7,8 +7,8 @@ import (
 	"github.com/mayocream/twitter/internal/config"
 	"github.com/mayocream/twitter/internal/validator"
 
-	"go.uber.org/fx"
 	"github.com/gofiber/fiber/v3"
+	"go.uber.org/fx"
 )
 
 func NewApi(
