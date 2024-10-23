@@ -11,6 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// TODO: email verification
 type EmailVerificationRequest struct {
 	Email string `json:"email" validate:"required,email"`
 }
