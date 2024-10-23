@@ -1,9 +1,6 @@
 # Twitter
 
-Twitter, without restrictions. 昔のツイーターが欲しいから作ってみた
-
-Twitter-like Social Network Service, implemented in Go and React.
-Compatible with Mastodon API.
+Yet another Twitter. Self-hosted, privacy-focused, and open-source federated social network.
 
 ## Disclaimer
 
