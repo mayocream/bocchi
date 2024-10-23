@@ -1,12 +1,12 @@
 package api
 
 import (
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/mayocream/twitter/ent"
 	"github.com/mayocream/twitter/ent/user"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
