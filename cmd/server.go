@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"context"
-
 	"github.com/mayocream/twitter/api"
 	"github.com/mayocream/twitter/internal/config"
 	"github.com/mayocream/twitter/internal/database"
@@ -10,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )
 
@@ -23,25 +22,21 @@ var serverCmd = &cobra.Command{
 				config.NewConfig,
 				database.NewClient,
 				validator.NewValidator,
-				api.NewApi,
 			),
-			fx.Invoke(api.RegisterRoutes),
-			fx.Invoke(
-				func(lc fx.Lifecycle, app *fiber.App) {
-					lc.Append(fx.Hook{
-						OnStart: func(context.Context) error {
-							go app.Listen(port)
-							return nil
-						},
-						OnStop: func(context.Context) error {
-							return app.Shutdown()
-						},
-					})
-				}),
+			api.Middlewares,
+			api.Routes,
+			fx.Provide(
+				fx.Annotate(
+					api.NewApi,
+					fx.ParamTags("", "", "", `group:"routes"`, `group:"middlewares"`),
+				),
+			),
+			fx.Invoke(func(app *fiber.App) {}),
 		).Run()
 	},
 }
 
 func init() {
-	serverCmd.Flags().StringVarP(&port, "port", "p", ":8080", "address to listen on")
+	serverCmd.Flags().StringP("port", "p", ":8080", "address to listen on")
+	viper.BindPFlag("SERVER_PORT", serverCmd.Flags().Lookup("port"))
 }

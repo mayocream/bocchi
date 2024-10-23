@@ -11,6 +11,7 @@ import (
 )
 
 type Config struct {
+	ServerPort   int
 	DatabaseURL  string
 	JWTSecretKey ed25519.PrivateKey
 	JWTSecretPub ed25519.PublicKey
@@ -30,6 +31,7 @@ func NewConfig() (*Config, error) {
 	}
 
 	return &Config{
+		ServerPort:   viper.GetInt("SERVER_PORT"),
 		DatabaseURL:  viper.GetString("DATABASE_URL"),
 		BaseURL:      viper.GetString("NEXT_PUBLIC_BASE_URL"),
 		APIBaseURL:   viper.GetString("NEXT_PUBLIC_API_BASE_URL"),
