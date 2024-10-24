@@ -2,8 +2,11 @@ package api
 
 import (
 	"github.com/mayocream/twitter/ent"
+	"github.com/mayocream/twitter/ent/predicate"
 	"github.com/mayocream/twitter/ent/user"
 	"github.com/mayocream/twitter/internal/config"
+	"github.com/mayocream/twitter/internal/turnstile"
+	"github.com/mayocream/twitter/internal/validator"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
@@ -12,14 +15,16 @@ import (
 )
 
 type AccountHandler struct {
-	DB     *ent.Client
-	Config *config.Config
+	DB        *ent.Client
+	Config    *config.Config
+	Turnstile *turnstile.Turnstile
 }
 
-func NewAccountHandler(db *ent.Client, config *config.Config) *AccountHandler {
+func NewAccountHandler(db *ent.Client, config *config.Config, turnstile *turnstile.Turnstile) *AccountHandler {
 	return &AccountHandler{
-		DB:     db,
-		Config: config,
+		DB:        db,
+		Config:    config,
+		Turnstile: turnstile,
 	}
 }
 
@@ -42,8 +47,7 @@ func (h *AccountHandler) Routes() []Route {
 func (h *AccountHandler) Register() fiber.Handler {
 	type Request struct {
 		Token    string `json:"token" validate:"required"`
-		Email    string `json:"email" validate:"email"`
-		Name     string `json:"name" validate:"required,min=3,max=50"`
+		Email    string `json:"email" validate:"required,email"`
 		Username string `json:"username" validate:"required,min=3,max=30,regexp=^[a-zA-Z0-9_]+$"`
 		Password string `json:"password" validate:"required,min=6,max=72"`
 	}
@@ -54,6 +58,16 @@ func (h *AccountHandler) Register() fiber.Handler {
 			return err
 		}
 
+		// turnstile verification
+		if err := h.Turnstile.Verify(req.Token); err != nil {
+			return err
+		}
+
+		// check if the username is blocked
+		if validator.IsUsernameBlocked(req.Username) {
+			return fiber.ErrForbidden
+		}
+
 		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			log.Errorf("failed to hash password: %v", err)
@@ -62,7 +76,6 @@ func (h *AccountHandler) Register() fiber.Handler {
 
 		user, err := h.DB.User.
 			Create().
-			SetName(req.Name).
 			SetUsername(req.Username).
 			SetPassword(string(hash)).
 			Save(c.Context())
@@ -77,7 +90,9 @@ func (h *AccountHandler) Register() fiber.Handler {
 
 func (h *AccountHandler) Login() fiber.Handler {
 	type Request struct {
-		Username string `json:"username" validate:"required"`
+		Token    string `json:"token" validate:"required"`
+		Username string `json:"username"`
+		Email    string `json:"email" validate:"email"`
 		Password string `json:"password" validate:"required,min=6,max=72"`
 	}
 
@@ -87,7 +102,23 @@ func (h *AccountHandler) Login() fiber.Handler {
 			return fiber.ErrBadRequest
 		}
 
-		user, err := h.DB.User.Query().Where(user.Username(req.Username)).Only(c.Context())
+		// turnstile verification
+		if err := h.Turnstile.Verify(req.Token); err != nil {
+			return err
+		}
+
+		if req.Username == "" && req.Email == "" {
+			return fiber.ErrBadRequest
+		}
+
+		var query predicate.User
+		if req.Username != "" {
+			query = user.Username(req.Username)
+		} else if req.Email != "" {
+			query = user.Email(req.Email)
+		}
+
+		user, err := h.DB.User.Query().Where(query).Only(c.Context())
 		if err != nil {
 			if ent.IsNotFound(err) {
 				return fiber.ErrUnauthorized
