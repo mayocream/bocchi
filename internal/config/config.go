@@ -11,19 +11,23 @@ import (
 )
 
 type Config struct {
-	ServerPort   int
-	DatabaseURL  string
-	JWTSecretKey ed25519.PrivateKey
-	JWTSecretPub ed25519.PublicKey
-	BaseURL      string
-	APIBaseURL   string
-	SiteName     string
+	ServerPort         int
+	DatabaseURL        string
+	JWTSecretKey       ed25519.PrivateKey
+	JWTSecretPub       ed25519.PublicKey
+	BaseURL            string
+	APIBaseURL         string
+	SiteName           string
+	TurnstileSecretKey string
+	SendgridAPIKey     string
 }
 
 func NewConfig() (*Config, error) {
 	godotenv.Overload(".env", ".env.local")
 	viper.AutomaticEnv()
 
+	// the JWT secret key is stored in a PEM-encoded environment variable
+	// which can be mounted as a Kubernetes secret
 	block, _ := pem.Decode([]byte(viper.GetString("JWT_SECRET_KEY")))
 	jwtSecretKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
@@ -31,12 +35,14 @@ func NewConfig() (*Config, error) {
 	}
 
 	return &Config{
-		ServerPort:   viper.GetInt("SERVER_PORT"),
-		DatabaseURL:  viper.GetString("DATABASE_URL"),
-		BaseURL:      viper.GetString("NEXT_PUBLIC_BASE_URL"),
-		APIBaseURL:   viper.GetString("NEXT_PUBLIC_API_BASE_URL"),
-		SiteName:     viper.GetString("SITE_NAME"),
-		JWTSecretKey: jwtSecretKey.(ed25519.PrivateKey),
-		JWTSecretPub: jwtSecretKey.(ed25519.PrivateKey).Public().(ed25519.PublicKey),
+		ServerPort:         viper.GetInt("SERVER_PORT"),
+		DatabaseURL:        viper.GetString("DATABASE_URL"),
+		BaseURL:            viper.GetString("NEXT_PUBLIC_BASE_URL"),
+		APIBaseURL:         viper.GetString("NEXT_PUBLIC_API_BASE_URL"),
+		SiteName:           viper.GetString("SITE_NAME"),
+		SendgridAPIKey:     viper.GetString("SENDGRID_API_KEY"),
+		TurnstileSecretKey: viper.GetString("TURNSTILE_SECRET_KEY"),
+		JWTSecretKey:       jwtSecretKey.(ed25519.PrivateKey),
+		JWTSecretPub:       jwtSecretKey.(ed25519.PrivateKey).Public().(ed25519.PublicKey),
 	}, nil
 }

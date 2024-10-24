@@ -4,6 +4,7 @@ import (
 	"github.com/mayocream/twitter/api"
 	"github.com/mayocream/twitter/internal/config"
 	"github.com/mayocream/twitter/internal/database"
+	"github.com/mayocream/twitter/internal/turnstile"
 	"github.com/mayocream/twitter/internal/validator"
 
 	"github.com/gofiber/fiber/v3"
@@ -22,6 +23,7 @@ var serverCmd = &cobra.Command{
 				config.NewConfig,
 				database.NewClient,
 				validator.NewValidator,
+				turnstile.NewTurnstile,
 			),
 			api.Middlewares,
 			api.Routes,
