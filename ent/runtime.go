@@ -42,6 +42,10 @@ func init() {
 	tweet.UpdateDefaultUpdatedAt = tweetDescUpdatedAt.UpdateDefault.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
+	// userDescMetadata is the schema descriptor for metadata field.
+	userDescMetadata := userFields[5].Descriptor()
+	// user.DefaultMetadata holds the default value on creation for the metadata field.
+	user.DefaultMetadata = userDescMetadata.Default.(map[string]interface{})
 	// userDescCreatedAt is the schema descriptor for created_at field.
 	userDescCreatedAt := userFields[6].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.

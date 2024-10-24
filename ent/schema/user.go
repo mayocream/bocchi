@@ -16,12 +16,12 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name"),
+		field.String("name").Optional(),
 		field.String("email").Unique().Optional(),
 		field.String("username").Unique(),
-		field.String("password"),
-		field.String("avatar"),
-		field.JSON("metadata", map[string]interface{}{}),
+		field.String("password").Optional(),
+		field.String("avatar").Optional(),
+		field.JSON("metadata", map[string]interface{}{}).Default(map[string]interface{}{}),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}

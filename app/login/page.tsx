@@ -1,7 +1,7 @@
 'use client'
 
 import Landing from '@/app/components/landing'
-import { Button, TextField } from '@radix-ui/themes'
+import { Text, Button, TextField } from '@radix-ui/themes'
 import { Turnstile } from '@marsidev/react-turnstile'
 import Link from 'next/link'
 import GoogleIcon from '@/app/assets/svg/google.svg'
@@ -12,20 +12,31 @@ const LoginPage = () => {
   return (
     <Landing>
       <form method='POST' className='space-y-6 text-white'>
-        <TextField.Root
-          name='username'
-          type='text'
-          placeholder='ユーザー名'
-          className='bg-black border border-gray-700 rounded-lg'
-        />
+        <div className='space-y-2'>
+          <Text as='label' size='2' className='text-white'>
+            ユーザー名
+          </Text>
+          <TextField.Root
+            name='username'
+            type='text'
+            placeholder='ユーザー名を入力してください'
+            pattern='[a-zA-Z0-9_]{3,}'
+            required
+          />
+        </div>
 
-        <TextField.Root
-          name='password'
-          type='password'
-          placeholder='パスワード'
-          className='bg-black border border-gray-700 rounded-lg'
-        />
-
+        <div className='space-y-2'>
+          <Text as='label' size='2' className='text-white'>
+            パスワード
+          </Text>
+          <TextField.Root
+            name='password'
+            type='password'
+            placeholder='パスワードを入力してください'
+            pattern='.{6,}'
+            required
+          />
+        </div>
         <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} />
 
         <div className='space-y-4 pt-4'>
