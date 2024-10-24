@@ -1,10 +1,9 @@
-import { Container, Flex, Button, Text, TextField } from '@radix-ui/themes'
-import { MagnifyingGlassIcon, PlusIcon, CheckIcon } from '@radix-ui/react-icons'
-import { Turnstile } from '@marsidev/react-turnstile'
+import { Container, Flex, Text } from '@radix-ui/themes'
+import { MagnifyingGlassIcon, Pencil1Icon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import Logo from '@/app/icon.svg'
 
-const LoginPage = () => {
+const Landing = ({ children }) => {
   return (
     <div className='min-h-screen bg-gradient-to-r from-blue-400 to-blue-500 relative'>
       <Container className='p-0'>
@@ -34,15 +33,21 @@ const LoginPage = () => {
                   </Text>
                 </div>
                 <div className='flex items-center space-x-4'>
-                  <PlusIcon className='w-8 h-8 text-white' />
+                  <svg
+                    className='w-8 h-8 text-white'
+                    fill='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path d='M21 7.337h-3.93l.372-4.272a.751.751 0 0 0-.682-.812.752.752 0 0 0-.812.683l-.383 4.4h-6.32l.37-4.27a.75.75 0 0 0-.68-.813.751.751 0 0 0-.813.683l-.382 4.4H3.782a.75.75 0 0 0 0 1.5h3.787l-.57 6.5H3.062a.75.75 0 0 0 0 1.5h3.782l-.37 4.27a.75.75 0 0 0 .682.812l.066.003a.75.75 0 0 0 .746-.686l.383-4.4h6.32l-.37 4.27a.75.75 0 0 0 .682.812l.066.003a.75.75 0 0 0 .746-.686l.382-4.4h3.957c.413 0 .75-.337.75-.75s-.337-.75-.75-.75H16.39l.57-6.5h3.957a.75.75 0 0 0 0-1.5zm-6.35 8h-6.32l.57-6.5h6.32l-.57 6.5z' />
+                  </svg>
                   <Text size='5' className='text-white font-medium'>
                     会話に参加しましょう
                   </Text>
                 </div>
                 <div className='flex items-center space-x-4'>
-                  <CheckIcon className='w-8 h-8 text-white' />
+                  <Pencil1Icon className='w-8 h-8 text-white' />
                   <Text size='5' className='text-white font-medium'>
-                    つながりを保ちましょう
+                    表現の自由を楽しもう
                   </Text>
                 </div>
               </div>
@@ -66,48 +71,7 @@ const LoginPage = () => {
                   「いま」起きていることを見つけよう
                 </Text>
               </div>
-
-              <form className='space-y-6 text-white'>
-                <TextField.Root
-                  type='email'
-                  placeholder='ユーザー名'
-                  className='bg-black border border-gray-700 rounded-lg'
-                />
-
-                <TextField.Root
-                  type='password'
-                  placeholder='パスワード'
-                  className='bg-black border border-gray-700 rounded-lg'
-                />
-
-                <Turnstile
-                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-                />
-
-                <div className='space-y-4 pt-4'>
-                  <Button className='w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg'>
-                    ログイン
-                  </Button>
-
-                  <div className='relative'>
-                    <div className='absolute inset-0 flex items-center'>
-                      <div className='w-full border-t border-gray-700'></div>
-                    </div>
-                    <div className='relative flex justify-center text-sm'>
-                      <span className='px-2 text-gray-500 bg-black'>
-                        または
-                      </span>
-                    </div>
-                  </div>
-
-                  <Button
-                    className='w-full bg-transparent border-2 border-blue-500 text-blue-500 font-bold py-3 px-4 rounded-lg'
-                    variant='outline'
-                  >
-                    アカウント作成
-                  </Button>
-                </div>
-              </form>
+              {children}
             </div>
           </div>
         </Flex>
@@ -116,4 +80,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+export default Landing

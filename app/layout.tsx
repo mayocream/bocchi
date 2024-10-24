@@ -7,9 +7,8 @@ import './globals.css'
 
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
 
-const title = 'Twitter JP - クリエイターのためのキャンバス'
-const description =
-  'Twitter JP は、クリエイターの筆を自由に振るえる無料のキャンバス。ファンと共に新しい景色を描き、才能で彩る未来を創造しましょう。あなたの独創性が、この世界に鮮やかな変化をもたらします。'
+const title = 'Twitter -「いま」起きていることを見つけよう'
+const description = 'Twitterで「いま」起きていることを見つけよう'
 const image = `${process.env.NEXT_PUBLIC_BASE_URL}/icon.svg`
 
 export const metadata: Metadata = {
@@ -20,13 +19,6 @@ export const metadata: Metadata = {
     title,
     description,
     images: [image],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title,
-    description,
-    images: [image],
-    creator: '@mayo_irl',
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
 }
