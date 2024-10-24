@@ -3,9 +3,10 @@ package email
 import (
 	"bytes"
 	_ "embed"
+	"fmt"
 	"html/template"
-	"os"
 
+	"github.com/mayocream/twitter/internal/config"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
@@ -15,7 +16,19 @@ var tpl string
 
 var Tpl = template.Must(template.New("email").Parse(tpl))
 
-func SendEmail(name, email, subject, token string) error {
+type Email struct {
+	config *config.Config
+	client *sendgrid.Client
+}
+
+func NewEmail(config *config.Config) *Email {
+	return &Email{
+		config: config,
+		client: sendgrid.NewSendClient(config.SendgridAPIKey),
+	}
+}
+
+func (e *Email) SendEmail(name, email, subject, token string) error {
 	from := mail.NewEmail("Twitter", "no-reply@twitter.co.jp")
 	to := mail.NewEmail(name, email)
 
@@ -30,7 +43,7 @@ func SendEmail(name, email, subject, token string) error {
 	}{
 		SiteName:         "Twitter",
 		UserName:         name,
-		VerificationLink: "http://localhost:8080/verify?token=" + token,
+		VerificationLink: fmt.Sprintf("%s/email/verification?token=%s", e.config.BaseURL, token),
 	}
 
 	// Execute template with data
@@ -39,8 +52,6 @@ func SendEmail(name, email, subject, token string) error {
 	}
 
 	message := mail.NewSingleEmail(from, subject, to, "", body.String())
-	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
-
-	_, err := client.Send(message)
+	_, err := e.client.Send(message)
 	return err
 }

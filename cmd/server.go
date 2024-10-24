@@ -4,6 +4,7 @@ import (
 	"github.com/mayocream/twitter/api"
 	"github.com/mayocream/twitter/internal/config"
 	"github.com/mayocream/twitter/internal/database"
+	"github.com/mayocream/twitter/internal/email"
 	"github.com/mayocream/twitter/internal/turnstile"
 	"github.com/mayocream/twitter/internal/validator"
 
@@ -24,6 +25,7 @@ var serverCmd = &cobra.Command{
 				database.NewClient,
 				validator.NewValidator,
 				turnstile.NewTurnstile,
+				email.NewEmail,
 			),
 			api.Middlewares,
 			api.Routes,

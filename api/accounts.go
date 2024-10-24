@@ -5,6 +5,7 @@ import (
 	"github.com/mayocream/twitter/ent/predicate"
 	"github.com/mayocream/twitter/ent/user"
 	"github.com/mayocream/twitter/internal/config"
+	"github.com/mayocream/twitter/internal/email"
 	"github.com/mayocream/twitter/internal/turnstile"
 	"github.com/mayocream/twitter/internal/validator"
 
@@ -18,6 +19,7 @@ type AccountHandler struct {
 	DB        *ent.Client
 	Config    *config.Config
 	Turnstile *turnstile.Turnstile
+	Email     *email.Email
 }
 
 func NewAccountHandler(db *ent.Client, config *config.Config, turnstile *turnstile.Turnstile) *AccountHandler {
