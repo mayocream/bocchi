@@ -25,7 +25,7 @@ var serverCmd = &cobra.Command{
 				database.NewClient,
 				validator.NewValidator,
 				turnstile.NewTurnstile,
-				email.NewEmail,
+				email.NewMailgun,
 			),
 			api.Middlewares,
 			api.Routes,

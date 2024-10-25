@@ -23,6 +23,7 @@ go.work.sum
 
 # env file
 .env.local
+!.env.test
 
 node_modules/
 .next/

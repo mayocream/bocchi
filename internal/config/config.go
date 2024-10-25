@@ -4,10 +4,17 @@ import (
 	"crypto/ed25519"
 	"crypto/x509"
 	"encoding/pem"
+	"path/filepath"
+	"runtime"
 
 	"github.com/joho/godotenv"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+)
+
+var (
+	_, b, _, _ = runtime.Caller(0)
+	Root       = filepath.Join(filepath.Dir(b), "../..")
 )
 
 type Config struct {
@@ -23,10 +30,12 @@ type Config struct {
 	EmailDomain        string
 }
 
-func NewConfig() (*Config, error) {
-	godotenv.Overload(".env", ".env.local")
+func init() {
+	godotenv.Overload(filepath.Join(Root, ".env"), filepath.Join(Root, ".env.local"))
 	viper.AutomaticEnv()
+}
 
+func NewConfig() (*Config, error) {
 	// the JWT secret key is stored in a PEM-encoded environment variable
 	// which can be mounted as a Kubernetes secret
 	block, _ := pem.Decode([]byte(viper.GetString("JWT_SECRET_KEY")))

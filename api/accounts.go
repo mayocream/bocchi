@@ -21,14 +21,14 @@ type AccountHandler struct {
 	DB        *ent.Client
 	Config    *config.Config
 	Turnstile *turnstile.Turnstile
-	Email     *email.Email
+	Email     email.Email
 }
 
 func NewAccountHandler(
 	db *ent.Client,
 	config *config.Config,
 	turnstile *turnstile.Turnstile,
-	email *email.Email,
+	email email.Email,
 ) *AccountHandler {
 	return &AccountHandler{
 		DB:        db,
