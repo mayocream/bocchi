@@ -37,9 +37,7 @@ type Config struct {
 // loadEnvFiles loads the appropriate environment files based on the runtime context
 func loadEnvFiles() error {
 	// Load base .env file
-	if err := godotenv.Load(filepath.Join(Root, ".env")); err != nil {
-		return fmt.Errorf("error loading .env file: %w", err)
-	}
+	godotenv.Load(filepath.Join(Root, ".env"))
 
 	// Load environment-specific .env file
 	envFile := ".env.local"
