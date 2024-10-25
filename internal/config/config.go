@@ -47,9 +47,7 @@ func loadEnvFiles() error {
 		envFile = ".env.test"
 	}
 
-	if err := godotenv.Load(filepath.Join(Root, envFile)); err != nil {
-		return fmt.Errorf("error loading %s file: %w", envFile, err)
-	}
+	godotenv.Load(filepath.Join(Root, envFile))
 
 	return nil
 }
