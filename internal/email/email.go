@@ -2,14 +2,14 @@ package email
 
 import (
 	"bytes"
+	"context"
 	_ "embed"
 	"fmt"
 	"html/template"
 
 	"github.com/mayocream/twitter/internal/config"
 
-	"github.com/sendgrid/sendgrid-go"
-	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"github.com/mailgun/mailgun-go/v4"
 )
 
 //go:embed template.html
@@ -19,19 +19,18 @@ var Tpl = template.Must(template.New("email").Parse(tpl))
 
 type Email struct {
 	config *config.Config
-	client *sendgrid.Client
+	client mailgun.Mailgun
 }
 
 func NewEmail(config *config.Config) *Email {
 	return &Email{
 		config: config,
-		client: sendgrid.NewSendClient(config.SendgridAPIKey),
+		client: mailgun.NewMailgun(config.EmailDomain, config.MailgunAPIKey),
 	}
 }
 
-func (e *Email) SendEmail(name, email, subject, token string) error {
-	from := mail.NewEmail("Twitter", "no-reply@twitter.co.jp")
-	to := mail.NewEmail(name, email)
+func (e *Email) SendEmailVerification(ctx context.Context, name, email, token string) error {
+	sender := fmt.Sprintf("%s@%s", "no-reply", e.config.EmailDomain)
 
 	// Create a new buffer to store the rendered template
 	var body bytes.Buffer
@@ -42,7 +41,7 @@ func (e *Email) SendEmail(name, email, subject, token string) error {
 		UserName         string
 		VerificationLink string
 	}{
-		SiteName:         "Twitter",
+		SiteName:         e.config.SiteName,
 		UserName:         name,
 		VerificationLink: fmt.Sprintf("%s/email/verification?token=%s", e.config.BaseURL, token),
 	}
@@ -52,7 +51,14 @@ func (e *Email) SendEmail(name, email, subject, token string) error {
 		return err
 	}
 
-	message := mail.NewSingleEmail(from, subject, to, "", body.String())
-	_, err := e.client.Send(message)
+	message := e.client.NewMessage(
+		sender,
+		fmt.Sprintf("[%s] Verify your email address", e.config.SiteName),
+		"",
+		email,
+	)
+	message.SetHtml(body.String())
+
+	_, _, err := e.client.Send(ctx, message)
 	return err
 }

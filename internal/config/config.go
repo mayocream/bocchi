@@ -19,7 +19,8 @@ type Config struct {
 	APIBaseURL         string
 	SiteName           string
 	TurnstileSecretKey string
-	SendgridAPIKey     string
+	MailgunAPIKey      string
+	EmailDomain        string
 }
 
 func NewConfig() (*Config, error) {
@@ -40,7 +41,8 @@ func NewConfig() (*Config, error) {
 		BaseURL:            viper.GetString("NEXT_PUBLIC_BASE_URL"),
 		APIBaseURL:         viper.GetString("NEXT_PUBLIC_API_BASE_URL"),
 		SiteName:           viper.GetString("SITE_NAME"),
-		SendgridAPIKey:     viper.GetString("SENDGRID_API_KEY"),
+		MailgunAPIKey:      viper.GetString("MAILGUN_API_KEY"),
+		EmailDomain:        viper.GetString("EMAIL_DOMAIN"),
 		TurnstileSecretKey: viper.GetString("TURNSTILE_SECRET_KEY"),
 		JWTSecretKey:       jwtSecretKey.(ed25519.PrivateKey),
 		JWTSecretPub:       jwtSecretKey.(ed25519.PrivateKey).Public().(ed25519.PublicKey),

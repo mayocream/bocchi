@@ -50,6 +50,63 @@ func (h *AccountHandler) Routes() []Route {
 			Path:    "/auth/login",
 			Handler: h.Login(),
 		},
+		{
+			Method:  fiber.MethodPost,
+			Path:    "/auth/email/verification",
+			Handler: h.EmailVerification(),
+		},
+	}
+}
+
+func (h *AccountHandler) EmailVerification() fiber.Handler {
+	type Request struct {
+		Token string `json:"token" validate:"required"`
+	}
+
+	return func(c fiber.Ctx) error {
+		var req Request
+		if err := c.Bind().JSON(&req); err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		claims := jwt.MapClaims{}
+		t, err := jwt.ParseWithClaims(req.Token, claims, func(t *jwt.Token) (interface{}, error) {
+			return h.Config.JWTSecretPub, nil
+		})
+		if err != nil {
+			log.Errorf("failed to parse JWT: %v", err)
+			return fiber.ErrBadRequest
+		}
+
+		if !t.Valid {
+			log.Errorf("invalid JWT")
+			return fiber.ErrBadRequest
+		}
+
+		id, ok := claims["id"].(float64)
+		if !ok {
+			log.Errorf("failed to get id from claims")
+			return fiber.ErrBadRequest
+		}
+
+		email, ok := claims["email"].(string)
+		if !ok {
+			log.Errorf("failed to get email from claims")
+			return fiber.ErrBadRequest
+		}
+
+		user, err := h.DB.User.Get(c.Context(), int(id))
+		if err != nil {
+			log.Errorf("failed to get user: %v", err)
+			return err
+		}
+
+		if err := user.Update().SetEmail(email).Exec(c.Context()); err != nil {
+			log.Errorf("failed to update user: %v", err)
+			return err
+		}
+
+		return c.JSON(fiber.Map{"message": "Email verified"})
 	}
 }
 
@@ -109,7 +166,7 @@ func (h *AccountHandler) Register() fiber.Handler {
 			return err
 		}
 
-		if err := h.Email.SendEmail(user.Username, req.Email, "Twitterへようこそ", token); err != nil {
+		if err := h.Email.SendEmailVerification(c.Context(), user.Username, req.Email, token); err != nil {
 			log.Errorf("failed to send email: %v", err)
 		}
 
@@ -120,7 +177,7 @@ func (h *AccountHandler) Register() fiber.Handler {
 func (h *AccountHandler) Login() fiber.Handler {
 	type Request struct {
 		Token    string `json:"token" validate:"required"`
-		Username string `json:"username"`
+		Username string `json:"username" validate:"username"`
 		Email    string `json:"email" validate:"email"`
 		Password string `json:"password" validate:"required,min=6,max=72"`
 	}
