@@ -9,12 +9,14 @@ import (
 	"github.com/mayocream/twitter/internal/email"
 	"github.com/mayocream/twitter/internal/turnstile"
 	"github.com/mayocream/twitter/internal/validator"
+	"github.com/mayocream/twitter/internal/testutil"
 
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/fx"
 )
 
 func TestNewApi(t *testing.T) {
+	testutil.SetupSuite(t)
 	app := fx.New(
 		fx.Provide(
 			config.NewConfig,

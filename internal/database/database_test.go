@@ -1,8 +1,10 @@
 package database
 
 import (
+	"path/filepath"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/mayocream/twitter/ent"
 	"github.com/mayocream/twitter/internal/config"
 
@@ -12,6 +14,7 @@ import (
 
 // TestNewClient tests the successful creation of a database client
 func TestNewClient(t *testing.T) {
+	godotenv.Load(filepath.Join(config.Root, ".env.test"))
 	app := fxtest.New(
 		t,
 		fx.Provide(
