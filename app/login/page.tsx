@@ -7,22 +7,80 @@ import Link from 'next/link'
 import GoogleIcon from '@/app/assets/svg/google.svg'
 import { DiscordLogoIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
+import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 const LoginPage = () => {
+  const router = useRouter()
+  const [error, setError] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  })
+
+  const onSubmit = async (data) => {
+    try {
+      if (!turnstileToken) {
+        setError('Please complete the captcha')
+        return
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...data,
+            token: turnstileToken,
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error('ログインに失敗しました')
+      }
+
+      router.push('/') // Redirect after successful login
+    } catch (err) {
+      setError(String(err))
+    }
+  }
+
   return (
     <Landing>
-      <form method='POST' className='space-y-6 text-white'>
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6 text-white'>
+        {error && <Text className='text-red-500 text-sm'>{error}</Text>}
+
         <div className='space-y-2'>
           <Text as='label' size='2' className='text-white'>
             ユーザー名
           </Text>
           <TextField.Root
-            name='username'
-            type='text'
+            {...register('username', {
+              required: 'ユーザー名は必須です',
+              pattern: {
+                value: /^[a-zA-Z0-9_]{3,}$/,
+                message:
+                  'ユーザー名は3文字以上の英数字とアンダースコアのみ使用可能です',
+              },
+            })}
             placeholder='ユーザー名を入力してください'
-            pattern='[a-zA-Z0-9_]{3,}'
-            required
           />
+          {errors.username && (
+            <Text className='text-red-500 text-sm'>
+              {errors.username.message}
+            </Text>
+          )}
         </div>
 
         <div className='space-y-2'>
@@ -30,21 +88,35 @@ const LoginPage = () => {
             パスワード
           </Text>
           <TextField.Root
-            name='password'
             type='password'
+            {...register('password', {
+              required: 'パスワードは必須です',
+              minLength: {
+                value: 6,
+                message: 'パスワードは6文字以上である必要があります',
+              },
+            })}
             placeholder='パスワードを入力してください'
-            pattern='.{6,}'
-            required
           />
+          {errors.password && (
+            <Text className='text-red-500 text-sm'>
+              {errors.password.message}
+            </Text>
+          )}
         </div>
-        <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} />
+
+        <Turnstile
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onSuccess={setTurnstileToken}
+        />
 
         <div className='space-y-4 pt-4'>
           <Button
             type='submit'
+            disabled={isSubmitting}
             className='w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg'
           >
-            Log In
+            {isSubmitting ? 'ログイン中...' : 'ログイン'}
           </Button>
 
           <div className='relative'>
