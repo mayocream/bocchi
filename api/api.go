@@ -22,6 +22,11 @@ func NewApi(
 		StructValidator: validator,
 	})
 
+	// Register middleware
+	for _, middleware := range middlewares {
+		app.Use(middleware)
+	}
+
 	// Register unauthenticated routes
 	for _, handler := range handlers {
 		for _, route := range handler.Routes() {
@@ -31,10 +36,8 @@ func NewApi(
 		}
 	}
 
-	// Register middleware
-	for _, middleware := range middlewares {
-		app.Use(middleware)
-	}
+	// Register authentication middleware
+	app.Use(Authentication(config))
 
 	// Register authenticated routes
 	for _, handler := range handlers {

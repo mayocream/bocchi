@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
 	"github.com/gofiber/fiber/v3/middleware/cors"
+	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/fx"
 )
@@ -53,6 +54,10 @@ func Cors(config *config.Config) fiber.Handler {
 	})
 }
 
+func Logger() fiber.Handler {
+	return logger.New()
+}
+
 func AsMiddleware(f any) any {
 	return fx.Annotate(
 		f,
@@ -62,7 +67,7 @@ func AsMiddleware(f any) any {
 
 var Middlewares = fx.Module("middlewares",
 	fx.Provide(
-		AsMiddleware(Authentication),
 		AsMiddleware(Cors),
+		AsMiddleware(Logger),
 	),
 )
