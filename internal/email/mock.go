@@ -1,6 +1,8 @@
 package email
 
 import (
+	"context"
+
 	"github.com/stretchr/testify/mock"
 )
 
@@ -12,7 +14,7 @@ func NewMock() *Mock {
 	return &Mock{}
 }
 
-func (m *Mock) SendEmailVerification(name, email, token string) error {
+func (m *Mock) SendEmailVerification(ctx context.Context, name, email, token string) error {
 	args := m.Called(name, email, token)
 	return args.Error(0)
 }

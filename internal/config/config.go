@@ -47,7 +47,8 @@ func loadEnvFiles() error {
 		envFile = ".env.test"
 	}
 
-	godotenv.Load(filepath.Join(Root, envFile))
+	// Overload environment-specific .env file
+	godotenv.Overload(filepath.Join(Root, envFile))
 
 	return nil
 }

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"time"
 
 	"github.com/mayocream/twitter/ent"
@@ -95,13 +96,13 @@ func (h *AccountHandler) EmailVerification() fiber.Handler {
 			return fiber.ErrBadRequest
 		}
 
-		user, err := h.DB.User.Get(c.Context(), int(id))
+		user, err := h.DB.User.Get(context.Background(), int(id))
 		if err != nil {
 			log.Errorf("failed to get user: %v", err)
 			return err
 		}
 
-		if err := user.Update().SetEmail(email).Exec(c.Context()); err != nil {
+		if err := user.Update().SetEmail(email).Exec(context.Background()); err != nil {
 			log.Errorf("failed to update user: %v", err)
 			return err
 		}
@@ -134,7 +135,7 @@ func (h *AccountHandler) Register() fiber.Handler {
 
 		// check if the username is blocked
 		if validator.IsUsernameBlocked(req.Username) {
-			return fiber.ErrForbidden
+			return fiber.ErrBadRequest
 		}
 
 		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
@@ -148,7 +149,7 @@ func (h *AccountHandler) Register() fiber.Handler {
 			SetUsername(req.Username).
 			SetName("我輩は猫である").
 			SetPassword(string(hash)).
-			Save(c.Context())
+			Save(context.Background())
 		if err != nil {
 			log.Errorf("failed to create user: %v", err)
 			return err
@@ -166,7 +167,7 @@ func (h *AccountHandler) Register() fiber.Handler {
 			return err
 		}
 
-		if err := h.Email.SendEmailVerification(c.Context(), user.Username, req.Email, token); err != nil {
+		if err := h.Email.SendEmailVerification(context.Background(), user.Username, req.Email, token); err != nil {
 			log.Errorf("failed to send email: %v", err)
 		}
 
@@ -177,23 +178,26 @@ func (h *AccountHandler) Register() fiber.Handler {
 func (h *AccountHandler) Login() fiber.Handler {
 	type Request struct {
 		Token    string `json:"token" validate:"required"`
-		Username string `json:"username" validate:"username"`
-		Email    string `json:"email" validate:"email"`
+		Username string `json:"username" validate:"omitempty,username,required_without=Email"`
+		Email    string `json:"email" validate:"omitempty,email,required_without=Username"`
 		Password string `json:"password" validate:"required,min=6,max=72"`
 	}
 
 	return func(c fiber.Ctx) error {
 		var req Request
 		if err := c.Bind().JSON(&req); err != nil {
+			log.Debugf("failed to bind request: %v", err)
 			return fiber.ErrBadRequest
 		}
 
 		// turnstile verification
 		if err := h.Turnstile.Verify(req.Token); err != nil {
-			return err
+			log.Errorf("failed to verify turnstile: %v", err)
+			return fiber.ErrBadRequest
 		}
 
 		if req.Username == "" && req.Email == "" {
+			log.Errorf("username or email is required")
 			return fiber.ErrBadRequest
 		}
 
@@ -204,7 +208,7 @@ func (h *AccountHandler) Login() fiber.Handler {
 			query = user.Email(req.Email)
 		}
 
-		user, err := h.DB.User.Query().Where(query).Only(c.Context())
+		user, err := h.DB.User.Query().Where(query).Only(context.Background())
 		if err != nil {
 			if ent.IsNotFound(err) {
 				return fiber.ErrUnauthorized
@@ -215,7 +219,7 @@ func (h *AccountHandler) Login() fiber.Handler {
 		}
 
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-			log.Infof("user %s failed to login: %v", user.Username, err)
+			log.Errorf("user %s failed to login: %v", user.Username, err)
 			return fiber.ErrUnauthorized
 		}
 
