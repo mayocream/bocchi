@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { type User } from './schema'
 
 const MAX_AGE = 30 * 24 * 60 * 60 // 30 days
 const TOKEN_NAME = 'jwt'
@@ -25,12 +24,12 @@ export async function decode(token: string): Promise<any> {
   return JSON.parse(atob(payload))
 }
 
-export async function getSession(): Promise<User | null> {
+export async function getSession(): Promise<any | null> {
   const token = cookies().get(TOKEN_NAME)?.value
   if (!token) return null
   try {
     const payload = await decode(token)
-    return payload as User
+    return payload
   } catch (error) {
     console.error(error)
     return null

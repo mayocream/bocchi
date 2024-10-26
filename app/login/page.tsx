@@ -7,80 +7,28 @@ import Link from 'next/link'
 import GoogleIcon from '@/app/assets/svg/google.svg'
 import { DiscordLogoIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
-import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useFormState } from 'react-dom'
+import { createSession } from '@/app/actions'
 
-const LoginPage = () => {
-  const router = useRouter()
-  const [error, setError] = useState('')
-  const [turnstileToken, setTurnstileToken] = useState('')
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      username: '',
-      password: '',
-    },
-  })
-
-  const onSubmit = async (data) => {
-    try {
-      if (!turnstileToken) {
-        setError('Please complete the captcha')
-        return
-      }
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...data,
-            token: turnstileToken,
-          }),
-        }
-      )
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error('ログインに失敗しました')
-      }
-
-      router.push('/') // Redirect after successful login
-    } catch (err) {
-      setError(String(err))
-    }
-  }
+const Page = () => {
+  const [message, action, pending] = useFormState(createSession, null)
 
   return (
     <Landing>
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6 text-white'>
-        {error && <Text className='text-red-500 text-sm'>{error}</Text>}
-
+      <Text size='2' className='text-red-500'>
+        {message as string}
+      </Text>
+      <form action={action} className='space-y-6 text-white'>
         <div className='space-y-2'>
           <Text as='label' size='2' className='text-white'>
             ユーザー名
           </Text>
           <TextField.Root
-            {...register('username', {
-              required: 'ユーザー名は必須です',
-              pattern: {
-                value: /^[a-zA-Z0-9_]{3,}$/,
-                message:
-                  'ユーザー名は3文字以上の英数字とアンダースコアのみ使用可能です',
-              },
-            })}
+            name='username'
+            type='text'
+            required
             placeholder='ユーザー名を入力してください'
           />
-          {errors.username && (
-            <Text className='text-red-500 text-sm'>
-              {errors.username.message}
-            </Text>
-          )}
         </div>
 
         <div className='space-y-2'>
@@ -88,35 +36,22 @@ const LoginPage = () => {
             パスワード
           </Text>
           <TextField.Root
+            name='password'
+            required
             type='password'
-            {...register('password', {
-              required: 'パスワードは必須です',
-              minLength: {
-                value: 6,
-                message: 'パスワードは6文字以上である必要があります',
-              },
-            })}
             placeholder='パスワードを入力してください'
           />
-          {errors.password && (
-            <Text className='text-red-500 text-sm'>
-              {errors.password.message}
-            </Text>
-          )}
         </div>
 
-        <Turnstile
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-          onSuccess={setTurnstileToken}
-        />
+        <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} />
 
         <div className='space-y-4 pt-4'>
           <Button
+            disabled={pending}
             type='submit'
-            disabled={isSubmitting}
             className='w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg'
           >
-            {isSubmitting ? 'ログイン中...' : 'ログイン'}
+            ログイン
           </Button>
 
           <div className='relative'>
@@ -136,15 +71,17 @@ const LoginPage = () => {
               <Link href='/signup'>Password でアカウントを作成</Link>
             </Button>
 
-            <Button>
-              <Image src={GoogleIcon} alt='google' className='w-5 h-5 mr-2' />
-              Google でログイン
-            </Button>
+            <div className='hidden'>
+              <Button>
+                <Image src={GoogleIcon} alt='google' className='w-5 h-5 mr-2' />
+                Google でログイン
+              </Button>
 
-            <Button>
-              <DiscordLogoIcon className='w-5 h-5 mr-2' />
-              Discord でログイン
-            </Button>
+              <Button>
+                <DiscordLogoIcon className='w-5 h-5 mr-2' />
+                Discord でログイン
+              </Button>
+            </div>
           </div>
         </div>
       </form>
@@ -152,4 +89,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+export default Page
