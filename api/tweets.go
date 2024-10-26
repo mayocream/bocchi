@@ -1,9 +1,13 @@
 package api
 
 import (
+	"context"
+	"strconv"
+
 	"github.com/mayocream/twitter/ent"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 )
 
 type TweetHandler struct {
@@ -22,7 +26,12 @@ func (h *TweetHandler) Routes() []Route {
 			Method:    fiber.MethodPost,
 			Path:      "/tweets",
 			Handler:   h.Tweet(),
-			Protected: false,
+			Protected: true,
+		},
+		{
+			Method:  fiber.MethodGet,
+			Path:    "/tweet/:id",
+			Handler: h.GetTweet(),
 		},
 	}
 }
@@ -38,16 +47,37 @@ func (h *TweetHandler) Tweet() fiber.Handler {
 			return err
 		}
 
-		user := c.Locals("user").(*ent.User)
-
-		_, err := h.DB.Tweet.Create().
-			SetAuthor(user).
-			SetContent(req.Content).
-			Save(c.Context())
-		if err != nil {
-			return err
+		user, ok := c.Locals("user").(*ent.User)
+		if !ok {
+			return fiber.ErrUnauthorized
 		}
 
-		return c.SendStatus(fiber.StatusCreated)
+		tweet, err := h.DB.Tweet.Create().
+			SetAuthor(user).
+			SetContent(req.Content).
+			Save(context.Background())
+		if err != nil {
+			log.Errorf("failed to create tweet: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.Status(fiber.StatusCreated).AutoFormat(tweet)
+	}
+}
+
+func (h *TweetHandler) GetTweet() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		idStr := c.Params("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		tweet, err := h.DB.Tweet.Get(context.Background(), id)
+		if err != nil {
+			return fiber.ErrNotFound
+		}
+
+		return c.AutoFormat(tweet)
 	}
 }

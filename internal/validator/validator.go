@@ -15,7 +15,7 @@ func (v *Validator) Validate(i interface{}) error {
 }
 
 func NewValidator() *Validator {
-	v := validator.New()
+	v := validator.New(validator.WithRequiredStructEnabled())
 	v.RegisterValidation("username", validateUsername)
 	return &Validator{
 		v: v,

@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/mayocream/twitter/ent"
@@ -18,13 +20,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var (
+	ErrInvalidToken = errors.New("invalid token")
+	ErrUserNotFound = errors.New("user not found")
+)
+
+// AccountHandler handles all account-related operations
 type AccountHandler struct {
-	DB        *ent.Client
-	Config    *config.Config
-	Turnstile *turnstile.Turnstile
-	Email     email.Email
+	db        *ent.Client
+	config    *config.Config
+	turnstile *turnstile.Turnstile
+	email     email.Email
 }
 
+// NewAccountHandler creates a new instance of AccountHandler
 func NewAccountHandler(
 	db *ent.Client,
 	config *config.Config,
@@ -32,33 +41,128 @@ func NewAccountHandler(
 	email email.Email,
 ) *AccountHandler {
 	return &AccountHandler{
-		DB:        db,
-		Config:    config,
-		Turnstile: turnstile,
-		Email:     email,
+		db:        db,
+		config:    config,
+		turnstile: turnstile,
+		email:     email,
 	}
 }
 
+// Routes returns all routes handled by AccountHandler
 func (h *AccountHandler) Routes() []Route {
 	return []Route{
 		{
 			Method:  fiber.MethodPost,
-			Path:    "/auth/register",
+			Path:    "/accounts",
 			Handler: h.Register(),
 		},
 		{
 			Method:  fiber.MethodPost,
-			Path:    "/auth/login",
-			Handler: h.Login(),
+			Path:    "/accounts/sessions",
+			Handler: h.Session(),
 		},
 		{
-			Method:  fiber.MethodPost,
-			Path:    "/auth/email/verification",
+			Method:    fiber.MethodPost,
+			Path:      "/accounts/verifications/email",
+			Handler:   h.EmailVerificationRequest(),
+			Protected: true,
+		},
+		{
+			Method:  fiber.MethodPut,
+			Path:    "/accounts/verifications/email",
 			Handler: h.EmailVerification(),
+		},
+		{
+			Method:    fiber.MethodPut,
+			Path:      "/accounts/profile",
+			Handler:   h.EditProfile(),
+			Protected: true,
 		},
 	}
 }
 
+// emailVerificationToken creates a JWT token for email verification
+func (h *AccountHandler) emailVerificationToken(email string, userID int) (string, error) {
+	t := jwt.NewWithClaims(jwt.SigningMethodEdDSA, jwt.MapClaims{
+		"id":    userID,
+		"email": email,
+		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	token, err := t.SignedString(h.config.JWTSecretKey)
+	if err != nil {
+		return "", fmt.Errorf("failed to sign JWT: %w", err)
+	}
+
+	return token, nil
+}
+
+// verifyEmailToken validates the email verification token
+func (h *AccountHandler) verifyEmailToken(token string) (int, string, error) {
+	claims := jwt.MapClaims{}
+	t, err := jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return h.config.JWTSecretPub, nil
+	})
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to parse JWT: %w", err)
+	}
+
+	if !t.Valid {
+		return 0, "", ErrInvalidToken
+	}
+
+	id, ok := claims["id"].(float64)
+	if !ok {
+		return 0, "", fmt.Errorf("invalid id claim")
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok {
+		return 0, "", fmt.Errorf("invalid email claim")
+	}
+
+	exp, ok := claims["exp"].(float64)
+	if !ok || time.Unix(int64(exp), 0).Before(time.Now()) {
+		return 0, "", fmt.Errorf("token expired")
+	}
+
+	return int(id), email, nil
+}
+
+// EmailVerificationRequest handles the request for email verification
+func (h *AccountHandler) EmailVerificationRequest() fiber.Handler {
+	type Request struct {
+		Email string `json:"email" validate:"required,email"`
+	}
+
+	return func(c fiber.Ctx) error {
+		var req Request
+		if err := c.Bind().Body(&req); err != nil {
+			log.Errorf("failed to bind request: %v", err)
+			return fiber.ErrBadRequest
+		}
+
+		user, ok := c.Locals("user").(*ent.User)
+		if !ok {
+			return fiber.ErrUnauthorized
+		}
+
+		token, err := h.emailVerificationToken(req.Email, user.ID)
+		if err != nil {
+			log.Errorf("failed to create verification token: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		if err := h.email.SendEmailVerification(context.Background(), user.Username, req.Email, token); err != nil {
+			log.Errorf("failed to send verification email: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.JSON(fiber.Map{"message": "Verification email sent"})
+	}
+}
+
+// EmailVerification handles email verification
 func (h *AccountHandler) EmailVerification() fiber.Handler {
 	type Request struct {
 		Token string `json:"token" validate:"required"`
@@ -66,52 +170,34 @@ func (h *AccountHandler) EmailVerification() fiber.Handler {
 
 	return func(c fiber.Ctx) error {
 		var req Request
-		if err := c.Bind().JSON(&req); err != nil {
+		if err := c.Bind().Body(&req); err != nil {
 			return fiber.ErrBadRequest
 		}
 
-		claims := jwt.MapClaims{}
-		t, err := jwt.ParseWithClaims(req.Token, claims, func(t *jwt.Token) (interface{}, error) {
-			return h.Config.JWTSecretPub, nil
-		})
+		userID, email, err := h.verifyEmailToken(req.Token)
 		if err != nil {
-			log.Errorf("failed to parse JWT: %v", err)
+			log.Errorf("failed to verify token: %v", err)
 			return fiber.ErrBadRequest
 		}
 
-		if !t.Valid {
-			log.Errorf("invalid JWT")
-			return fiber.ErrBadRequest
-		}
-
-		id, ok := claims["id"].(float64)
-		if !ok {
-			log.Errorf("failed to get id from claims")
-			return fiber.ErrBadRequest
-		}
-
-		email, ok := claims["email"].(string)
-		if !ok {
-			log.Errorf("failed to get email from claims")
-			return fiber.ErrBadRequest
-		}
-
-		user, err := h.DB.User.Get(context.Background(), int(id))
+		user, err := h.db.User.Get(context.Background(), userID)
 		if err != nil {
-			log.Errorf("failed to get user: %v", err)
-			return err
+			if ent.IsNotFound(err) {
+				return fiber.ErrNotFound
+			}
+			return fiber.ErrInternalServerError
 		}
 
 		if err := user.Update().SetEmail(email).Exec(context.Background()); err != nil {
-			log.Errorf("failed to update user: %v", err)
-			return err
+			log.Errorf("failed to update user email: %v", err)
+			return fiber.ErrInternalServerError
 		}
 
-		return c.JSON(fiber.Map{"message": "Email verified"})
+		return c.JSON(fiber.Map{"message": "Email verified successfully"})
 	}
 }
 
-// Register registers a new user.
+// Register handles user registration
 func (h *AccountHandler) Register() fiber.Handler {
 	type Request struct {
 		Token    string `json:"token" validate:"required"`
@@ -122,60 +208,53 @@ func (h *AccountHandler) Register() fiber.Handler {
 
 	return func(c fiber.Ctx) error {
 		var req Request
-		if err := c.Bind().JSON(&req); err != nil {
-			log.Errorf("failed to bind request: %v", err)
+		if err := c.Bind().Body(&req); err != nil {
 			return fiber.ErrBadRequest
 		}
 
-		// turnstile verification
-		if err := h.Turnstile.Verify(req.Token); err != nil {
-			log.Errorf("failed to verify turnstile: %v", err)
+		if err := h.turnstile.Verify(req.Token); err != nil {
+			log.Errorf("turnstile verification failed: %v", err)
 			return fiber.ErrBadRequest
 		}
 
-		// check if the username is blocked
 		if validator.IsUsernameBlocked(req.Username) {
-			return fiber.ErrBadRequest
+			return fiber.NewError(fiber.StatusBadRequest, "Username not allowed")
 		}
 
 		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
-			log.Errorf("failed to hash password: %v", err)
-			return err
+			log.Errorf("password hashing failed: %v", err)
+			return fiber.ErrInternalServerError
 		}
 
-		user, err := h.DB.User.
+		user, err := h.db.User.
 			Create().
 			SetUsername(req.Username).
-			SetName("我輩は猫である").
+			SetName(req.Username). // Default name is username
 			SetPassword(string(hash)).
 			Save(context.Background())
 		if err != nil {
-			log.Errorf("failed to create user: %v", err)
-			return err
+			log.Errorf("user creation failed: %v", err)
+			return fiber.ErrInternalServerError
 		}
 
-		// send verification email
-		t := jwt.NewWithClaims(jwt.SigningMethodEdDSA, jwt.MapClaims{
-			"id":    user.ID,
-			"email": req.Email,
-			"exp":   time.Now().Add(time.Hour * 24).Unix(),
-		})
-		token, err := t.SignedString(h.Config.JWTSecretKey)
+		token, err := h.emailVerificationToken(req.Email, user.ID)
 		if err != nil {
-			log.Errorf("failed to sign JWT: %v", err)
-			return err
+			log.Errorf("email verification token creation failed: %v", err)
+			return fiber.ErrInternalServerError
 		}
 
-		if err := h.Email.SendEmailVerification(context.Background(), user.Username, req.Email, token); err != nil {
-			log.Errorf("failed to send email: %v", err)
+		if err := h.email.SendEmailVerification(context.Background(), user.Username, req.Email, token); err != nil {
+			log.Errorf("verification email sending failed: %v", err)
+			// Don't return error here as user is already created
 		}
 
 		return c.Status(fiber.StatusCreated).JSON(user)
 	}
 }
 
-func (h *AccountHandler) Login() fiber.Handler {
+// Session handles user login
+func (h *AccountHandler) Session() fiber.Handler {
 	type Request struct {
 		Token    string `json:"token" validate:"required"`
 		Username string `json:"username" validate:"omitempty,username,required_without=Email"`
@@ -185,56 +264,88 @@ func (h *AccountHandler) Login() fiber.Handler {
 
 	return func(c fiber.Ctx) error {
 		var req Request
-		if err := c.Bind().JSON(&req); err != nil {
-			log.Debugf("failed to bind request: %v", err)
+		if err := c.Bind().Body(&req); err != nil {
 			return fiber.ErrBadRequest
 		}
 
-		// turnstile verification
-		if err := h.Turnstile.Verify(req.Token); err != nil {
-			log.Errorf("failed to verify turnstile: %v", err)
-			return fiber.ErrBadRequest
-		}
-
-		if req.Username == "" && req.Email == "" {
-			log.Errorf("username or email is required")
+		if err := h.turnstile.Verify(req.Token); err != nil {
+			log.Errorf("turnstile verification failed: %v", err)
 			return fiber.ErrBadRequest
 		}
 
 		var query predicate.User
 		if req.Username != "" {
 			query = user.Username(req.Username)
-		} else if req.Email != "" {
+		} else {
 			query = user.Email(req.Email)
 		}
 
-		user, err := h.DB.User.Query().Where(query).Only(context.Background())
+		user, err := h.db.User.Query().Where(query).Only(context.Background())
 		if err != nil {
 			if ent.IsNotFound(err) {
 				return fiber.ErrUnauthorized
-			} else {
-				log.Errorf("failed to query user: %v", err)
-				return err
 			}
+			return fiber.ErrInternalServerError
 		}
 
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-			log.Errorf("user %s failed to login: %v", user.Username, err)
 			return fiber.ErrUnauthorized
 		}
 
-		t := jwt.NewWithClaims(jwt.SigningMethodEdDSA, jwt.MapClaims{
+		token := jwt.NewWithClaims(jwt.SigningMethodEdDSA, jwt.MapClaims{
 			"id":       user.ID,
 			"email":    user.Email,
 			"name":     user.Name,
 			"username": user.Username,
+			"exp":      time.Now().Add(time.Hour * 24 * 30).Unix(), // 30 days
 		})
-		s, err := t.SignedString(h.Config.JWTSecretKey)
+
+		signedToken, err := token.SignedString(h.config.JWTSecretKey)
 		if err != nil {
-			log.Errorf("failed to sign JWT: %v", err)
-			return err
+			log.Errorf("JWT signing failed: %v", err)
+			return fiber.ErrInternalServerError
 		}
 
-		return c.JSON(fiber.Map{"token": s})
+		return c.JSON(fiber.Map{"token": signedToken})
+	}
+}
+
+// EditProfile handles profile updates
+func (h *AccountHandler) EditProfile() fiber.Handler {
+	type Request struct {
+		Name     string `json:"name" validate:"min=3,max=30"`
+		Avatar   string `json:"avatar" validate:"url"`
+		Bio      string `json:"bio" validate:"min=3,max=160"`
+		Website  string `json:"website" validate:"url"`
+		Location string `json:"location" validate:"min=3,max=30"`
+		Banner   string `json:"banner" validate:"url"`
+	}
+
+	return func(c fiber.Ctx) error {
+		var req Request
+		if err := c.Bind().Body(&req); err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		user, ok := c.Locals("user").(*ent.User)
+		if !ok {
+			return fiber.ErrUnauthorized
+		}
+
+		updatedUser, err := user.Update().
+			SetName(req.Name).
+			SetAvatar(req.Avatar).
+			SetMetadata(map[string]interface{}{
+				"bio":      req.Bio,
+				"website":  req.Website,
+				"location": req.Location,
+				"banner":   req.Banner,
+			}).Save(context.Background())
+		if err != nil {
+			log.Errorf("failed to update user profile: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.JSON(updatedUser)
 	}
 }

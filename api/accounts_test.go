@@ -1,17 +1,15 @@
 package api
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/mayocream/twitter/ent"
 	"github.com/mayocream/twitter/internal/config"
 	"github.com/mayocream/twitter/internal/email"
+	"github.com/mayocream/twitter/internal/testutil"
 	"github.com/mayocream/twitter/internal/turnstile"
 	"github.com/mayocream/twitter/internal/validator"
 
@@ -39,12 +37,7 @@ func (s *AccountHandlerTestSuite) SetupTest() {
 	})
 
 	// Initialize test database (using SQLite for tests)
-	s.db, err = ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
-	s.Require().NoError(err)
-
-	// Run the auto migration tool
-	err = s.db.Schema.Create(context.Background())
-	s.Require().NoError(err)
+	s.db = testutil.InMemoryDatabase()
 
 	cfg, err := config.NewConfig()
 	s.Require().NoError(err)
@@ -77,7 +70,7 @@ func (s *AccountHandlerTestSuite) TestRegister_Success() {
 	}
 
 	// Act
-	resp, err := s.app.Test(makeTestRequest(http.MethodPost, "/auth/register", reqBody))
+	resp, err := s.app.Test(testutil.MakeTestRequest(http.MethodPost, "/accounts", reqBody))
 
 	// Assert
 	s.Require().NoError(err)
@@ -130,14 +123,14 @@ func (s *AccountHandlerTestSuite) TestRegister_InvalidInput() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			resp, err := s.app.Test(makeTestRequest(http.MethodPost, "/auth/register", tc.reqBody))
+			resp, err := s.app.Test(testutil.MakeTestRequest(http.MethodPost, "/accounts", tc.reqBody))
 			s.Require().NoError(err)
 			s.Equal(tc.expected, resp.StatusCode, tc.name)
 		})
 	}
 }
 
-func (s *AccountHandlerTestSuite) TestLogin_Success() {
+func (s *AccountHandlerTestSuite) TestSession_Success() {
 	// Arrange
 	password := "password123"
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -159,7 +152,7 @@ func (s *AccountHandlerTestSuite) TestLogin_Success() {
 	}
 
 	// Act
-	resp, err := s.app.Test(makeTestRequest(http.MethodPost, "/auth/login", reqBody))
+	resp, err := s.app.Test(testutil.MakeTestRequest(http.MethodPost, "/accounts/sessions", reqBody))
 
 	// Assert
 	s.Require().NoError(err)
@@ -173,7 +166,7 @@ func (s *AccountHandlerTestSuite) TestLogin_Success() {
 
 	// Verify the JWT token
 	token, err := jwt.Parse(respBody["token"].(string), func(token *jwt.Token) (interface{}, error) {
-		return s.handler.Config.JWTSecretPub, nil
+		return s.handler.config.JWTSecretPub, nil
 	})
 	s.Require().NoError(err)
 	s.True(token.Valid)
@@ -193,12 +186,7 @@ func (s *AccountHandlerTestSuite) TestEmailVerification_Success() {
 	s.Require().NoError(err)
 
 	// Create a valid JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodEdDSA, jwt.MapClaims{
-		"id":    user.ID,
-		"email": "newemail@example.com",
-		"exp":   time.Now().Add(time.Hour).Unix(),
-	})
-	tokenString, err := token.SignedString(s.handler.Config.JWTSecretKey)
+	tokenString, err := s.handler.emailVerificationToken("newemail@example.com", user.ID)
 	s.Require().NoError(err)
 
 	reqBody := map[string]interface{}{
@@ -206,7 +194,7 @@ func (s *AccountHandlerTestSuite) TestEmailVerification_Success() {
 	}
 
 	// Act
-	resp, err := s.app.Test(makeTestRequest(http.MethodPost, "/auth/email/verification", reqBody))
+	resp, err := s.app.Test(testutil.MakeTestRequest(http.MethodPut, "/accounts/verifications/email", reqBody))
 
 	// Assert
 	s.Require().NoError(err)
@@ -216,14 +204,6 @@ func (s *AccountHandlerTestSuite) TestEmailVerification_Success() {
 	updatedUser, err := s.db.User.Get(context.Background(), user.ID)
 	s.Require().NoError(err)
 	s.Equal("newemail@example.com", updatedUser.Email)
-}
-
-// Helper function to create test requests
-func makeTestRequest(method, path string, body interface{}) *http.Request {
-	jsonBody, _ := json.Marshal(body)
-	req := httptest.NewRequest(method, path, bytes.NewReader(jsonBody))
-	req.Header.Set("Content-Type", "application/json")
-	return req
 }
 
 func TestAccountHandlerSuite(t *testing.T) {
