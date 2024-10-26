@@ -90,7 +90,7 @@ func (h *TweetHandler) GetTweet() fiber.Handler {
 
 func (h *TweetHandler) ListTweets() fiber.Handler {
 	return func(c fiber.Ctx) error {
-		tweets, err := h.DB.Tweet.Query().Limit(100).Order(tweet.ByID()).All(context.Background())
+		tweets, err := h.DB.Tweet.Query().Limit(100).Order(ent.Desc(tweet.FieldID)).All(context.Background())
 		if err != nil {
 			log.Errorf("failed to list tweets: %v", err)
 			return fiber.ErrInternalServerError

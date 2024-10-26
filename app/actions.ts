@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { getToken, setUserCookie } from './lib/auth'
+import { revalidatePath } from 'next/cache'
 
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -67,6 +68,8 @@ export async function sendTweet(prev, formData: FormData) {
     const error = await response.json<string>()
     return { success: false, error }
   }
+
+  revalidatePath('/')
 
   return {
     success: true,
