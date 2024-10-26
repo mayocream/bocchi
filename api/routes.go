@@ -27,6 +27,6 @@ func AsRoute(f any) any {
 var Routes = fx.Module("routes",
 	fx.Provide(
 		AsRoute(NewAccountHandler),
-		AsRoute(NewTimelineHandler),
+		AsRoute(NewTweetHandler),
 	),
 )

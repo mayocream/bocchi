@@ -203,18 +203,18 @@ func (h *AccountHandler) Register() fiber.Handler {
 		Token    string `json:"token" validate:"required"`
 		Email    string `json:"email" validate:"required,email"`
 		Username string `json:"username" validate:"required,username,min=3,max=30"`
-		Password string `json:"password" validate:"required,min=6,max=72"`
+		Password string `json:"password" validate:"required,max=72"`
 	}
 
 	return func(c fiber.Ctx) error {
 		var req Request
 		if err := c.Bind().Body(&req); err != nil {
-			return fiber.ErrBadRequest
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 
 		if err := h.turnstile.Verify(req.Token); err != nil {
 			log.Errorf("turnstile verification failed: %v", err)
-			return fiber.ErrBadRequest
+			return fiber.NewError(fiber.StatusBadRequest, "Invalid token")
 		}
 
 		if validator.IsUsernameBlocked(req.Username) {

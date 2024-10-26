@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/mayocream/twitter/internal/config"
@@ -10,6 +11,15 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/fx"
 )
+
+func errorHandler(c fiber.Ctx, err error) error {
+	code := fiber.StatusInternalServerError
+	var e *fiber.Error
+	if errors.As(err, &e) {
+		code = e.Code
+	}
+	return c.Status(code).AutoFormat(err.Error())
+}
 
 func NewApi(
 	lc fx.Lifecycle,
@@ -20,6 +30,7 @@ func NewApi(
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
 		StructValidator: validator,
+		ErrorHandler:    errorHandler,
 	})
 
 	// Register middleware

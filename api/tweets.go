@@ -30,7 +30,7 @@ func (h *TweetHandler) Routes() []Route {
 		},
 		{
 			Method:  fiber.MethodGet,
-			Path:    "/tweet/:id",
+			Path:    "/tweets/:id",
 			Handler: h.GetTweet(),
 		},
 	}

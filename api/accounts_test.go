@@ -34,6 +34,7 @@ func (s *AccountHandlerTestSuite) SetupTest() {
 	var err error
 	s.app = fiber.New(fiber.Config{
 		StructValidator: validator.NewValidator(),
+		ErrorHandler:    errorHandler,
 	})
 
 	// Initialize test database (using SQLite for tests)
