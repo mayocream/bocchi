@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/mayocream/twitter/ent"
@@ -78,6 +79,11 @@ func (h *AccountHandler) Routes() []Route {
 			Handler:   h.EditProfile(),
 			Protected: true,
 		},
+		{
+			Method:  fiber.MethodGet,
+			Path:    "/accounts/:id",
+			Handler: h.GetAccount(),
+		},
 	}
 }
 
@@ -127,6 +133,27 @@ func (h *AccountHandler) verifyEmailToken(token string) (int, string, error) {
 	}
 
 	return int(id), email, nil
+}
+
+// GetAccount handles account retrieval
+func (h *AccountHandler) GetAccount() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		id := c.Params("id")
+		userID, err := strconv.Atoi(id)
+		if err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		user, err := h.db.User.Get(context.Background(), userID)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return fiber.ErrNotFound
+			}
+			return fiber.ErrInternalServerError
+		}
+
+		return c.JSON(user)
+	}
 }
 
 // EmailVerificationRequest handles the request for email verification

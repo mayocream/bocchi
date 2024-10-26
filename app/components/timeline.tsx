@@ -1,5 +1,6 @@
-import { Flex, Text, Avatar } from '@radix-ui/themes'
+import { Flex, Text } from '@radix-ui/themes'
 import { LikeIcon, ReplyIcon, RetweetIcon, ShareIcon } from './icons'
+import { Avatar } from './widgets'
 
 export const TweetInteractionButton = ({ icon: Icon, count, color }) => (
   <Flex
@@ -35,17 +36,12 @@ export const TweetInteraction = ({ replyCount, retweetCount, likeCount }) => (
   </Flex>
 )
 
-export const Tweet = ({ key }) => {
+export const Tweet = ({ tweet }) => {
   return (
-    <div key={key} className='border-b p-4 hover:bg-gray-50 transition-colors'>
+    <div className='border-b p-4 hover:bg-gray-50 transition-colors'>
       <Flex gap='3'>
         <div className='w-12'>
-          <Avatar
-            src='/api/placeholder/48/48'
-            fallback='N'
-            className='w-12 h-12'
-            radius='full'
-          />
+          <Avatar src='/api/placeholder/48/48' className='w-12 h-12' />
         </div>
         <div className='flex-1 min-w-0'>
           <Flex gap='2' align='center'>
@@ -55,10 +51,7 @@ export const Tweet = ({ key }) => {
             <Text className='text-gray-500'>@mayo・12秒</Text>
           </Flex>
           <Text className='mt-1'>
-            ヤーヤーヤーヤーヤー　唱タイム 天辺の御成り　ほらおいで
-            宵をコンプリート　オーライ Hell yeah yeah yeah
-            だんだんノリノリで超簡単 Brah brah brah！！！ Pow えも言われない
-            Ain't nobody stop
+            {tweet.content}
           </Text>
           <TweetInteraction replyCount={12} retweetCount={34} likeCount={56} />
         </div>

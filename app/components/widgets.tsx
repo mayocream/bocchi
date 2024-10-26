@@ -1,25 +1,44 @@
-import { Flex, Avatar, Text, Box, Button } from '@radix-ui/themes'
+'use client'
+
+import {
+  Flex,
+  Avatar as RadixAvatar,
+  Text,
+  Box,
+  Button,
+} from '@radix-ui/themes'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
+import { useUser } from '@/app/providers/user'
+import Image from 'next/image'
+import Akkarin from '@/app/assets/transparent_akkarin.jpg'
+
+export const Avatar = ({ src, className }) => {
+  return (
+    <RadixAvatar
+      src={src}
+      fallback={<Image src={Akkarin} alt='akkarin' className='rounded-full' />}
+      className={className}
+      radius='full'
+    />
+  )
+}
 
 export const ProfileCard = () => {
+  const user = useUser()
+
   return (
     <Box className='rounded-xl bg-white p-4 shadow-sm'>
       <Flex direction='column' gap='3'>
-        <Avatar
-          src='/api/placeholder/48/48'
-          fallback='Y'
-          className='w-12 h-12'
-          radius='full'
-        />
+        <Avatar src={user?.avatar} className='w-12 h-12' />
         <div>
           <Flex align='center' gap='1'>
             <Text size='3' weight='bold'>
-              我輩は猫である
+              {user?.name ?? '吾輩は猫である'}
             </Text>
           </Flex>
           <Text size='2' color='gray'>
-            @cat
+            @{user?.username}
           </Text>
         </div>
         <Flex gap='4' className='mt-2'>
@@ -97,12 +116,7 @@ export const RecommendCard = () => {
         {Array.from({ length: 3 }).map((_, i) => (
           <Flex key={i} justify='between' align='center'>
             <Flex gap='2' align='center'>
-              <Avatar
-                src='/api/placeholder/32/32'
-                fallback='R'
-                className='w-8 h-8'
-                radius='full'
-              />
+              <Avatar src='/api/placeholder/32/32' className='w-8 h-8' />
               <div>
                 <Text size='2' weight='bold'>
                   真夜
@@ -162,7 +176,7 @@ export const DeveloperCard = () => {
                   Progress to v1.0
                 </Text>
                 <Text size='1' weight='bold'>
-                  75%
+                  10%
                 </Text>
               </Flex>
               <div className='w-full bg-gray-200 rounded-full h-2'>

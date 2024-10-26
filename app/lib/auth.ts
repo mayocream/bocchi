@@ -24,6 +24,10 @@ export async function decode(token: string): Promise<any> {
   return JSON.parse(atob(payload))
 }
 
+export function getToken() {
+  return cookies().get(TOKEN_NAME)?.value
+}
+
 export async function getSession(): Promise<any | null> {
   const token = cookies().get(TOKEN_NAME)?.value
   if (!token) return null

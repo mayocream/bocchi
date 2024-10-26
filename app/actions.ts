@@ -1,8 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { setUserCookie } from './lib/auth'
-import { NextResponse } from 'next/server'
+import { getToken, setUserCookie } from './lib/auth'
 
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -52,7 +51,7 @@ export async function createSession(prev, formData: FormData) {
   return redirect('/')
 }
 
-export async function tweet(prev, formData: FormData) {
+export async function sendTweet(prev, formData: FormData) {
   const data = Object.fromEntries(formData)
   const response = await fetch(`${API_URL}/tweets`, {
     method: 'POST',
@@ -60,13 +59,17 @@ export async function tweet(prev, formData: FormData) {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
+      Authorization: `Bearer ${getToken()}`,
     },
   })
 
   if (!response.ok) {
     const error = await response.json<string>()
-    return error
+    return { success: false, error }
   }
 
-  return await response.json<any>()
+  return {
+    success: true,
+    tweet: await response.json<any>(),
+  }
 }

@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/mayocream/twitter/ent"
+	"github.com/mayocream/twitter/ent/tweet"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
@@ -32,6 +33,11 @@ func (h *TweetHandler) Routes() []Route {
 			Method:  fiber.MethodGet,
 			Path:    "/tweets/:id",
 			Handler: h.GetTweet(),
+		},
+		{
+			Method:  fiber.MethodGet,
+			Path:    "/tweets",
+			Handler: h.ListTweets(),
 		},
 	}
 }
@@ -79,5 +85,17 @@ func (h *TweetHandler) GetTweet() fiber.Handler {
 		}
 
 		return c.AutoFormat(tweet)
+	}
+}
+
+func (h *TweetHandler) ListTweets() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		tweets, err := h.DB.Tweet.Query().Limit(100).Order(tweet.ByID()).All(context.Background())
+		if err != nil {
+			log.Errorf("failed to list tweets: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.AutoFormat(tweets)
 	}
 }
