@@ -330,29 +330,6 @@ func HasRepliesWith(preds ...predicate.Tweet) predicate.Tweet {
 	})
 }
 
-// HasMentions applies the HasEdge predicate on the "mentions" edge.
-func HasMentions() predicate.Tweet {
-	return predicate.Tweet(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MentionsTable, MentionsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMentionsWith applies the HasEdge predicate on the "mentions" edge with a given conditions (other predicates).
-func HasMentionsWith(preds ...predicate.User) predicate.Tweet {
-	return predicate.Tweet(func(s *sql.Selector) {
-		step := newMentionsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasHashtags applies the HasEdge predicate on the "hashtags" edge.
 func HasHashtags() predicate.Tweet {
 	return predicate.Tweet(func(s *sql.Selector) {

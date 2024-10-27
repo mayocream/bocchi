@@ -43,19 +43,19 @@ export const ProfileCard = () => {
         </div>
         <Flex gap='4' className='mt-2'>
           <div>
-            <Text weight='bold'>25,921</Text>
+            <Text weight='bold'>{user?.tweets}</Text>
             <Text size='1' color='gray'>
               ツイート
             </Text>
           </div>
           <div>
-            <Text weight='bold'>1,654</Text>
+            <Text weight='bold'>{user?.following}</Text>
             <Text size='1' color='gray'>
               フォロー
             </Text>
           </div>
           <div>
-            <Text weight='bold'>27,079</Text>
+            <Text weight='bold'>{user?.followers}</Text>
             <Text size='1' color='gray'>
               フォロワー
             </Text>
@@ -138,7 +138,7 @@ export const RecommendCard = () => {
 
 export const DeveloperCard = () => {
   return (
-    <Box className='mt-4 rounded-xl bg-white p-4 shadow-sm'>
+    <Box className='rounded-xl bg-white p-4 shadow-sm'>
       <Flex direction='column' gap='4'>
         <div>
           <Text size='3' weight='bold' className='mb-2'>

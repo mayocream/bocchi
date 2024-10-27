@@ -30,8 +30,6 @@ const (
 	EdgeParentTweet = "parent_tweet"
 	// EdgeReplies holds the string denoting the replies edge name in mutations.
 	EdgeReplies = "replies"
-	// EdgeMentions holds the string denoting the mentions edge name in mutations.
-	EdgeMentions = "mentions"
 	// EdgeHashtags holds the string denoting the hashtags edge name in mutations.
 	EdgeHashtags = "hashtags"
 	// Table holds the table name of the tweet in the database.
@@ -61,13 +59,6 @@ const (
 	RepliesTable = "tweets"
 	// RepliesColumn is the table column denoting the replies relation/edge.
 	RepliesColumn = "tweet_replies"
-	// MentionsTable is the table that holds the mentions relation/edge.
-	MentionsTable = "users"
-	// MentionsInverseTable is the table name for the User entity.
-	// It exists in this package in order to avoid circular dependency with the "user" package.
-	MentionsInverseTable = "users"
-	// MentionsColumn is the table column denoting the mentions relation/edge.
-	MentionsColumn = "tweet_mentions"
 	// HashtagsTable is the table that holds the hashtags relation/edge. The primary key declared below.
 	HashtagsTable = "tweet_hashtags"
 	// HashtagsInverseTable is the table name for the Hashtag entity.
@@ -205,20 +196,6 @@ func ByReplies(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByMentionsCount orders the results by mentions count.
-func ByMentionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newMentionsStep(), opts...)
-	}
-}
-
-// ByMentions orders the results by mentions terms.
-func ByMentions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMentionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByHashtagsCount orders the results by hashtags count.
 func ByHashtagsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -265,13 +242,6 @@ func newRepliesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, RepliesTable, RepliesColumn),
-	)
-}
-func newMentionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MentionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MentionsTable, MentionsColumn),
 	)
 }
 func newHashtagsStep() *sqlgraph.Step {

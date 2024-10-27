@@ -929,7 +929,7 @@ func HasFollowers() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, FollowersTable, FollowersPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, FollowersTable, FollowersPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -952,7 +952,7 @@ func HasFollowing() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, FollowingTable, FollowingPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, FollowingTable, FollowingPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

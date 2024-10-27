@@ -34,7 +34,6 @@ type UserQuery struct {
 	withNotifications    *NotificationQuery
 	withSentMessages     *DirectMessageQuery
 	withReceivedMessages *DirectMessageQuery
-	withFKs              bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -151,7 +150,7 @@ func (uq *UserQuery) QueryFollowers() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.FollowersTable, user.FollowersPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.FollowersTable, user.FollowersPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -173,7 +172,7 @@ func (uq *UserQuery) QueryFollowing() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, user.FollowingTable, user.FollowingPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.FollowingTable, user.FollowingPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -618,7 +617,6 @@ func (uq *UserQuery) prepareQuery(ctx context.Context) error {
 func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, error) {
 	var (
 		nodes       = []*User{}
-		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
 		loadedTypes = [8]bool{
 			uq.withTweets != nil,
@@ -631,9 +629,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withReceivedMessages != nil,
 		}
 	)
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, user.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*User).scanValues(nil, columns)
 	}
@@ -877,10 +872,10 @@ func (uq *UserQuery) loadFollowers(ctx context.Context, query *UserQuery, nodes 
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(user.FollowersTable)
-		s.Join(joinT).On(s.C(user.FieldID), joinT.C(user.FollowersPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(user.FollowersPrimaryKey[0]), edgeIDs...))
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(user.FollowersPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(user.FollowersPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(user.FollowersPrimaryKey[0]))
+		s.Select(joinT.C(user.FollowersPrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -938,10 +933,10 @@ func (uq *UserQuery) loadFollowing(ctx context.Context, query *UserQuery, nodes 
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(user.FollowingTable)
-		s.Join(joinT).On(s.C(user.FieldID), joinT.C(user.FollowingPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(user.FollowingPrimaryKey[1]), edgeIDs...))
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(user.FollowingPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.FollowingPrimaryKey[0]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(user.FollowingPrimaryKey[1]))
+		s.Select(joinT.C(user.FollowingPrimaryKey[0]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})

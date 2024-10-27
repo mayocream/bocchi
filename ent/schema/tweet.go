@@ -29,7 +29,6 @@ func (Tweet) Edges() []ent.Edge {
 		edge.From("liked_by", User.Type).Ref("likes"),
 		edge.From("retweeted_by", User.Type).Ref("retweets"),
 		edge.To("replies", Tweet.Type).From("parent_tweet").Unique(),
-		edge.To("mentions", User.Type),
 		edge.To("hashtags", Hashtag.Type),
 	}
 }

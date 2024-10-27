@@ -1700,9 +1700,6 @@ type TweetMutation struct {
 	replies             map[int]struct{}
 	removedreplies      map[int]struct{}
 	clearedreplies      bool
-	mentions            map[int]struct{}
-	removedmentions     map[int]struct{}
-	clearedmentions     bool
 	hashtags            map[int]struct{}
 	removedhashtags     map[int]struct{}
 	clearedhashtags     bool
@@ -2157,60 +2154,6 @@ func (m *TweetMutation) ResetReplies() {
 	m.removedreplies = nil
 }
 
-// AddMentionIDs adds the "mentions" edge to the User entity by ids.
-func (m *TweetMutation) AddMentionIDs(ids ...int) {
-	if m.mentions == nil {
-		m.mentions = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.mentions[ids[i]] = struct{}{}
-	}
-}
-
-// ClearMentions clears the "mentions" edge to the User entity.
-func (m *TweetMutation) ClearMentions() {
-	m.clearedmentions = true
-}
-
-// MentionsCleared reports if the "mentions" edge to the User entity was cleared.
-func (m *TweetMutation) MentionsCleared() bool {
-	return m.clearedmentions
-}
-
-// RemoveMentionIDs removes the "mentions" edge to the User entity by IDs.
-func (m *TweetMutation) RemoveMentionIDs(ids ...int) {
-	if m.removedmentions == nil {
-		m.removedmentions = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.mentions, ids[i])
-		m.removedmentions[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedMentions returns the removed IDs of the "mentions" edge to the User entity.
-func (m *TweetMutation) RemovedMentionsIDs() (ids []int) {
-	for id := range m.removedmentions {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// MentionsIDs returns the "mentions" edge IDs in the mutation.
-func (m *TweetMutation) MentionsIDs() (ids []int) {
-	for id := range m.mentions {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetMentions resets all changes to the "mentions" edge.
-func (m *TweetMutation) ResetMentions() {
-	m.mentions = nil
-	m.clearedmentions = false
-	m.removedmentions = nil
-}
-
 // AddHashtagIDs adds the "hashtags" edge to the Hashtag entity by ids.
 func (m *TweetMutation) AddHashtagIDs(ids ...int) {
 	if m.hashtags == nil {
@@ -2432,7 +2375,7 @@ func (m *TweetMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TweetMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.author != nil {
 		edges = append(edges, tweet.EdgeAuthor)
 	}
@@ -2447,9 +2390,6 @@ func (m *TweetMutation) AddedEdges() []string {
 	}
 	if m.replies != nil {
 		edges = append(edges, tweet.EdgeReplies)
-	}
-	if m.mentions != nil {
-		edges = append(edges, tweet.EdgeMentions)
 	}
 	if m.hashtags != nil {
 		edges = append(edges, tweet.EdgeHashtags)
@@ -2487,12 +2427,6 @@ func (m *TweetMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case tweet.EdgeMentions:
-		ids := make([]ent.Value, 0, len(m.mentions))
-		for id := range m.mentions {
-			ids = append(ids, id)
-		}
-		return ids
 	case tweet.EdgeHashtags:
 		ids := make([]ent.Value, 0, len(m.hashtags))
 		for id := range m.hashtags {
@@ -2505,7 +2439,7 @@ func (m *TweetMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TweetMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.removedliked_by != nil {
 		edges = append(edges, tweet.EdgeLikedBy)
 	}
@@ -2514,9 +2448,6 @@ func (m *TweetMutation) RemovedEdges() []string {
 	}
 	if m.removedreplies != nil {
 		edges = append(edges, tweet.EdgeReplies)
-	}
-	if m.removedmentions != nil {
-		edges = append(edges, tweet.EdgeMentions)
 	}
 	if m.removedhashtags != nil {
 		edges = append(edges, tweet.EdgeHashtags)
@@ -2546,12 +2477,6 @@ func (m *TweetMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case tweet.EdgeMentions:
-		ids := make([]ent.Value, 0, len(m.removedmentions))
-		for id := range m.removedmentions {
-			ids = append(ids, id)
-		}
-		return ids
 	case tweet.EdgeHashtags:
 		ids := make([]ent.Value, 0, len(m.removedhashtags))
 		for id := range m.removedhashtags {
@@ -2564,7 +2489,7 @@ func (m *TweetMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TweetMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.clearedauthor {
 		edges = append(edges, tweet.EdgeAuthor)
 	}
@@ -2579,9 +2504,6 @@ func (m *TweetMutation) ClearedEdges() []string {
 	}
 	if m.clearedreplies {
 		edges = append(edges, tweet.EdgeReplies)
-	}
-	if m.clearedmentions {
-		edges = append(edges, tweet.EdgeMentions)
 	}
 	if m.clearedhashtags {
 		edges = append(edges, tweet.EdgeHashtags)
@@ -2603,8 +2525,6 @@ func (m *TweetMutation) EdgeCleared(name string) bool {
 		return m.clearedparent_tweet
 	case tweet.EdgeReplies:
 		return m.clearedreplies
-	case tweet.EdgeMentions:
-		return m.clearedmentions
 	case tweet.EdgeHashtags:
 		return m.clearedhashtags
 	}
@@ -2643,9 +2563,6 @@ func (m *TweetMutation) ResetEdge(name string) error {
 		return nil
 	case tweet.EdgeReplies:
 		m.ResetReplies()
-		return nil
-	case tweet.EdgeMentions:
-		m.ResetMentions()
 		return nil
 	case tweet.EdgeHashtags:
 		m.ResetHashtags()

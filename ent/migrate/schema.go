@@ -127,21 +127,12 @@ var (
 		{Name: "banner", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "tweet_mentions", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "users_tweets_mentions",
-				Columns:    []*schema.Column{UsersColumns[12]},
-				RefColumns: []*schema.Column{TweetsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 	}
 	// TweetHashtagsColumns holds the columns for the "tweet_hashtags" table.
 	TweetHashtagsColumns = []*schema.Column{
@@ -218,26 +209,26 @@ var (
 			},
 		},
 	}
-	// UserFollowersColumns holds the columns for the "user_followers" table.
-	UserFollowersColumns = []*schema.Column{
+	// UserFollowingColumns holds the columns for the "user_following" table.
+	UserFollowingColumns = []*schema.Column{
 		{Name: "user_id", Type: field.TypeInt},
-		{Name: "following_id", Type: field.TypeInt},
+		{Name: "follower_id", Type: field.TypeInt},
 	}
-	// UserFollowersTable holds the schema information for the "user_followers" table.
-	UserFollowersTable = &schema.Table{
-		Name:       "user_followers",
-		Columns:    UserFollowersColumns,
-		PrimaryKey: []*schema.Column{UserFollowersColumns[0], UserFollowersColumns[1]},
+	// UserFollowingTable holds the schema information for the "user_following" table.
+	UserFollowingTable = &schema.Table{
+		Name:       "user_following",
+		Columns:    UserFollowingColumns,
+		PrimaryKey: []*schema.Column{UserFollowingColumns[0], UserFollowingColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_followers_user_id",
-				Columns:    []*schema.Column{UserFollowersColumns[0]},
+				Symbol:     "user_following_user_id",
+				Columns:    []*schema.Column{UserFollowingColumns[0]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "user_followers_following_id",
-				Columns:    []*schema.Column{UserFollowersColumns[1]},
+				Symbol:     "user_following_follower_id",
+				Columns:    []*schema.Column{UserFollowingColumns[1]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -253,7 +244,7 @@ var (
 		TweetHashtagsTable,
 		UserRetweetsTable,
 		UserLikesTable,
-		UserFollowersTable,
+		UserFollowingTable,
 	}
 )
 
@@ -265,13 +256,12 @@ func init() {
 	NotificationsTable.ForeignKeys[2].RefTable = UsersTable
 	TweetsTable.ForeignKeys[0].RefTable = TweetsTable
 	TweetsTable.ForeignKeys[1].RefTable = UsersTable
-	UsersTable.ForeignKeys[0].RefTable = TweetsTable
 	TweetHashtagsTable.ForeignKeys[0].RefTable = TweetsTable
 	TweetHashtagsTable.ForeignKeys[1].RefTable = HashtagsTable
 	UserRetweetsTable.ForeignKeys[0].RefTable = UsersTable
 	UserRetweetsTable.ForeignKeys[1].RefTable = TweetsTable
 	UserLikesTable.ForeignKeys[0].RefTable = UsersTable
 	UserLikesTable.ForeignKeys[1].RefTable = TweetsTable
-	UserFollowersTable.ForeignKeys[0].RefTable = UsersTable
-	UserFollowersTable.ForeignKeys[1].RefTable = UsersTable
+	UserFollowingTable.ForeignKeys[0].RefTable = UsersTable
+	UserFollowingTable.ForeignKeys[1].RefTable = UsersTable
 }

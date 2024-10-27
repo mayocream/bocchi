@@ -139,21 +139,6 @@ func (tu *TweetUpdate) AddReplies(t ...*Tweet) *TweetUpdate {
 	return tu.AddReplyIDs(ids...)
 }
 
-// AddMentionIDs adds the "mentions" edge to the User entity by IDs.
-func (tu *TweetUpdate) AddMentionIDs(ids ...int) *TweetUpdate {
-	tu.mutation.AddMentionIDs(ids...)
-	return tu
-}
-
-// AddMentions adds the "mentions" edges to the User entity.
-func (tu *TweetUpdate) AddMentions(u ...*User) *TweetUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tu.AddMentionIDs(ids...)
-}
-
 // AddHashtagIDs adds the "hashtags" edge to the Hashtag entity by IDs.
 func (tu *TweetUpdate) AddHashtagIDs(ids ...int) *TweetUpdate {
 	tu.mutation.AddHashtagIDs(ids...)
@@ -247,27 +232,6 @@ func (tu *TweetUpdate) RemoveReplies(t ...*Tweet) *TweetUpdate {
 		ids[i] = t[i].ID
 	}
 	return tu.RemoveReplyIDs(ids...)
-}
-
-// ClearMentions clears all "mentions" edges to the User entity.
-func (tu *TweetUpdate) ClearMentions() *TweetUpdate {
-	tu.mutation.ClearMentions()
-	return tu
-}
-
-// RemoveMentionIDs removes the "mentions" edge to User entities by IDs.
-func (tu *TweetUpdate) RemoveMentionIDs(ids ...int) *TweetUpdate {
-	tu.mutation.RemoveMentionIDs(ids...)
-	return tu
-}
-
-// RemoveMentions removes "mentions" edges to User entities.
-func (tu *TweetUpdate) RemoveMentions(u ...*User) *TweetUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tu.RemoveMentionIDs(ids...)
 }
 
 // ClearHashtags clears all "hashtags" edges to the Hashtag entity.
@@ -549,51 +513,6 @@ func (tu *TweetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tu.mutation.MentionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tweet.MentionsTable,
-			Columns: []string{tweet.MentionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.RemovedMentionsIDs(); len(nodes) > 0 && !tu.mutation.MentionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tweet.MentionsTable,
-			Columns: []string{tweet.MentionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.MentionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tweet.MentionsTable,
-			Columns: []string{tweet.MentionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if tu.mutation.HashtagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -768,21 +687,6 @@ func (tuo *TweetUpdateOne) AddReplies(t ...*Tweet) *TweetUpdateOne {
 	return tuo.AddReplyIDs(ids...)
 }
 
-// AddMentionIDs adds the "mentions" edge to the User entity by IDs.
-func (tuo *TweetUpdateOne) AddMentionIDs(ids ...int) *TweetUpdateOne {
-	tuo.mutation.AddMentionIDs(ids...)
-	return tuo
-}
-
-// AddMentions adds the "mentions" edges to the User entity.
-func (tuo *TweetUpdateOne) AddMentions(u ...*User) *TweetUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tuo.AddMentionIDs(ids...)
-}
-
 // AddHashtagIDs adds the "hashtags" edge to the Hashtag entity by IDs.
 func (tuo *TweetUpdateOne) AddHashtagIDs(ids ...int) *TweetUpdateOne {
 	tuo.mutation.AddHashtagIDs(ids...)
@@ -876,27 +780,6 @@ func (tuo *TweetUpdateOne) RemoveReplies(t ...*Tweet) *TweetUpdateOne {
 		ids[i] = t[i].ID
 	}
 	return tuo.RemoveReplyIDs(ids...)
-}
-
-// ClearMentions clears all "mentions" edges to the User entity.
-func (tuo *TweetUpdateOne) ClearMentions() *TweetUpdateOne {
-	tuo.mutation.ClearMentions()
-	return tuo
-}
-
-// RemoveMentionIDs removes the "mentions" edge to User entities by IDs.
-func (tuo *TweetUpdateOne) RemoveMentionIDs(ids ...int) *TweetUpdateOne {
-	tuo.mutation.RemoveMentionIDs(ids...)
-	return tuo
-}
-
-// RemoveMentions removes "mentions" edges to User entities.
-func (tuo *TweetUpdateOne) RemoveMentions(u ...*User) *TweetUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tuo.RemoveMentionIDs(ids...)
 }
 
 // ClearHashtags clears all "hashtags" edges to the Hashtag entity.
@@ -1201,51 +1084,6 @@ func (tuo *TweetUpdateOne) sqlSave(ctx context.Context) (_node *Tweet, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if tuo.mutation.MentionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tweet.MentionsTable,
-			Columns: []string{tweet.MentionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.RemovedMentionsIDs(); len(nodes) > 0 && !tuo.mutation.MentionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tweet.MentionsTable,
-			Columns: []string{tweet.MentionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.MentionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tweet.MentionsTable,
-			Columns: []string{tweet.MentionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

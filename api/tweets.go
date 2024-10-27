@@ -39,6 +39,17 @@ func (h *TweetHandler) Routes() []Route {
 			Path:    "/tweets",
 			Handler: h.ListTweets(),
 		},
+		{
+			Method:  fiber.MethodGet,
+			Path:    "/accounts/:id/tweets",
+			Handler: h.ListAccountTweets(),
+		},
+		{
+			Method:    fiber.MethodGet,
+			Path:      "/tweets/feed",
+			Handler:   h.GetTweetFeed(),
+			Protected: true,
+		},
 	}
 }
 
@@ -137,6 +148,79 @@ func (h *TweetHandler) ListTweets() fiber.Handler {
 			All(context.Background())
 		if err != nil {
 			log.Errorf("failed to list tweets: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		// ignore password
+		for _, tweet := range tweets {
+			tweet.Edges.Author.Password = ""
+		}
+
+		return c.AutoFormat(tweets)
+	}
+}
+
+func (h *TweetHandler) ListAccountTweets() fiber.Handler {
+	type Request struct {
+		Offset int `query:"offset"`
+	}
+
+	return func(c fiber.Ctx) error {
+		var req Request
+		if err := c.Bind().Query(&req); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+
+		idStr := c.Params("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		account, err := h.DB.User.Get(context.Background(), id)
+		if err != nil {
+			return fiber.ErrNotFound
+		}
+
+		tweets, err := account.QueryTweets().
+			Limit(100).
+			Offset(req.Offset).
+			Order(ent.Desc(tweet.FieldID)).
+			All(context.Background())
+		if err != nil {
+			log.Errorf("failed to list tweets: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.AutoFormat(tweets)
+	}
+}
+
+func (h *TweetHandler) GetTweetFeed() fiber.Handler {
+	type Request struct {
+		Offset int `query:"offset"`
+	}
+
+	return func(c fiber.Ctx) error {
+		var req Request
+		if err := c.Bind().Query(&req); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+
+		user, ok := c.Locals("user").(*ent.User)
+		if !ok {
+			return fiber.ErrUnauthorized
+		}
+
+		// get user's following's tweets
+		tweets, err := user.QueryFollowing().
+			QueryTweets().
+			Offset(req.Offset).
+			Limit(100).
+			Order(ent.Desc(tweet.FieldID)).
+			All(context.Background())
+		if err != nil {
+			log.Errorf("failed to get tweet feed: %v", err)
 			return fiber.ErrInternalServerError
 		}
 

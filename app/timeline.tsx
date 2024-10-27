@@ -10,22 +10,20 @@ import {
 import { getSession } from '@/app/lib/auth'
 import { UserProvider } from '@/app/providers/user'
 import { TweetTextarea } from './components/textarea'
+import { getAccount } from './lib/fetcher'
 
 export default async function Timeline({ tweets }) {
   // initialize user
   let user = await getSession()
   if (user) {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/accounts/${user.id}`
-    )
-    user = await response.json()
+    user = await getAccount(user.id)
   }
 
   return (
     <UserProvider user={user}>
       <div className='min-h-screen bg-zinc-50'>
         {/* Top Navigation */}
-        <TopNavigation />
+        <TopNavigation user={user} />
 
         {/* Main Content */}
         <div className='pt-14'>
@@ -35,7 +33,7 @@ export default async function Timeline({ tweets }) {
               <div className='w-72 py-3 md:flex hidden'>
                 <div className='sticky top-16'>
                   <ProfileCard />
-                  <TrendCard />
+                  {/* <TrendCard /> */}
                 </div>
               </div>
 
@@ -57,7 +55,7 @@ export default async function Timeline({ tweets }) {
               {/* Right Sidebar */}
               <div className='w-72 py-3 md:flex hidden'>
                 <div className='sticky top-16'>
-                  <RecommendCard />
+                  {/* <RecommendCard /> */}
 
                   <DeveloperCard />
                 </div>

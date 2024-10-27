@@ -920,22 +920,6 @@ func (c *TweetClient) QueryReplies(t *Tweet) *TweetQuery {
 	return query
 }
 
-// QueryMentions queries the mentions edge of a Tweet.
-func (c *TweetClient) QueryMentions(t *Tweet) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := t.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(tweet.Table, tweet.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, tweet.MentionsTable, tweet.MentionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryHashtags queries the hashtags edge of a Tweet.
 func (c *TweetClient) QueryHashtags(t *Tweet) *HashtagQuery {
 	query := (&HashtagClient{config: c.config}).Query()
@@ -1141,7 +1125,7 @@ func (c *UserClient) QueryFollowers(u *User) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.FollowersTable, user.FollowersPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.FollowersTable, user.FollowersPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -1157,7 +1141,7 @@ func (c *UserClient) QueryFollowing(u *User) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, user.FollowingTable, user.FollowingPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.FollowingTable, user.FollowingPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

@@ -44,13 +44,11 @@ type TweetEdges struct {
 	ParentTweet *Tweet `json:"parent_tweet,omitempty"`
 	// Replies holds the value of the replies edge.
 	Replies []*Tweet `json:"replies,omitempty"`
-	// Mentions holds the value of the mentions edge.
-	Mentions []*User `json:"mentions,omitempty"`
 	// Hashtags holds the value of the hashtags edge.
 	Hashtags []*Hashtag `json:"hashtags,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [6]bool
 }
 
 // AuthorOrErr returns the Author value or an error if the edge
@@ -102,19 +100,10 @@ func (e TweetEdges) RepliesOrErr() ([]*Tweet, error) {
 	return nil, &NotLoadedError{edge: "replies"}
 }
 
-// MentionsOrErr returns the Mentions value or an error if the edge
-// was not loaded in eager-loading.
-func (e TweetEdges) MentionsOrErr() ([]*User, error) {
-	if e.loadedTypes[5] {
-		return e.Mentions, nil
-	}
-	return nil, &NotLoadedError{edge: "mentions"}
-}
-
 // HashtagsOrErr returns the Hashtags value or an error if the edge
 // was not loaded in eager-loading.
 func (e TweetEdges) HashtagsOrErr() ([]*Hashtag, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[5] {
 		return e.Hashtags, nil
 	}
 	return nil, &NotLoadedError{edge: "hashtags"}
@@ -224,11 +213,6 @@ func (t *Tweet) QueryParentTweet() *TweetQuery {
 // QueryReplies queries the "replies" edge of the Tweet entity.
 func (t *Tweet) QueryReplies() *TweetQuery {
 	return NewTweetClient(t.config).QueryReplies(t)
-}
-
-// QueryMentions queries the "mentions" edge of the Tweet entity.
-func (t *Tweet) QueryMentions() *UserQuery {
-	return NewTweetClient(t.config).QueryMentions(t)
 }
 
 // QueryHashtags queries the "hashtags" edge of the Tweet entity.

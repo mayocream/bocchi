@@ -61,14 +61,14 @@ export const TweetTextarea = () => {
               />
               <Flex mt='4' justify='between' align='center'>
                 <Flex align='center' gap='3'>
-                  <IconButton
+                  {/* <IconButton
                     variant='ghost'
                     color='blue'
                     radius='full'
                     aria-label='Add image'
                   >
                     <ImageIcon className='w-5 h-5' />
-                  </IconButton>
+                  </IconButton> */}
                   <Text
                     size='2'
                     weight={isOverLimit ? 'medium' : 'regular'}

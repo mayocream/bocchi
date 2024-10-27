@@ -72,9 +72,9 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "tweet" package.
 	LikesInverseTable = "tweets"
 	// FollowersTable is the table that holds the followers relation/edge. The primary key declared below.
-	FollowersTable = "user_followers"
+	FollowersTable = "user_following"
 	// FollowingTable is the table that holds the following relation/edge. The primary key declared below.
-	FollowingTable = "user_followers"
+	FollowingTable = "user_following"
 	// NotificationsTable is the table that holds the notifications relation/edge.
 	NotificationsTable = "notifications"
 	// NotificationsInverseTable is the table name for the Notification entity.
@@ -114,12 +114,6 @@ var Columns = []string{
 	FieldUpdatedAt,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "users"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"tweet_mentions",
-}
-
 var (
 	// RetweetsPrimaryKey and RetweetsColumn2 are the table columns denoting the
 	// primary key for the retweets relation (M2M).
@@ -129,21 +123,16 @@ var (
 	LikesPrimaryKey = []string{"user_id", "tweet_id"}
 	// FollowersPrimaryKey and FollowersColumn2 are the table columns denoting the
 	// primary key for the followers relation (M2M).
-	FollowersPrimaryKey = []string{"user_id", "following_id"}
+	FollowersPrimaryKey = []string{"user_id", "follower_id"}
 	// FollowingPrimaryKey and FollowingColumn2 are the table columns denoting the
 	// primary key for the following relation (M2M).
-	FollowingPrimaryKey = []string{"user_id", "following_id"}
+	FollowingPrimaryKey = []string{"user_id", "follower_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -358,14 +347,14 @@ func newFollowersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, FollowersTable, FollowersPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2M, true, FollowersTable, FollowersPrimaryKey...),
 	)
 }
 func newFollowingStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, FollowingTable, FollowingPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2M, false, FollowingTable, FollowingPrimaryKey...),
 	)
 }
 func newNotificationsStep() *sqlgraph.Step {

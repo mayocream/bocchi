@@ -1,6 +1,8 @@
 import { Flex, Text } from '@radix-ui/themes'
 import { LikeIcon, ReplyIcon, RetweetIcon, ShareIcon } from './icons'
 import { Avatar } from './widgets'
+import { formatDistanceFromNow } from '../lib/date'
+import { getTweet } from '../lib/fetcher'
 
 export const TweetInteractionButton = ({ icon: Icon, count, color }) => (
   <Flex
@@ -36,7 +38,9 @@ export const TweetInteraction = ({ replyCount, retweetCount, likeCount }) => (
   </Flex>
 )
 
-export const Tweet = ({ tweet }) => {
+export const Tweet = async ({ tweet }) => {
+  const interactions = await getTweet(tweet.id)
+
   return (
     <div className='border-b p-4 hover:bg-gray-50 transition-colors'>
       <Flex gap='3'>
@@ -46,14 +50,19 @@ export const Tweet = ({ tweet }) => {
         <div className='flex-1 min-w-0'>
           <Flex gap='2' align='center'>
             <Flex align='center' gap='1'>
-              <Text weight='bold'>Mayo</Text>
+              <Text weight='bold'>{tweet?.edges?.author?.name}</Text>
             </Flex>
-            <Text className='text-gray-500'>@mayo・12秒</Text>
+            <Text className='text-gray-500'>
+              @{tweet?.edges?.author?.username}・
+              {formatDistanceFromNow(tweet.created_at)}
+            </Text>
           </Flex>
-          <Text className='mt-1'>
-            {tweet.content}
-          </Text>
-          <TweetInteraction replyCount={12} retweetCount={34} likeCount={56} />
+          <Text className='mt-1'>{tweet.content}</Text>
+          <TweetInteraction
+            replyCount={interactions?.replies}
+            retweetCount={interactions?.retweets}
+            likeCount={interactions?.likes}
+          />
         </div>
       </Flex>
     </div>

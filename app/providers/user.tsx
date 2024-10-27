@@ -1,12 +1,11 @@
 'use client'
 
 import React, { createContext, useContext } from 'react'
-import { User } from '@/app/lib/schema'
 
-const UserContext = createContext<User | undefined>(undefined)
+const UserContext = createContext<any | undefined>(undefined)
 
 // Custom hook to use the User
-export const useUser = (): User => {
+export const useUser = (): any => {
   const context = useContext(UserContext)
   if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider')
@@ -16,7 +15,7 @@ export const useUser = (): User => {
 
 // Props for the UserProvider component
 interface UserProviderProps {
-  user: User
+  user: any
   children: React.ReactNode
 }
 

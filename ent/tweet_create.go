@@ -131,21 +131,6 @@ func (tc *TweetCreate) AddReplies(t ...*Tweet) *TweetCreate {
 	return tc.AddReplyIDs(ids...)
 }
 
-// AddMentionIDs adds the "mentions" edge to the User entity by IDs.
-func (tc *TweetCreate) AddMentionIDs(ids ...int) *TweetCreate {
-	tc.mutation.AddMentionIDs(ids...)
-	return tc
-}
-
-// AddMentions adds the "mentions" edges to the User entity.
-func (tc *TweetCreate) AddMentions(u ...*User) *TweetCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tc.AddMentionIDs(ids...)
-}
-
 // AddHashtagIDs adds the "hashtags" edge to the Hashtag entity by IDs.
 func (tc *TweetCreate) AddHashtagIDs(ids ...int) *TweetCreate {
 	tc.mutation.AddHashtagIDs(ids...)
@@ -333,22 +318,6 @@ func (tc *TweetCreate) createSpec() (*Tweet, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := tc.mutation.MentionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tweet.MentionsTable,
-			Columns: []string{tweet.MentionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

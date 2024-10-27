@@ -30,7 +30,6 @@ type TweetQuery struct {
 	withRetweetedBy *UserQuery
 	withParentTweet *TweetQuery
 	withReplies     *TweetQuery
-	withMentions    *UserQuery
 	withHashtags    *HashtagQuery
 	withFKs         bool
 	// intermediate query (i.e. traversal path).
@@ -172,28 +171,6 @@ func (tq *TweetQuery) QueryReplies() *TweetQuery {
 			sqlgraph.From(tweet.Table, tweet.FieldID, selector),
 			sqlgraph.To(tweet.Table, tweet.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, tweet.RepliesTable, tweet.RepliesColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryMentions chains the current query on the "mentions" edge.
-func (tq *TweetQuery) QueryMentions() *UserQuery {
-	query := (&UserClient{config: tq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := tq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := tq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(tweet.Table, tweet.FieldID, selector),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, tweet.MentionsTable, tweet.MentionsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -420,7 +397,6 @@ func (tq *TweetQuery) Clone() *TweetQuery {
 		withRetweetedBy: tq.withRetweetedBy.Clone(),
 		withParentTweet: tq.withParentTweet.Clone(),
 		withReplies:     tq.withReplies.Clone(),
-		withMentions:    tq.withMentions.Clone(),
 		withHashtags:    tq.withHashtags.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
@@ -480,17 +456,6 @@ func (tq *TweetQuery) WithReplies(opts ...func(*TweetQuery)) *TweetQuery {
 		opt(query)
 	}
 	tq.withReplies = query
-	return tq
-}
-
-// WithMentions tells the query-builder to eager-load the nodes that are connected to
-// the "mentions" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TweetQuery) WithMentions(opts ...func(*UserQuery)) *TweetQuery {
-	query := (&UserClient{config: tq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	tq.withMentions = query
 	return tq
 }
 
@@ -584,13 +549,12 @@ func (tq *TweetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tweet,
 		nodes       = []*Tweet{}
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [6]bool{
 			tq.withAuthor != nil,
 			tq.withLikedBy != nil,
 			tq.withRetweetedBy != nil,
 			tq.withParentTweet != nil,
 			tq.withReplies != nil,
-			tq.withMentions != nil,
 			tq.withHashtags != nil,
 		}
 	)
@@ -648,13 +612,6 @@ func (tq *TweetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tweet,
 		if err := tq.loadReplies(ctx, query, nodes,
 			func(n *Tweet) { n.Edges.Replies = []*Tweet{} },
 			func(n *Tweet, e *Tweet) { n.Edges.Replies = append(n.Edges.Replies, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := tq.withMentions; query != nil {
-		if err := tq.loadMentions(ctx, query, nodes,
-			func(n *Tweet) { n.Edges.Mentions = []*User{} },
-			func(n *Tweet, e *User) { n.Edges.Mentions = append(n.Edges.Mentions, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -880,37 +837,6 @@ func (tq *TweetQuery) loadReplies(ctx context.Context, query *TweetQuery, nodes 
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "tweet_replies" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (tq *TweetQuery) loadMentions(ctx context.Context, query *UserQuery, nodes []*Tweet, init func(*Tweet), assign func(*Tweet, *User)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Tweet)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.User(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(tweet.MentionsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.tweet_mentions
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "tweet_mentions" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "tweet_mentions" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

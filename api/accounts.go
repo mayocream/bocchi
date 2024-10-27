@@ -84,6 +84,28 @@ func (h *AccountHandler) Routes() []Route {
 			Path:    "/accounts/:id",
 			Handler: h.GetAccount(),
 		},
+		{
+			Method:  fiber.MethodGet,
+			Path:    "/accounts/:id/followers",
+			Handler: h.GetFollowers(),
+		},
+		{
+			Method:  fiber.MethodGet,
+			Path:    "/accounts/:id/following",
+			Handler: h.GetFollowing(),
+		},
+		{
+			Method:    fiber.MethodPut,
+			Path:      "/accounts/:id/follow",
+			Handler:   h.Follow(),
+			Protected: true,
+		},
+		{
+			Method:    fiber.MethodPut,
+			Path:      "/accounts/:id/unfollow",
+			Handler:   h.Unfollow(),
+			Protected: true,
+		},
 	}
 }
 
@@ -137,6 +159,13 @@ func (h *AccountHandler) verifyEmailToken(token string) (int, string, error) {
 
 // GetAccount handles account retrieval
 func (h *AccountHandler) GetAccount() fiber.Handler {
+	type Response struct {
+		*ent.User
+		Followers int `json:"followers"`
+		Following int `json:"following"`
+		Tweets    int `json:"tweets"`
+	}
+
 	return func(c fiber.Ctx) error {
 		id := c.Params("id")
 		userID, err := strconv.Atoi(id)
@@ -152,7 +181,33 @@ func (h *AccountHandler) GetAccount() fiber.Handler {
 			return fiber.ErrInternalServerError
 		}
 
-		return c.JSON(user)
+		// ignore password
+		user.Password = ""
+
+		followers, err := user.QueryFollowers().Count(context.Background())
+		if err != nil {
+			log.Errorf("failed to count followers: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		following, err := user.QueryFollowing().Count(context.Background())
+		if err != nil {
+			log.Errorf("failed to count following: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		tweets, err := user.QueryTweets().Count(context.Background())
+		if err != nil {
+			log.Errorf("failed to count tweets: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.JSON(Response{
+			User:      user,
+			Followers: followers,
+			Following: following,
+			Tweets:    tweets,
+		})
 	}
 }
 
@@ -373,5 +428,121 @@ func (h *AccountHandler) EditProfile() fiber.Handler {
 		}
 
 		return c.JSON(updatedUser)
+	}
+}
+
+// GetFollowers handles follower retrieval
+func (h *AccountHandler) GetFollowers() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		id := c.Params("id")
+		userID, err := strconv.Atoi(id)
+		if err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		user, err := h.db.User.Get(context.Background(), userID)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return fiber.ErrNotFound
+			}
+			return fiber.ErrInternalServerError
+		}
+
+		followers, err := user.QueryFollowers().All(context.Background())
+		if err != nil {
+			log.Errorf("failed to get followers: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.JSON(followers)
+	}
+}
+
+// GetFollowing handles following retrieval
+func (h *AccountHandler) GetFollowing() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		id := c.Params("id")
+		userID, err := strconv.Atoi(id)
+		if err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		user, err := h.db.User.Get(context.Background(), userID)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return fiber.ErrNotFound
+			}
+			return fiber.ErrInternalServerError
+		}
+
+		following, err := user.QueryFollowing().All(context.Background())
+		if err != nil {
+			log.Errorf("failed to get following: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.JSON(following)
+	}
+}
+
+// Follow handles user follow
+func (h *AccountHandler) Follow() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		id := c.Params("id")
+		userID, err := strconv.Atoi(id)
+		if err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		user, ok := c.Locals("user").(*ent.User)
+		if !ok {
+			return fiber.ErrUnauthorized
+		}
+
+		otherUser, err := h.db.User.Get(context.Background(), userID)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return fiber.ErrNotFound
+			}
+			return fiber.ErrInternalServerError
+		}
+
+		if err := user.Update().AddFollowing(otherUser).Exec(context.Background()); err != nil {
+			log.Errorf("failed to follow user: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.JSON(fiber.Map{"message": "User followed"})
+	}
+}
+
+// Unfollow handles user unfollow
+func (h *AccountHandler) Unfollow() fiber.Handler {
+	return func(c fiber.Ctx) error {
+		id := c.Params("id")
+		userID, err := strconv.Atoi(id)
+		if err != nil {
+			return fiber.ErrBadRequest
+		}
+
+		user, ok := c.Locals("user").(*ent.User)
+		if !ok {
+			return fiber.ErrUnauthorized
+		}
+
+		otherUser, err := h.db.User.Get(context.Background(), userID)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return fiber.ErrNotFound
+			}
+			return fiber.ErrInternalServerError
+		}
+
+		if err := user.Update().RemoveFollowing(otherUser).Exec(context.Background()); err != nil {
+			log.Errorf("failed to unfollow user: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.JSON(fiber.Map{"message": "User unfollowed"})
 	}
 }

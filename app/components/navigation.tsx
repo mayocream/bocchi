@@ -8,8 +8,9 @@ import {
   HomeIcon,
 } from '@radix-ui/react-icons'
 import { BoltIcon } from '@/app/components/icons'
+import Link from 'next/link'
 
-export const TopNavigation = () => {
+export const TopNavigation = ({ user }) => {
   return (
     <header className='fixed top-0 w-full bg-white border-b z-50'>
       <Container>
@@ -57,15 +58,19 @@ export const TopNavigation = () => {
               />
               <MagnifyingGlassIcon className='absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
             </div>
-            <Avatar
-              src='/api/placeholder/32/32'
-              fallback='U'
-              className='w-8 h-8'
-              radius='full'
-            />
-            <Button className='md:flex hidden bg-blue-500 text-white rounded-full px-4 hover:bg-blue-600'>
-              ツイート
-            </Button>
+
+            {user ? (
+              <Button className='md:flex hidden bg-blue-500 text-white rounded-full px-4 hover:bg-blue-600'>
+                ツイート
+              </Button>
+            ) : (
+              <Button
+                asChild
+                className='md:flex hidden bg-blue-500 text-white rounded-full px-4 hover:bg-blue-600'
+              >
+                <Link href='/login'>ログイン</Link>
+              </Button>
+            )}
           </Flex>
         </Flex>
       </Container>
