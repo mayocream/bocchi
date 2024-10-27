@@ -2665,7 +2665,10 @@ type UserMutation struct {
 	username                 *string
 	password                 *string
 	avatar                   *string
-	metadata                 *map[string]interface{}
+	bio                      *string
+	location                 *string
+	website                  *string
+	banner                   *string
 	created_at               *time.Time
 	updated_at               *time.Time
 	clearedFields            map[string]struct{}
@@ -3028,40 +3031,200 @@ func (m *UserMutation) ResetAvatar() {
 	delete(m.clearedFields, user.FieldAvatar)
 }
 
-// SetMetadata sets the "metadata" field.
-func (m *UserMutation) SetMetadata(value map[string]interface{}) {
-	m.metadata = &value
+// SetBio sets the "bio" field.
+func (m *UserMutation) SetBio(s string) {
+	m.bio = &s
 }
 
-// Metadata returns the value of the "metadata" field in the mutation.
-func (m *UserMutation) Metadata() (r map[string]interface{}, exists bool) {
-	v := m.metadata
+// Bio returns the value of the "bio" field in the mutation.
+func (m *UserMutation) Bio() (r string, exists bool) {
+	v := m.bio
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldMetadata returns the old "metadata" field's value of the User entity.
+// OldBio returns the old "bio" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldMetadata(ctx context.Context) (v map[string]interface{}, err error) {
+func (m *UserMutation) OldBio(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetadata is only allowed on UpdateOne operations")
+		return v, errors.New("OldBio is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetadata requires an ID field in the mutation")
+		return v, errors.New("OldBio requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetadata: %w", err)
+		return v, fmt.Errorf("querying old value for OldBio: %w", err)
 	}
-	return oldValue.Metadata, nil
+	return oldValue.Bio, nil
 }
 
-// ResetMetadata resets all changes to the "metadata" field.
-func (m *UserMutation) ResetMetadata() {
-	m.metadata = nil
+// ClearBio clears the value of the "bio" field.
+func (m *UserMutation) ClearBio() {
+	m.bio = nil
+	m.clearedFields[user.FieldBio] = struct{}{}
+}
+
+// BioCleared returns if the "bio" field was cleared in this mutation.
+func (m *UserMutation) BioCleared() bool {
+	_, ok := m.clearedFields[user.FieldBio]
+	return ok
+}
+
+// ResetBio resets all changes to the "bio" field.
+func (m *UserMutation) ResetBio() {
+	m.bio = nil
+	delete(m.clearedFields, user.FieldBio)
+}
+
+// SetLocation sets the "location" field.
+func (m *UserMutation) SetLocation(s string) {
+	m.location = &s
+}
+
+// Location returns the value of the "location" field in the mutation.
+func (m *UserMutation) Location() (r string, exists bool) {
+	v := m.location
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocation returns the old "location" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldLocation(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocation: %w", err)
+	}
+	return oldValue.Location, nil
+}
+
+// ClearLocation clears the value of the "location" field.
+func (m *UserMutation) ClearLocation() {
+	m.location = nil
+	m.clearedFields[user.FieldLocation] = struct{}{}
+}
+
+// LocationCleared returns if the "location" field was cleared in this mutation.
+func (m *UserMutation) LocationCleared() bool {
+	_, ok := m.clearedFields[user.FieldLocation]
+	return ok
+}
+
+// ResetLocation resets all changes to the "location" field.
+func (m *UserMutation) ResetLocation() {
+	m.location = nil
+	delete(m.clearedFields, user.FieldLocation)
+}
+
+// SetWebsite sets the "website" field.
+func (m *UserMutation) SetWebsite(s string) {
+	m.website = &s
+}
+
+// Website returns the value of the "website" field in the mutation.
+func (m *UserMutation) Website() (r string, exists bool) {
+	v := m.website
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWebsite returns the old "website" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldWebsite(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWebsite is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWebsite requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWebsite: %w", err)
+	}
+	return oldValue.Website, nil
+}
+
+// ClearWebsite clears the value of the "website" field.
+func (m *UserMutation) ClearWebsite() {
+	m.website = nil
+	m.clearedFields[user.FieldWebsite] = struct{}{}
+}
+
+// WebsiteCleared returns if the "website" field was cleared in this mutation.
+func (m *UserMutation) WebsiteCleared() bool {
+	_, ok := m.clearedFields[user.FieldWebsite]
+	return ok
+}
+
+// ResetWebsite resets all changes to the "website" field.
+func (m *UserMutation) ResetWebsite() {
+	m.website = nil
+	delete(m.clearedFields, user.FieldWebsite)
+}
+
+// SetBanner sets the "banner" field.
+func (m *UserMutation) SetBanner(s string) {
+	m.banner = &s
+}
+
+// Banner returns the value of the "banner" field in the mutation.
+func (m *UserMutation) Banner() (r string, exists bool) {
+	v := m.banner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBanner returns the old "banner" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldBanner(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBanner is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBanner requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBanner: %w", err)
+	}
+	return oldValue.Banner, nil
+}
+
+// ClearBanner clears the value of the "banner" field.
+func (m *UserMutation) ClearBanner() {
+	m.banner = nil
+	m.clearedFields[user.FieldBanner] = struct{}{}
+}
+
+// BannerCleared returns if the "banner" field was cleared in this mutation.
+func (m *UserMutation) BannerCleared() bool {
+	_, ok := m.clearedFields[user.FieldBanner]
+	return ok
+}
+
+// ResetBanner resets all changes to the "banner" field.
+func (m *UserMutation) ResetBanner() {
+	m.banner = nil
+	delete(m.clearedFields, user.FieldBanner)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -3602,7 +3765,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 11)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -3618,8 +3781,17 @@ func (m *UserMutation) Fields() []string {
 	if m.avatar != nil {
 		fields = append(fields, user.FieldAvatar)
 	}
-	if m.metadata != nil {
-		fields = append(fields, user.FieldMetadata)
+	if m.bio != nil {
+		fields = append(fields, user.FieldBio)
+	}
+	if m.location != nil {
+		fields = append(fields, user.FieldLocation)
+	}
+	if m.website != nil {
+		fields = append(fields, user.FieldWebsite)
+	}
+	if m.banner != nil {
+		fields = append(fields, user.FieldBanner)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -3645,8 +3817,14 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Password()
 	case user.FieldAvatar:
 		return m.Avatar()
-	case user.FieldMetadata:
-		return m.Metadata()
+	case user.FieldBio:
+		return m.Bio()
+	case user.FieldLocation:
+		return m.Location()
+	case user.FieldWebsite:
+		return m.Website()
+	case user.FieldBanner:
+		return m.Banner()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	case user.FieldUpdatedAt:
@@ -3670,8 +3848,14 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPassword(ctx)
 	case user.FieldAvatar:
 		return m.OldAvatar(ctx)
-	case user.FieldMetadata:
-		return m.OldMetadata(ctx)
+	case user.FieldBio:
+		return m.OldBio(ctx)
+	case user.FieldLocation:
+		return m.OldLocation(ctx)
+	case user.FieldWebsite:
+		return m.OldWebsite(ctx)
+	case user.FieldBanner:
+		return m.OldBanner(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case user.FieldUpdatedAt:
@@ -3720,12 +3904,33 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAvatar(v)
 		return nil
-	case user.FieldMetadata:
-		v, ok := value.(map[string]interface{})
+	case user.FieldBio:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetMetadata(v)
+		m.SetBio(v)
+		return nil
+	case user.FieldLocation:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocation(v)
+		return nil
+	case user.FieldWebsite:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWebsite(v)
+		return nil
+	case user.FieldBanner:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBanner(v)
 		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -3783,6 +3988,18 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldAvatar) {
 		fields = append(fields, user.FieldAvatar)
 	}
+	if m.FieldCleared(user.FieldBio) {
+		fields = append(fields, user.FieldBio)
+	}
+	if m.FieldCleared(user.FieldLocation) {
+		fields = append(fields, user.FieldLocation)
+	}
+	if m.FieldCleared(user.FieldWebsite) {
+		fields = append(fields, user.FieldWebsite)
+	}
+	if m.FieldCleared(user.FieldBanner) {
+		fields = append(fields, user.FieldBanner)
+	}
 	return fields
 }
 
@@ -3809,6 +4026,18 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldAvatar:
 		m.ClearAvatar()
 		return nil
+	case user.FieldBio:
+		m.ClearBio()
+		return nil
+	case user.FieldLocation:
+		m.ClearLocation()
+		return nil
+	case user.FieldWebsite:
+		m.ClearWebsite()
+		return nil
+	case user.FieldBanner:
+		m.ClearBanner()
+		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
@@ -3832,8 +4061,17 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldAvatar:
 		m.ResetAvatar()
 		return nil
-	case user.FieldMetadata:
-		m.ResetMetadata()
+	case user.FieldBio:
+		m.ResetBio()
+		return nil
+	case user.FieldLocation:
+		m.ResetLocation()
+		return nil
+	case user.FieldWebsite:
+		m.ResetWebsite()
+		return nil
+	case user.FieldBanner:
+		m.ResetBanner()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()

@@ -85,9 +85,59 @@ func (uc *UserCreate) SetNillableAvatar(s *string) *UserCreate {
 	return uc
 }
 
-// SetMetadata sets the "metadata" field.
-func (uc *UserCreate) SetMetadata(m map[string]interface{}) *UserCreate {
-	uc.mutation.SetMetadata(m)
+// SetBio sets the "bio" field.
+func (uc *UserCreate) SetBio(s string) *UserCreate {
+	uc.mutation.SetBio(s)
+	return uc
+}
+
+// SetNillableBio sets the "bio" field if the given value is not nil.
+func (uc *UserCreate) SetNillableBio(s *string) *UserCreate {
+	if s != nil {
+		uc.SetBio(*s)
+	}
+	return uc
+}
+
+// SetLocation sets the "location" field.
+func (uc *UserCreate) SetLocation(s string) *UserCreate {
+	uc.mutation.SetLocation(s)
+	return uc
+}
+
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLocation(s *string) *UserCreate {
+	if s != nil {
+		uc.SetLocation(*s)
+	}
+	return uc
+}
+
+// SetWebsite sets the "website" field.
+func (uc *UserCreate) SetWebsite(s string) *UserCreate {
+	uc.mutation.SetWebsite(s)
+	return uc
+}
+
+// SetNillableWebsite sets the "website" field if the given value is not nil.
+func (uc *UserCreate) SetNillableWebsite(s *string) *UserCreate {
+	if s != nil {
+		uc.SetWebsite(*s)
+	}
+	return uc
+}
+
+// SetBanner sets the "banner" field.
+func (uc *UserCreate) SetBanner(s string) *UserCreate {
+	uc.mutation.SetBanner(s)
+	return uc
+}
+
+// SetNillableBanner sets the "banner" field if the given value is not nil.
+func (uc *UserCreate) SetNillableBanner(s *string) *UserCreate {
+	if s != nil {
+		uc.SetBanner(*s)
+	}
 	return uc
 }
 
@@ -274,10 +324,6 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() {
-	if _, ok := uc.mutation.Metadata(); !ok {
-		v := user.DefaultMetadata
-		uc.mutation.SetMetadata(v)
-	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
@@ -292,9 +338,6 @@ func (uc *UserCreate) defaults() {
 func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Username(); !ok {
 		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "User.username"`)}
-	}
-	if _, ok := uc.mutation.Metadata(); !ok {
-		return &ValidationError{Name: "metadata", err: errors.New(`ent: missing required field "User.metadata"`)}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
@@ -348,9 +391,21 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldAvatar, field.TypeString, value)
 		_node.Avatar = value
 	}
-	if value, ok := uc.mutation.Metadata(); ok {
-		_spec.SetField(user.FieldMetadata, field.TypeJSON, value)
-		_node.Metadata = value
+	if value, ok := uc.mutation.Bio(); ok {
+		_spec.SetField(user.FieldBio, field.TypeString, value)
+		_node.Bio = value
+	}
+	if value, ok := uc.mutation.Location(); ok {
+		_spec.SetField(user.FieldLocation, field.TypeString, value)
+		_node.Location = value
+	}
+	if value, ok := uc.mutation.Website(); ok {
+		_spec.SetField(user.FieldWebsite, field.TypeString, value)
+		_node.Website = value
+	}
+	if value, ok := uc.mutation.Banner(); ok {
+		_spec.SetField(user.FieldBanner, field.TypeString, value)
+		_node.Banner = value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

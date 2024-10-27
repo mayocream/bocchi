@@ -24,8 +24,14 @@ const (
 	FieldPassword = "password"
 	// FieldAvatar holds the string denoting the avatar field in the database.
 	FieldAvatar = "avatar"
-	// FieldMetadata holds the string denoting the metadata field in the database.
-	FieldMetadata = "metadata"
+	// FieldBio holds the string denoting the bio field in the database.
+	FieldBio = "bio"
+	// FieldLocation holds the string denoting the location field in the database.
+	FieldLocation = "location"
+	// FieldWebsite holds the string denoting the website field in the database.
+	FieldWebsite = "website"
+	// FieldBanner holds the string denoting the banner field in the database.
+	FieldBanner = "banner"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -100,7 +106,10 @@ var Columns = []string{
 	FieldUsername,
 	FieldPassword,
 	FieldAvatar,
-	FieldMetadata,
+	FieldBio,
+	FieldLocation,
+	FieldWebsite,
+	FieldBanner,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -142,8 +151,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultMetadata holds the default value on creation for the "metadata" field.
-	DefaultMetadata map[string]interface{}
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -183,6 +190,26 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 // ByAvatar orders the results by the avatar field.
 func ByAvatar(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAvatar, opts...).ToFunc()
+}
+
+// ByBio orders the results by the bio field.
+func ByBio(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBio, opts...).ToFunc()
+}
+
+// ByLocation orders the results by the location field.
+func ByLocation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocation, opts...).ToFunc()
+}
+
+// ByWebsite orders the results by the website field.
+func ByWebsite(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWebsite, opts...).ToFunc()
+}
+
+// ByBanner orders the results by the banner field.
+func ByBanner(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBanner, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

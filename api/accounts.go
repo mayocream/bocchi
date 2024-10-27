@@ -362,12 +362,11 @@ func (h *AccountHandler) EditProfile() fiber.Handler {
 		updatedUser, err := user.Update().
 			SetName(req.Name).
 			SetAvatar(req.Avatar).
-			SetMetadata(map[string]interface{}{
-				"bio":      req.Bio,
-				"website":  req.Website,
-				"location": req.Location,
-				"banner":   req.Banner,
-			}).Save(context.Background())
+			SetBio(req.Bio).
+			SetWebsite(req.Website).
+			SetLocation(req.Location).
+			SetBanner(req.Banner).
+			Save(context.Background())
 		if err != nil {
 			log.Errorf("failed to update user profile: %v", err)
 			return fiber.ErrInternalServerError

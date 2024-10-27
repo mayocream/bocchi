@@ -21,7 +21,10 @@ func (User) Fields() []ent.Field {
 		field.String("username").Unique(),
 		field.String("password").Optional(),
 		field.String("avatar").Optional(),
-		field.JSON("metadata", map[string]interface{}{}).Default(map[string]interface{}{}),
+		field.String("bio").Optional(),
+		field.String("location").Optional(),
+		field.String("website").Optional(),
+		field.String("banner").Optional(),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}

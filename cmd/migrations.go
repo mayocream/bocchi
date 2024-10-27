@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"github.com/mayocream/twitter/ent"
+	"github.com/mayocream/twitter/ent/migrate"
 	"github.com/mayocream/twitter/internal/config"
 	"github.com/mayocream/twitter/internal/database"
 
-	"go.uber.org/fx"
 	"github.com/spf13/cobra"
+	"go.uber.org/fx"
 )
 
 var migrationsCmd = &cobra.Command{
@@ -24,7 +25,11 @@ var migrationsApplyCmd = &cobra.Command{
 				database.NewClient,
 			),
 			fx.Invoke(func(database *ent.Client) error {
-				return database.Schema.Create(cmd.Context())
+				return database.Schema.Create(
+					cmd.Context(),
+					migrate.WithDropColumn(true),
+					migrate.WithDropIndex(true),
+				)
 			}),
 		)
 

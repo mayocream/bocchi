@@ -72,6 +72,13 @@ func (h *TweetHandler) Tweet() fiber.Handler {
 }
 
 func (h *TweetHandler) GetTweet() fiber.Handler {
+	type Response struct {
+		*ent.Tweet
+		Likes    int `json:"likes"`
+		Retweets int `json:"retweets"`
+		Replies  int `json:"replies"`
+	}
+
 	return func(c fiber.Ctx) error {
 		idStr := c.Params("id")
 		id, err := strconv.Atoi(idStr)
@@ -84,13 +91,50 @@ func (h *TweetHandler) GetTweet() fiber.Handler {
 			return fiber.ErrNotFound
 		}
 
-		return c.AutoFormat(tweet)
+		likes, err := tweet.QueryLikedBy().Count(context.Background())
+		if err != nil {
+			log.Errorf("failed to count likes: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		retweets, err := tweet.QueryRetweetedBy().Count(context.Background())
+		if err != nil {
+			log.Errorf("failed to count retweets: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		replies, err := tweet.QueryReplies().Count(context.Background())
+		if err != nil {
+			log.Errorf("failed to count replies: %v", err)
+			return fiber.ErrInternalServerError
+		}
+
+		return c.AutoFormat(Response{
+			Tweet:    tweet,
+			Likes:    likes,
+			Retweets: retweets,
+			Replies:  replies,
+		})
 	}
 }
 
 func (h *TweetHandler) ListTweets() fiber.Handler {
+	type Request struct {
+		Offset int `query:"offset"`
+	}
+
 	return func(c fiber.Ctx) error {
-		tweets, err := h.DB.Tweet.Query().Limit(100).Order(ent.Desc(tweet.FieldID)).All(context.Background())
+		var req Request
+		if err := c.Bind().Query(&req); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+
+		tweets, err := h.DB.Tweet.Query().
+			WithAuthor().
+			Limit(100).
+			Offset(req.Offset).
+			Order(ent.Desc(tweet.FieldID)).
+			All(context.Background())
 		if err != nil {
 			log.Errorf("failed to list tweets: %v", err)
 			return fiber.ErrInternalServerError
