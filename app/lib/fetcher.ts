@@ -6,7 +6,7 @@ export const getTweet = async (id: number) => {
       accept: 'application/json',
     },
   })
-  return await response.json<any>()
+  return await response.json()
 }
 
 export const getAccount = async (id: number) => {
@@ -15,7 +15,7 @@ export const getAccount = async (id: number) => {
       accept: 'application/json',
     },
   })
-  return await response.json<any>()
+  return await response.json()
 }
 
 export const getTweets = async () => {
@@ -24,7 +24,7 @@ export const getTweets = async () => {
       accept: 'application/json',
     },
   })
-  return await response.json<any>()
+  return await response.json()
 }
 
 export const getAccountFollowers = async (id: number) => {
@@ -33,7 +33,7 @@ export const getAccountFollowers = async (id: number) => {
       accept: 'application/json',
     },
   })
-  return await response.json<any>()
+  return await response.json()
 }
 
 export const getAccountFollowing = async (id: number) => {
@@ -42,5 +42,5 @@ export const getAccountFollowing = async (id: number) => {
       accept: 'application/json',
     },
   })
-  return await response.json<any>()
+  return await response.json()
 }

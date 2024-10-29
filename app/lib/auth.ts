@@ -24,12 +24,12 @@ export async function decode(token: string): Promise<any> {
   return JSON.parse(atob(payload))
 }
 
-export function getToken() {
-  return cookies().get(TOKEN_NAME)?.value
+export async function getToken() {
+  return (await cookies()).get(TOKEN_NAME)?.value
 }
 
 export async function getSession(): Promise<any | null> {
-  const token = cookies().get(TOKEN_NAME)?.value
+  const token = (await cookies()).get(TOKEN_NAME)?.value
   if (!token) return null
   try {
     const payload = await decode(token)
@@ -49,8 +49,8 @@ export function withAuth(handler: Function) {
   }
 }
 
-export const setUserCookie = (token: string) =>
-  cookies().set({
+export const setUserCookie = async (token: string) =>
+  (await cookies()).set({
     name: TOKEN_NAME,
     value: token,
     httpOnly: true,
@@ -60,6 +60,6 @@ export const setUserCookie = (token: string) =>
     maxAge: MAX_AGE,
   })
 
-export const removeUserCookie = () => cookies().delete(TOKEN_NAME)
+export const removeUserCookie = async () => (await cookies()).delete(TOKEN_NAME)
 
 export const endSession = removeUserCookie

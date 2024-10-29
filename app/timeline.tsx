@@ -13,17 +13,12 @@ import { TweetTextarea } from './components/textarea'
 import { getAccount } from './lib/fetcher'
 
 export default async function Timeline({ tweets }) {
-  // initialize user
-  let user = await getSession()
-  if (user) {
-    user = await getAccount(user.id)
-  }
 
   return (
-    <UserProvider user={user}>
+    <UserProvider user={null}>
       <div className='min-h-screen bg-zinc-50'>
         {/* Top Navigation */}
-        <TopNavigation user={user} />
+        <TopNavigation user={null} />
 
         {/* Main Content */}
         <div className='pt-14'>

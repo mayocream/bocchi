@@ -4,9 +4,9 @@ import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons'
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const token = searchParams.token
+  const token = (await searchParams).token
 
   if (!token) {
     return (

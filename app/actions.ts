@@ -20,7 +20,7 @@ export async function createAccount(prev, formData: FormData) {
   })
 
   if (!response.ok) {
-    const error = await response.json<string>()
+    const error = await response.json()
     return error
   }
 
@@ -41,11 +41,11 @@ export async function createSession(prev, formData: FormData) {
   })
 
   if (!response.ok) {
-    const error = await response.json<string>()
+    const error = await response.json()
     return error
   }
 
-  const content = await response.json<any>()
+  const content = await response.json()
   const jwt = content.token
 
   setUserCookie(jwt)
@@ -65,7 +65,7 @@ export async function sendTweet(prev, formData: FormData) {
   })
 
   if (!response.ok) {
-    const error = await response.json<string>()
+    const error = await response.json()
     return { success: false, error }
   }
 
@@ -73,6 +73,6 @@ export async function sendTweet(prev, formData: FormData) {
 
   return {
     success: true,
-    tweet: await response.json<any>(),
+    tweet: await response.json(),
   }
 }
