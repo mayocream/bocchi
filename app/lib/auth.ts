@@ -1,65 +1,37 @@
+import { prisma } from '@/app/lib/storage'
 import { cookies } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
+import { jwtVerify, SignJWT } from 'jose'
+import { User } from '@prisma/client'
 
-const MAX_AGE = 30 * 24 * 60 * 60 // 30 days
-const TOKEN_NAME = 'jwt'
-const JWT_PUBLIC_KEY = await crypto.subtle.importKey(
-  'spki',
-  Buffer.from(process.env.NEXT_PUBLIC_JWT_PUBLIC_KEY!, 'base64'),
-  { name: 'Ed25519' },
-  false,
-  ['verify']
-)
+const jwtKey = new TextEncoder().encode(process.env.AUTH_SECRET!)
 
-export async function decode(token: string): Promise<any> {
-  const [header, payload, signature] = token.split('.')
-  const data = `${header}.${payload}`
-  const isValid = await crypto.subtle.verify(
-    { name: 'Ed25519' },
-    JWT_PUBLIC_KEY,
-    new Uint8Array(Buffer.from(signature, 'base64')),
-    new Uint8Array(Buffer.from(data))
-  )
-  if (!isValid) throw new Error('Invalid token')
-  return JSON.parse(atob(payload))
-}
+export const auth = async () => {
+  const jwt = (await cookies()).get('auth')
+  if (!jwt) return null
 
-export async function getToken() {
-  return (await cookies()).get(TOKEN_NAME)?.value
-}
-
-export async function getSession(): Promise<any | null> {
-  const token = (await cookies()).get(TOKEN_NAME)?.value
-  if (!token) return null
   try {
-    const payload = await decode(token)
-    return payload
-  } catch (error) {
-    console.error(error)
+    const { payload } = await jwtVerify(jwt.value, jwtKey)
+    return await prisma.user.findUnique({
+      where: { username: payload.sub },
+    })
+  } catch {
     return null
   }
 }
 
-export function withAuth(handler: Function) {
-  return async (request: NextRequest, ...args: any[]) => {
-    const session = await getSession()
-    return session
-      ? handler(request, ...args)
-      : NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-}
+export const createSession = async (user: User) => {
+  const token = await new SignJWT({
+    sub: user.username,
+  })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('30d')
+    .sign(jwtKey)
 
-export const setUserCookie = async (token: string) =>
-  (await cookies()).set({
-    name: TOKEN_NAME,
-    value: token,
+  ;(await cookies()).set('auth', token, {
     httpOnly: true,
-    path: '/',
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge: MAX_AGE,
+    maxAge: 60 * 60 * 24 * 30,
   })
-
-export const removeUserCookie = async () => (await cookies()).delete(TOKEN_NAME)
-
-export const endSession = removeUserCookie
+}

@@ -7,18 +7,18 @@ import {
   RecommendCard,
   TrendCard,
 } from '@/app/components/widgets'
-import { getSession } from '@/app/lib/auth'
+import { auth } from '@/app/lib/auth'
 import { UserProvider } from '@/app/providers/user'
 import { TweetTextarea } from './components/textarea'
-import { getAccount } from './lib/fetcher'
 
 export default async function Timeline({ tweets }) {
+  const user = await auth()
 
   return (
-    <UserProvider user={null}>
+    <UserProvider user={user}>
       <div className='min-h-screen bg-zinc-50'>
         {/* Top Navigation */}
-        <TopNavigation user={null} />
+        <TopNavigation user={user} />
 
         {/* Main Content */}
         <div className='pt-14'>
@@ -27,7 +27,7 @@ export default async function Timeline({ tweets }) {
               {/* Left Sidebar */}
               <div className='w-72 py-3 md:flex hidden'>
                 <div className='sticky top-16'>
-                  <ProfileCard />
+                  <ProfileCard user={user} />
                   {/* <TrendCard /> */}
                 </div>
               </div>
@@ -35,13 +35,16 @@ export default async function Timeline({ tweets }) {
               {/* Main Timeline */}
               <div className='flex-1 bg-white border-x min-h-screen'>
                 {/* Tweet Input */}
-                <div className='border-b p-4'>
-                  <TweetTextarea />
-                </div>
+
+                {user && (
+                  <div className='border-b p-4'>
+                    <TweetTextarea />
+                  </div>
+                )}
 
                 {/* Timeline */}
                 <div>
-                  {tweets.map((tweet) => (
+                  {tweets?.map((tweet) => (
                     <Tweet key={tweet.id} tweet={tweet} />
                   ))}
                 </div>

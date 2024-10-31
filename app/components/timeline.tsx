@@ -1,8 +1,7 @@
 import { Flex, Text } from '@radix-ui/themes'
 import { LikeIcon, ReplyIcon, RetweetIcon, ShareIcon } from './icons'
 import { Avatar } from './widgets'
-import { formatDistanceFromNow } from '../lib/date'
-import { getTweet } from '../lib/fetcher'
+import { formatDistanceFromNow } from '@/app/lib/date'
 
 export const TweetInteractionButton = ({ icon: Icon, count, color }) => (
   <Flex

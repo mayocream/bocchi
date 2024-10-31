@@ -1,3 +1,4 @@
+import Timeline from "./timeline"
 export default async function Page() {
-  return null
+  return <Timeline tweets={null} />
 }

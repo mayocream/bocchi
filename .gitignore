@@ -33,3 +33,5 @@ node_modules/
 # generated keys
 /*.pub
 /*.pem
+
+.vercel

@@ -4,30 +4,20 @@ import Landing from '@/app/components/landing'
 import { Text, Button, TextField } from '@radix-ui/themes'
 import { Turnstile } from '@marsidev/react-turnstile'
 import Link from 'next/link'
-import GoogleIcon from '@/app/assets/svg/google.svg'
-import { DiscordLogoIcon } from '@radix-ui/react-icons'
-import Image from 'next/image'
-import { useFormState } from 'react-dom'
-import { createSession } from '@/app/actions'
 
 const Page = () => {
-  const [message, action, pending] = useFormState(createSession, null)
-
   return (
     <Landing>
-      <Text size='2' className='text-red-500'>
-        {message as string}
-      </Text>
-      <form action={action} className='space-y-6 text-white'>
+      <form className='space-y-6 text-white'>
         <div className='space-y-2'>
           <Text as='label' size='2' className='text-white'>
-            ユーザー名
+            メールアドレス
           </Text>
           <TextField.Root
-            name='username'
-            type='text'
+            name='email'
+            type='email'
             required
-            placeholder='ユーザー名を入力してください'
+            placeholder='メールアドレスを入力してください'
           />
         </div>
 
@@ -47,7 +37,6 @@ const Page = () => {
 
         <div className='space-y-4 pt-4'>
           <Button
-            disabled={pending}
             type='submit'
             className='w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg'
           >
@@ -70,18 +59,6 @@ const Page = () => {
             >
               <Link href='/signup'>Password でアカウントを作成</Link>
             </Button>
-
-            <div className='hidden'>
-              <Button>
-                <Image src={GoogleIcon} alt='google' className='w-5 h-5 mr-2' />
-                Google でログイン
-              </Button>
-
-              <Button>
-                <DiscordLogoIcon className='w-5 h-5 mr-2' />
-                Discord でログイン
-              </Button>
-            </div>
           </div>
         </div>
       </form>
