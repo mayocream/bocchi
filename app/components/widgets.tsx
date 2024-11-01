@@ -9,7 +9,6 @@ import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import Image from 'next/image'
 import Akkarin from '@/app/assets/transparent_akkarin.jpg'
-import { query } from '@/app/lib/api'
 
 export const Avatar = ({ src, className }) => {
   return (
@@ -23,7 +22,6 @@ export const Avatar = ({ src, className }) => {
 }
 
 export const ProfileCard = async ({ user }) => {
-  const account = await query(`/api/accounts/${user?.username}`)
   return (
     <Box className='rounded-xl bg-white p-4 shadow-sm'>
       <Flex direction='column' gap='3'>
@@ -40,19 +38,19 @@ export const ProfileCard = async ({ user }) => {
         </div>
         <Flex gap='4' className='mt-2'>
           <div>
-            <Text weight='bold'>{account?._count?.tweets}</Text>
+            <Text weight='bold'>{user?._count?.tweets}</Text>
             <Text size='1' color='gray'>
               ツイート
             </Text>
           </div>
           <div>
-            <Text weight='bold'>{account?._count?.following}</Text>
+            <Text weight='bold'>{user?._count?.following}</Text>
             <Text size='1' color='gray'>
               フォロー
             </Text>
           </div>
           <div>
-            <Text weight='bold'>{account?._count?.followers}</Text>
+            <Text weight='bold'>{user?._count?.followers}</Text>
             <Text size='1' color='gray'>
               フォロワー
             </Text>

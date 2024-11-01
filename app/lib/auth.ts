@@ -35,3 +35,7 @@ export const createSession = async (user: User) => {
     maxAge: 60 * 60 * 24 * 30,
   })
 }
+
+export const deleteSession = async () => {
+  ;(await cookies()).delete('auth')
+}

@@ -42,7 +42,7 @@ export const DELETE = async (
     return new NextResponse(null, { status: 404 })
   }
 
-  if (tweet.authorId !== session.user.id) {
+  if (tweet.authorId !== session.id) {
     return new NextResponse(null, { status: 403 })
   }
 

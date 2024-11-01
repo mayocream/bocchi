@@ -10,11 +10,11 @@ import * as argon2 from 'argon2'
 
 export const signup = async (prev, form: FormData) => {
   if (!verify(form.get('cf-turnstile-response') as string)) {
-    return '人間が確認できませんでした。'
+    return { message: '人間が確認できませんでした。' }
   }
 
   if (blocklist.usernames.includes(form.get('username') as string)) {
-    return 'このユーザー名は使用できません。'
+    return { message: 'このユーザー名は使用できません。' }
   }
 
   const validated = User.pick({
@@ -25,13 +25,13 @@ export const signup = async (prev, form: FormData) => {
 
   if (!validated.success) {
     console.log(validated.error.message)
-    return '入力内容が正しくありません。'
+    return { message: '入力内容が正しくありません。' }
   }
 
   if (
     await prisma.user.findUnique({ where: { email: validated.data.email } })
   ) {
-    return 'このメールアドレスは既に使用されています。'
+    return { message: 'このメールアドレスは既に使用されています。' }
   }
 
   if (
@@ -39,7 +39,7 @@ export const signup = async (prev, form: FormData) => {
       where: { username: validated.data.username },
     })
   ) {
-    return 'このユーザー名は既に使用されています。'
+    return { message: 'このユーザー名は既に使用されています。' }
   }
 
   const user = await prisma.user.create({
@@ -50,15 +50,13 @@ export const signup = async (prev, form: FormData) => {
     },
   })
 
-  // TODO: send email confirmation
-
   createSession(user)
   return redirect('/')
 }
 
 export const login = async (prev, form: FormData) => {
   if (!verify(form.get('cf-turnstile-response') as string)) {
-    return '人間が確認できませんでした。'
+    return { message: '人間が確認できませんでした。'}
   }
 
   const validated = User.pick({
@@ -67,7 +65,7 @@ export const login = async (prev, form: FormData) => {
   }).safeParse(Object.fromEntries(form))
 
   if (!validated.success) {
-    return '入力内容が正しくありません。'
+    return { message: '入力内容が正しくありません。'}
   }
 
   const user = await prisma.user.findUnique({
@@ -75,7 +73,7 @@ export const login = async (prev, form: FormData) => {
   })
 
   if (!user || !(await argon2.verify(user.password, validated.data.password))) {
-    return 'メールアドレスかパスワードが正しくありません。'
+    return { message: 'ユーザー名またはパスワードが正しくありません。'}
   }
 
   createSession(user)

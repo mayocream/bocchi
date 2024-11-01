@@ -7,31 +7,34 @@ import { useActionState } from 'react'
 import { signup } from '@/app/actionts'
 
 export default function Page() {
-  const [error, action, pending] = useActionState(signup, null)
+  const [state, action, pending] = useActionState(signup, null)
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    await action(new FormData(e.currentTarget))
+  }
 
   return (
     <Landing>
       <Text size='2' className='text-red-500'>
-        {error}
+        {state?.message}
       </Text>
-      <form action={action} className='space-y-6 text-white'>
+      <form onSubmit={handleSubmit} className='space-y-6 text-white'>
         <div className='space-y-2'>
           <Text as='label' size='2'>
             ユーザー名
           </Text>
-          <div>
-            <TextField.Root
-              name='username'
-              type='text'
-              required
-              pattern='[a-zA-Z0-9]+'
-              placeholder='ユニークなユーザー名を入力してください'
-            >
-              <TextField.Slot side='right'>
-                <Text size='2'>@twitter.co.jp</Text>
-              </TextField.Slot>
-            </TextField.Root>
-          </div>
+          <TextField.Root
+            name='username'
+            type='text'
+            pattern='[a-zA-Z0-9_]+'
+            required
+            placeholder='ユーザー名を入力してください'
+          >
+            <TextField.Slot side='right'>
+              <Text size='2'>@twitter.co.jp</Text>
+            </TextField.Slot>
+          </TextField.Root>
         </div>
 
         <div className='space-y-2'>

@@ -28,7 +28,7 @@ const Landing = ({ children }) => {
               <div className='space-y-6'>
                 <div className='flex items-center space-x-4'>
                   <MagnifyingGlassIcon className='w-8 h-8 text-white' />
-                  <Text size='5' className='text-white font-medium'>
+                  <Text size='6' className='text-white font-medium'>
                     トレンドを見つけよう
                   </Text>
                 </div>
@@ -40,13 +40,13 @@ const Landing = ({ children }) => {
                   >
                     <path d='M21 7.337h-3.93l.372-4.272a.751.751 0 0 0-.682-.812.752.752 0 0 0-.812.683l-.383 4.4h-6.32l.37-4.27a.75.75 0 0 0-.68-.813.751.751 0 0 0-.813.683l-.382 4.4H3.782a.75.75 0 0 0 0 1.5h3.787l-.57 6.5H3.062a.75.75 0 0 0 0 1.5h3.782l-.37 4.27a.75.75 0 0 0 .682.812l.066.003a.75.75 0 0 0 .746-.686l.383-4.4h6.32l-.37 4.27a.75.75 0 0 0 .682.812l.066.003a.75.75 0 0 0 .746-.686l.382-4.4h3.957c.413 0 .75-.337.75-.75s-.337-.75-.75-.75H16.39l.57-6.5h3.957a.75.75 0 0 0 0-1.5zm-6.35 8h-6.32l.57-6.5h6.32l-.57 6.5z' />
                   </svg>
-                  <Text size='5' className='text-white font-medium'>
+                  <Text size='6' className='text-white font-medium'>
                     会話に参加しましょう
                   </Text>
                 </div>
                 <div className='flex items-center space-x-4'>
                   <Pencil1Icon className='w-8 h-8 text-white' />
-                  <Text size='5' className='text-white font-medium'>
+                  <Text size='6' className='text-white font-medium'>
                     表現の自由を楽しもう
                   </Text>
                 </div>
@@ -55,7 +55,7 @@ const Landing = ({ children }) => {
           </div>
 
           {/* Right Section */}
-          <div className='w-full lg:w-1/2 flex items-center justify-center p-8 bg-black/80 relative z-20'>
+          <div className='w-full lg:w-1/2 flex items-center justify-center p-8 bg-black/20 relative z-20'>
             <div className='w-full max-w-md space-y-8'>
               <div className='text-center mb-8'>
                 <div className='relative w-12 h-12 mx-auto mb-6'>
