@@ -1,6 +1,6 @@
-import { auth } from '@/app/lib/auth'
-import { User } from '@/app/lib/scehma'
-import { prisma } from '@/app/lib/storage'
+import { auth } from '@/lib/auth'
+import { User } from '@/lib/scehma'
+import { prisma } from '@/lib/storage'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const GET = async (

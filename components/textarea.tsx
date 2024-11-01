@@ -4,11 +4,11 @@ import { Box, Button, Flex, IconButton, Text } from '@radix-ui/themes'
 import { useEffect, useRef, useState } from 'react'
 import { Avatar } from './widgets'
 import { ImageIcon } from '@radix-ui/react-icons'
-import { useFormState } from 'react-dom'
+import { useActionState } from 'react'
 
 export const TweetTextarea = () => {
   const sendTweet = () => {}
-  const [tweet, action, pending] = useFormState(sendTweet, null)
+  const [tweet, action, pending] = useActionState(sendTweet, null)
   const [text, setText] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const MAX_CHARS = 160
@@ -31,7 +31,7 @@ export const TweetTextarea = () => {
   }
 
   const handleSubmit = async (formData: FormData) => {
-    await action(formData)
+    await action()
     setText('')
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'

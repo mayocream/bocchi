@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { nanoid } from 'nanoid'
-import { s3 } from '@/app/lib/storage'
-import { auth } from '@/app/lib/auth'
+import { s3 } from '@/lib/storage'
+import { auth } from '@/lib/auth'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
 
 export const POST = async (request: NextRequest) => {

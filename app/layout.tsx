@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Noto_Sans_JP } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
-import { QueryProvider } from './providers/query'
+import { QueryProvider } from '@/providers/query'
 import { Theme } from '@radix-ui/themes'
 import '@radix-ui/themes/styles.css'
 import './globals.css'

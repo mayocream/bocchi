@@ -7,7 +7,7 @@ import {
   MagnifyingGlassIcon,
   HomeIcon,
 } from '@radix-ui/react-icons'
-import { BoltIcon } from '@/app/components/icons'
+import { BoltIcon } from '@/components/icons'
 import Link from 'next/link'
 
 export const TopNavigation = ({ user }) => {

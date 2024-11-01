@@ -1,4 +1,4 @@
-import { prisma } from '@/app/lib/storage'
+import { prisma } from '@/lib/storage'
 import { cookies } from 'next/headers'
 import { jwtVerify, SignJWT } from 'jose'
 import { User } from '@prisma/client'

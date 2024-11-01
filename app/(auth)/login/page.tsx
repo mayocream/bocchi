@@ -1,6 +1,5 @@
 'use client'
 
-import Landing from '@/app/components/landing'
 import { Text, Button, TextField } from '@radix-ui/themes'
 import { Turnstile } from '@marsidev/react-turnstile'
 import Link from 'next/link'
@@ -16,7 +15,7 @@ const Page = () => {
   }
 
   return (
-    <Landing>
+    <>
       <Text size='2' className='text-red-500'>
         {state?.message}
       </Text>
@@ -75,12 +74,12 @@ const Page = () => {
               asChild
               className='w-full bg-transparent border-2 border-blue-500 text-blue-500 font-bold py-3 px-4 rounded-lg'
             >
-              <Link href='/signup'>Password でアカウントを作成</Link>
+              <Link href='/register'>Password でアカウントを作成</Link>
             </Button>
           </div>
         </div>
       </form>
-    </Landing>
+    </>
   )
 }
 

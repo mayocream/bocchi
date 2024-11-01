@@ -1,17 +1,17 @@
 import { Container, Flex } from '@radix-ui/themes'
-import { TopNavigation } from '@/app/components/navigation'
-import { Tweet } from '@/app/components/timeline'
+import { TopNavigation } from '@/components/navigation'
+import { Tweet } from '@/components/timeline'
 import {
   DeveloperCard,
   ProfileCard,
   RecommendCard,
   TrendCard,
-} from '@/app/components/widgets'
-import { auth } from '@/app/lib/auth'
-import { UserProvider } from '@/app/providers/user'
-import { TweetTextarea } from './components/textarea'
+} from '@/components/widgets'
+import { auth } from '@/lib/auth'
+import { UserProvider } from '@/providers/user'
+import { TweetTextarea } from '@/components/textarea'
 
-export default async function Timeline({ tweets }) {
+export default async function Layout({ children }) {
   const user = await auth()
 
   return (
@@ -43,11 +43,7 @@ export default async function Timeline({ tweets }) {
                 )}
 
                 {/* Timeline */}
-                <div>
-                  {tweets?.map((tweet) => (
-                    <Tweet key={tweet.id} tweet={tweet} />
-                  ))}
-                </div>
+                <div>{children}</div>
               </div>
 
               {/* Right Sidebar */}

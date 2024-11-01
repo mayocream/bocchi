@@ -1,10 +1,10 @@
 'use server'
 
-import { User } from './lib/scehma'
-import { verify } from './lib/turnstile'
-import * as blocklist from './lib/blocklist'
-import { prisma } from './lib/storage'
-import { createSession } from './lib/auth'
+import { User } from '@/lib/scehma'
+import { verify } from '@/lib/turnstile'
+import * as blocklist from '@/lib/blocklist'
+import { prisma } from '@/lib/storage'
+import { createSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import * as argon2 from 'argon2'
 
@@ -56,7 +56,7 @@ export const signup = async (prev, form: FormData) => {
 
 export const login = async (prev, form: FormData) => {
   if (!verify(form.get('cf-turnstile-response') as string)) {
-    return { message: '人間が確認できませんでした。'}
+    return { message: '人間が確認できませんでした。' }
   }
 
   const validated = User.pick({
@@ -65,7 +65,7 @@ export const login = async (prev, form: FormData) => {
   }).safeParse(Object.fromEntries(form))
 
   if (!validated.success) {
-    return { message: '入力内容が正しくありません。'}
+    return { message: '入力内容が正しくありません。' }
   }
 
   const user = await prisma.user.findUnique({
@@ -73,7 +73,7 @@ export const login = async (prev, form: FormData) => {
   })
 
   if (!user || !(await argon2.verify(user.password, validated.data.password))) {
-    return { message: 'ユーザー名またはパスワードが正しくありません。'}
+    return { message: 'ユーザー名またはパスワードが正しくありません。' }
   }
 
   createSession(user)

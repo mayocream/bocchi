@@ -1,6 +1,5 @@
 'use client'
 
-import Landing from '@/app/components/landing'
 import { Button, TextField, Text } from '@radix-ui/themes'
 import { Turnstile } from '@marsidev/react-turnstile'
 import { useActionState } from 'react'
@@ -15,7 +14,7 @@ export default function Page() {
   }
 
   return (
-    <Landing>
+    <>
       <Text size='2' className='text-red-500'>
         {state?.message}
       </Text>
@@ -67,6 +66,6 @@ export default function Page() {
           アカウントを作成
         </Button>
       </form>
-    </Landing>
+    </>
   )
 }

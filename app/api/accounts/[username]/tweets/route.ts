@@ -1,4 +1,4 @@
-import { prisma } from '@/app/lib/storage'
+import { prisma } from '@/lib/storage'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const GET = async (

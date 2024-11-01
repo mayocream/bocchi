@@ -3,7 +3,7 @@ import { MagnifyingGlassIcon, Pencil1Icon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import Logo from '@/app/icon.svg'
 
-const Landing = ({ children }) => {
+export default function Layout({ children }) {
   return (
     <div className='min-h-screen bg-gradient-to-r from-blue-400 to-blue-500 relative'>
       <Container className='p-0'>
@@ -79,5 +79,3 @@ const Landing = ({ children }) => {
     </div>
   )
 }
-
-export default Landing

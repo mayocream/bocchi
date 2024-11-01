@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/app/lib/storage'
-import { auth } from '@/app/lib/auth'
+import { prisma } from '@/lib/storage'
+import { auth } from '@/lib/auth'
 
 export const GET = async (
   request: NextRequest,
-  {
-    searchParams,
-  }: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-  }
+  segmentData
 ) => {
-  const { cursor, limit = 10 } = await searchParams
+  const { cursor, limit = 10 } = await segmentData.searchParams
 
   const user = await auth()
   if (!user) {

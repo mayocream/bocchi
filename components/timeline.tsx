@@ -1,7 +1,7 @@
 import { Flex, Text } from '@radix-ui/themes'
 import { LikeIcon, ReplyIcon, RetweetIcon, ShareIcon } from './icons'
 import { Avatar } from './widgets'
-import { formatDistanceFromNow } from '@/app/lib/date'
+import { formatDistanceFromNow } from '@/lib/date'
 
 export const TweetInteractionButton = ({ icon: Icon, count, color }) => (
   <Flex
@@ -38,7 +38,7 @@ export const TweetInteraction = ({ replyCount, retweetCount, likeCount }) => (
 )
 
 export const Tweet = async ({ tweet }) => {
-  const interactions = await getTweet(tweet.id)
+  const interactions = {} as any
 
   return (
     <div className='border-b p-4 hover:bg-gray-50 transition-colors'>
