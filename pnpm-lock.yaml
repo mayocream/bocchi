@@ -78,9 +78,6 @@ importers:
       '@storybook/addon-interactions':
         specifier: ^8.4.1
         version: 8.4.1(storybook@8.4.1)
-      '@storybook/addon-onboarding':
-        specifier: ^8.4.1
-        version: 8.4.1(react@19.0.0-rc-02c0e824-20241028)(storybook@8.4.1)
       '@storybook/blocks':
         specifier: ^8.4.1
         version: 8.4.1(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)(storybook@8.4.1)
@@ -2203,11 +2200,6 @@ packages:
 
   '@storybook/addon-measure@8.4.1':
     resolution: {integrity: sha512-Pg1ROj29hKt7grL/HmbIJ10WrkZf1Unx35SsP373bkPQ1ggYi9oxGqtfNchTF2zCb1xUpIikLYSJgkwdjqWxhA==}
-    peerDependencies:
-      storybook: ^8.4.1
-
-  '@storybook/addon-onboarding@8.4.1':
-    resolution: {integrity: sha512-xcMCQ2HPvl8O/NHt2V5T1hDlzitRGI5ATSrfo7o7JjcsAgFNSNtcFn7YU8M5SIpHd5u4v24ubE/pMrsskpp/+Q==}
     peerDependencies:
       storybook: ^8.4.1
 
@@ -8019,13 +8011,6 @@ snapshots:
       '@storybook/global': 5.0.0
       storybook: 8.4.1
       tiny-invariant: 1.3.3
-
-  '@storybook/addon-onboarding@8.4.1(react@19.0.0-rc-02c0e824-20241028)(storybook@8.4.1)':
-    dependencies:
-      react-confetti: 6.1.0(react@19.0.0-rc-02c0e824-20241028)
-      storybook: 8.4.1
-    transitivePeerDependencies:
-      - react
 
   '@storybook/addon-outline@8.4.1(storybook@8.4.1)':
     dependencies:
