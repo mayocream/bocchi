@@ -1,5 +1,5 @@
 import { TopNavigation } from '@/components/navigation'
-import { Tweet } from '@/components/timeline'
+import { Tweet } from '@/components/tweet'
 import {
   DeveloperCard,
   ProfileCard,
@@ -26,7 +26,7 @@ export default async function Layout({ children }) {
               {/* Left Sidebar */}
               <div className='w-72 py-3 hidden md:block'>
                 <div className='sticky top-16'>
-                  <ProfileCard user={user} />
+                  {user && <ProfileCard user={user} />}
                   {/* <TrendCard /> */}
                 </div>
               </div>

@@ -9,17 +9,12 @@ import { login } from '@/app/actionts'
 const Page = () => {
   const [state, action, pending] = useActionState(login, null)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    await action(new FormData(e.currentTarget))
-  }
-
   return (
     <>
       <Text size='2' className='text-red-500'>
         {state?.message}
       </Text>
-      <form onSubmit={handleSubmit} className='space-y-6 text-white'>
+      <form action={action} className='space-y-6 text-white'>
         <div className='space-y-2'>
           <Text as='label' size='2'>
             ユーザー名
@@ -52,11 +47,7 @@ const Page = () => {
         <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} />
 
         <div className='space-y-4 pt-4'>
-          <Button
-            disabled={pending}
-            type='submit'
-            className='w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg'
-          >
+          <Button disabled={pending} className='w-full' type='submit'>
             ログイン
           </Button>
 
@@ -65,15 +56,12 @@ const Page = () => {
               <div className='w-full border-t border-gray-700'></div>
             </div>
             <div className='relative flex justify-center text-sm'>
-              <span className='px-2 text-gray-500 bg-blue-900'>または</span>
+              <span className='px-2 text-gray-500 bg-blue-500'>または</span>
             </div>
           </div>
 
           <div className='flex flex-col space-y-4'>
-            <Button
-              asChild
-              className='w-full bg-transparent border-2 border-blue-500 text-blue-500 font-bold py-3 px-4 rounded-lg'
-            >
+            <Button asChild>
               <Link href='/register'>Password でアカウントを作成</Link>
             </Button>
           </div>

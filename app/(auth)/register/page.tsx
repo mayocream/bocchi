@@ -8,17 +8,12 @@ import { signup } from '@/app/actionts'
 export default function Page() {
   const [state, action, pending] = useActionState(signup, null)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    await action(new FormData(e.currentTarget))
-  }
-
   return (
     <>
       <Text size='2' className='text-red-500'>
         {state?.message}
       </Text>
-      <form onSubmit={handleSubmit} className='space-y-6 text-white'>
+      <form action={action} className='space-y-6 text-white'>
         <div className='space-y-2'>
           <Text as='label' size='2'>
             ユーザー名
