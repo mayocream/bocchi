@@ -35,3 +35,5 @@ node_modules/
 /*.pem
 
 .vercel
+
+*storybook.log

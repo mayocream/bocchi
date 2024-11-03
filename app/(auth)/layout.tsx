@@ -1,4 +1,3 @@
-import { Container, Flex, Text } from '@radix-ui/themes'
 import { MagnifyingGlassIcon, Pencil1Icon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import Logo from '@/app/icon.svg'
@@ -6,8 +5,8 @@ import Logo from '@/app/icon.svg'
 export default function Layout({ children }) {
   return (
     <div className='min-h-screen bg-gradient-to-r from-blue-400 to-blue-500 relative'>
-      <Container className='p-0'>
-        <Flex className='min-h-screen relative'>
+      <div className='max-w-7xl mx-auto'>
+        <div className='min-h-screen relative flex'>
           {/* Left Section */}
           <div className='hidden lg:flex lg:w-1/2 items-center justify-center relative'>
             {/* Large Background Logo */}
@@ -28,9 +27,9 @@ export default function Layout({ children }) {
               <div className='space-y-6'>
                 <div className='flex items-center space-x-4'>
                   <MagnifyingGlassIcon className='w-8 h-8 text-white' />
-                  <Text size='6' className='text-white font-medium'>
+                  <span className='text-2xl text-white font-medium'>
                     トレンドを見つけよう
-                  </Text>
+                  </span>
                 </div>
                 <div className='flex items-center space-x-4'>
                   <svg
@@ -40,15 +39,15 @@ export default function Layout({ children }) {
                   >
                     <path d='M21 7.337h-3.93l.372-4.272a.751.751 0 0 0-.682-.812.752.752 0 0 0-.812.683l-.383 4.4h-6.32l.37-4.27a.75.75 0 0 0-.68-.813.751.751 0 0 0-.813.683l-.382 4.4H3.782a.75.75 0 0 0 0 1.5h3.787l-.57 6.5H3.062a.75.75 0 0 0 0 1.5h3.782l-.37 4.27a.75.75 0 0 0 .682.812l.066.003a.75.75 0 0 0 .746-.686l.383-4.4h6.32l-.37 4.27a.75.75 0 0 0 .682.812l.066.003a.75.75 0 0 0 .746-.686l.382-4.4h3.957c.413 0 .75-.337.75-.75s-.337-.75-.75-.75H16.39l.57-6.5h3.957a.75.75 0 0 0 0-1.5zm-6.35 8h-6.32l.57-6.5h6.32l-.57 6.5z' />
                   </svg>
-                  <Text size='6' className='text-white font-medium'>
+                  <span className='text-2xl text-white font-medium'>
                     会話に参加しましょう
-                  </Text>
+                  </span>
                 </div>
                 <div className='flex items-center space-x-4'>
                   <Pencil1Icon className='w-8 h-8 text-white' />
-                  <Text size='6' className='text-white font-medium'>
+                  <span className='text-2xl text-white font-medium'>
                     表現の自由を楽しもう
-                  </Text>
+                  </span>
                 </div>
               </div>
             </div>
@@ -67,15 +66,15 @@ export default function Layout({ children }) {
                     priority
                   />
                 </div>
-                <Text size='8' className='text-white font-bold'>
+                <h1 className='text-4xl text-white font-bold'>
                   「いま」起きていることを見つけよう
-                </Text>
+                </h1>
               </div>
               {children}
             </div>
           </div>
-        </Flex>
-      </Container>
+        </div>
+      </div>
     </div>
   )
 }

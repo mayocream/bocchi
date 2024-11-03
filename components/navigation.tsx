@@ -1,6 +1,6 @@
-import { Container, Flex, Text, Avatar, Button } from '@radix-ui/themes'
 import Image from 'next/image'
 import Logo from '@/app/icon.svg'
+import { Button } from '@radix-ui/themes'
 import {
   BellIcon,
   EnvelopeClosedIcon,
@@ -13,43 +13,37 @@ import Link from 'next/link'
 export const TopNavigation = ({ user }) => {
   return (
     <header className='fixed top-0 w-full bg-white border-b z-50'>
-      <Container>
-        <Flex justify='between' align='center' className='h-14'>
-          <Flex gap='6' align='center'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex justify-between items-center h-14'>
+          <div className='flex items-center gap-6'>
             <Image
               src={Logo}
               alt='Twitter Logo'
-              className='w-6 h-6 md:flex hidden'
+              className='w-6 h-6 hidden md:block'
             />
-            <Flex gap='8'>
-              <Flex align='center' gap='2' className='text-blue-500'>
+            <nav className='flex gap-8'>
+              <div className='flex items-center gap-2 text-blue-500'>
                 <HomeIcon className='w-5 h-5' />
-                <Text size='2' weight='bold' className='md:flex hidden'>
+                <span className='hidden md:block font-bold text-sm'>
                   ホーム
-                </Text>
-              </Flex>
-              <Flex align='center' gap='2'>
+                </span>
+              </div>
+              <div className='flex items-center gap-2'>
                 <BoltIcon />
-                <Text size='2' className='md:flex hidden'>
-                  モーメント
-                </Text>
-              </Flex>
-              <Flex align='center' gap='2'>
+                <span className='hidden md:block text-sm'>モーメント</span>
+              </div>
+              <div className='flex items-center gap-2'>
                 <BellIcon className='w-5 h-5' />
-                <Text size='2' className='md:flex hidden'>
-                  通知
-                </Text>
-              </Flex>
-              <Flex align='center' gap='2'>
+                <span className='hidden md:block text-sm'>通知</span>
+              </div>
+              <div className='flex items-center gap-2'>
                 <EnvelopeClosedIcon className='w-5 h-5' />
-                <Text size='2' className='md:flex hidden'>
-                  メッセージ
-                </Text>
-              </Flex>
-            </Flex>
-          </Flex>
+                <span className='hidden md:block text-sm'>メッセージ</span>
+              </div>
+            </nav>
+          </div>
 
-          <Flex gap='4' align='center'>
+          <div className='flex items-center gap-4'>
             <div className='relative'>
               <input
                 type='text'
@@ -60,20 +54,15 @@ export const TopNavigation = ({ user }) => {
             </div>
 
             {user ? (
-              <Button className='md:flex hidden bg-blue-500 text-white rounded-full px-4 hover:bg-blue-600'>
-                ツイート
-              </Button>
+              <Button>ツイート</Button>
             ) : (
-              <Button
-                asChild
-                className='md:flex hidden bg-blue-500 text-white rounded-full px-4 hover:bg-blue-600'
-              >
+              <Button asChild>
                 <Link href='/login'>ログイン</Link>
               </Button>
             )}
-          </Flex>
-        </Flex>
-      </Container>
+          </div>
+        </div>
+      </div>
     </header>
   )
 }

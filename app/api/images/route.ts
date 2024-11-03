@@ -14,7 +14,7 @@ export const POST = async (request: NextRequest) => {
   if (!contentType || contentType !== 'image/webp') {
     return NextResponse.json(
       { error: 'Content-Type must be an webp' },
-      { status: 400 }
+      { status: 400 },
     )
   }
 
@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
   if (!contentLength || parseInt(contentLength) > 5 * 1024 * 1024) {
     return NextResponse.json(
       { error: 'Image size should be less than 5MB' },
-      { status: 400 }
+      { status: 400 },
     )
   }
 
@@ -36,7 +36,7 @@ export const POST = async (request: NextRequest) => {
       Metadata: {
         owner: String(user.id),
       },
-    })
+    }),
   )
 
   return NextResponse.json({ id })

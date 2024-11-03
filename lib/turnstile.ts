@@ -10,7 +10,7 @@ export const verify = async (token: string) => {
         response: token,
         secret: process.env.TURNSTILE_SECRET_KEY!,
       }),
-    }
+    },
   )
 
   if (!response.ok) {

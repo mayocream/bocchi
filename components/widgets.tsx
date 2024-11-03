@@ -1,10 +1,3 @@
-import {
-  Flex,
-  Avatar as RadixAvatar,
-  Text,
-  Box,
-  Button,
-} from '@radix-ui/themes'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -12,68 +5,60 @@ import Akkarin from '@/app/assets/transparent_akkarin.jpg'
 
 export const Avatar = ({ src, className }) => {
   return (
-    <RadixAvatar
-      src={src}
-      fallback={<Image src={Akkarin} alt='akkarin' className='rounded-full' />}
-      className={className}
-      radius='full'
-    />
+    <div className={`rounded-full overflow-hidden ${className}`}>
+      {src ? (
+        <img src={src} alt='avatar' className='w-full h-full object-cover' />
+      ) : (
+        <Image
+          src={Akkarin}
+          alt='akkarin'
+          className='w-full h-full rounded-full'
+        />
+      )}
+    </div>
   )
 }
 
 export const ProfileCard = async ({ user }) => {
   return (
-    <Box className='rounded-xl bg-white p-4 shadow-sm'>
-      <Flex direction='column' gap='3'>
+    <div className='rounded-xl bg-white p-4 shadow-sm'>
+      <div className='flex flex-col gap-3'>
         <Avatar src={user?.avatar} className='w-12 h-12' />
         <div>
-          <Flex align='center' gap='1'>
-            <Text size='3' weight='bold'>
+          <div className='flex items-center gap-1'>
+            <span className='text-lg font-bold'>
               {user?.name ?? '吾輩は猫である'}
-            </Text>
-          </Flex>
-          <Text size='2' color='gray'>
-            @{user?.username}
-          </Text>
+            </span>
+          </div>
+          <span className='text-sm text-gray-500'>@{user?.username}</span>
         </div>
-        <Flex gap='4' className='mt-2'>
+        <div className='flex gap-4 mt-2'>
           <div>
-            <Text weight='bold'>{user?._count?.tweets}</Text>
-            <Text size='1' color='gray'>
-              ツイート
-            </Text>
+            <span className='font-bold'>{user?._count?.tweets}</span>
+            <span className='text-xs text-gray-500 block'>ツイート</span>
           </div>
           <div>
-            <Text weight='bold'>{user?._count?.following}</Text>
-            <Text size='1' color='gray'>
-              フォロー
-            </Text>
+            <span className='font-bold'>{user?._count?.following}</span>
+            <span className='text-xs text-gray-500 block'>フォロー</span>
           </div>
           <div>
-            <Text weight='bold'>{user?._count?.followers}</Text>
-            <Text size='1' color='gray'>
-              フォロワー
-            </Text>
+            <span className='font-bold'>{user?._count?.followers}</span>
+            <span className='text-xs text-gray-500 block'>フォロワー</span>
           </div>
-        </Flex>
-      </Flex>
-    </Box>
+        </div>
+      </div>
+    </div>
   )
 }
 
 export const TrendCard = () => {
   return (
-    <Box className='mt-4 rounded-xl bg-white p-4 shadow-sm'>
-      <Text size='3' weight='bold' className='mb-2'>
-        日本のトレンド
-      </Text>
-      <Flex direction='column' gap='3'>
+    <div className='mt-4 rounded-xl bg-white p-4 shadow-sm'>
+      <h2 className='text-lg font-bold mb-2'>日本のトレンド</h2>
+      <div className='flex flex-col gap-3'>
         {[
           { text: '#上司を選べるRPG', tweets: '2,158件のツイート' },
-          {
-            text: '#あなたが止められないもの',
-            tweets: '2,158件のツイート',
-          },
+          { text: '#あなたが止められないもの', tweets: '2,158件のツイート' },
           { text: '平成最後の水曜日', tweets: '2,158件のツイート' },
           { text: 'ヤンセン', tweets: '2,158件のツイート' },
           { text: 'エリクセン', tweets: '2,158件のツイート' },
@@ -82,98 +67,73 @@ export const TrendCard = () => {
             key={trend.text}
             className='hover:bg-gray-50 -mx-2 px-2 py-1 rounded cursor-pointer'
           >
-            <Text weight='bold'>{trend.text}</Text>
-            <Text size='1' color='gray'>
-              {trend.tweets}
-            </Text>
+            <p className='font-bold'>{trend.text}</p>
+            <p className='text-xs text-gray-500'>{trend.tweets}</p>
           </div>
         ))}
-      </Flex>
-    </Box>
+      </div>
+    </div>
   )
 }
 
 export const RecommendCard = () => {
   return (
-    <Box className='rounded-xl bg-white p-4 shadow-sm'>
-      <Flex justify='between' align='center' className='mb-4'>
-        <Text size='3' weight='bold'>
-          おすすめユーザー
-        </Text>
-        <Text
-          size='2'
-          className='text-orange-500 cursor-pointer hover:underline'
-        >
+    <div className='rounded-xl bg-white p-4 shadow-sm'>
+      <div className='flex justify-between items-center mb-4'>
+        <span className='text-lg font-bold'>おすすめユーザー</span>
+        <span className='text-sm text-orange-500 cursor-pointer hover:underline'>
           すべて見る
-        </Text>
-      </Flex>
-      <Flex direction='column' gap='4'>
+        </span>
+      </div>
+      <div className='flex flex-col gap-4'>
         {Array.from({ length: 3 }).map((_, i) => (
-          <Flex key={i} justify='between' align='center'>
-            <Flex gap='2' align='center'>
+          <div key={i} className='flex justify-between items-center'>
+            <div className='flex gap-2 items-center'>
               <Avatar src='/api/placeholder/32/32' className='w-8 h-8' />
               <div>
-                <Text size='2' weight='bold'>
-                  真夜
-                </Text>
-                <Text size='1' color='gray'>
-                  @mayo
-                </Text>
+                <p className='text-sm font-bold'>真夜</p>
+                <p className='text-xs text-gray-500'>@mayo</p>
               </div>
-            </Flex>
-            <Button variant='soft' size='1' className='rounded-full'>
+            </div>
+            <button className='px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors'>
               フォローする
-            </Button>
-          </Flex>
+            </button>
+          </div>
         ))}
-      </Flex>
-    </Box>
+      </div>
+    </div>
   )
 }
 
 export const DeveloperCard = () => {
   return (
-    <Box className='rounded-xl bg-white p-4 shadow-sm'>
-      <Flex direction='column' gap='4'>
+    <div className='rounded-xl bg-white p-4 shadow-sm'>
+      <div className='flex flex-col gap-4'>
         <div>
-          <Text size='3' weight='bold' className='mb-2'>
-            開発
-          </Text>
-          <Text size='2' color='gray' className='mb-4'>
+          <h2 className='text-lg font-bold mb-2'>開発</h2>
+          <p className='text-sm text-gray-500 mb-4'>
             オープンソースプロジェクト
-          </Text>
+          </p>
         </div>
 
-        {/* GitHub Stats */}
         <div className='bg-gray-50 p-3 rounded-lg'>
-          <Flex justify='between' align='center' className='mb-3'>
-            <Text size='2' weight='bold'>
-              GitHub Stats
-            </Text>
-            <Button
-              asChild
-              variant='soft'
-              className='rounded-full flex items-center gap-1'
-              size='1'
+          <div className='flex justify-between items-center mb-3'>
+            <span className='text-sm font-bold'>GitHub Stats</span>
+            <Link
+              href='https://github.com/mayocream/twitter'
+              className='px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors flex items-center gap-1'
             >
-              <Link href='https://github.com/mayocream/twitter'>
-                <GitHubLogoIcon />
-                Follow
-              </Link>
-            </Button>
-          </Flex>
+              <GitHubLogoIcon />
+              Follow
+            </Link>
+          </div>
 
-          <Flex direction='column' gap='2'>
-            {/* Progress Bar */}
+          <div className='flex flex-col gap-2'>
             <div className='mt-2'>
-              <Flex justify='between' className='mb-1'>
-                <Text size='1' color='gray'>
-                  Progress to v1.0
-                </Text>
-                <Text size='1' weight='bold'>
-                  10%
-                </Text>
-              </Flex>
+              <div className='flex justify-between mb-1'>
+                <span className='text-xs text-gray-500'>Progress to v1.0</span>
+                <span className='text-xs font-bold'>10%</span>
+              </div>
               <div className='w-full bg-gray-200 rounded-full h-2'>
                 <div
                   className='bg-blue-500 h-2 rounded-full'
@@ -181,9 +141,9 @@ export const DeveloperCard = () => {
                 />
               </div>
             </div>
-          </Flex>
+          </div>
         </div>
-      </Flex>
-    </Box>
+      </div>
+    </div>
   )
 }

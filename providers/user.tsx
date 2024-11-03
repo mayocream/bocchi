@@ -24,9 +24,5 @@ export const UserProvider: React.FC<UserProviderProps> = ({
   user,
   children,
 }) => {
-  return (
-    <UserContext.Provider value={user}>
-      {children}
-    </UserContext.Provider>
-  )
+  return <UserContext.Provider value={user}>{children}</UserContext.Provider>
 }

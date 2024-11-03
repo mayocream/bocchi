@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/storage'
 import { auth } from '@/lib/auth'
 
-export const GET = async (
-  request: NextRequest,
-  segmentData
-) => {
+export const GET = async (request: NextRequest, segmentData) => {
   const { cursor, limit = 10 } = await segmentData.searchParams
 
   const user = await auth()

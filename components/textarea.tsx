@@ -1,6 +1,5 @@
 'use client'
 
-import { Box, Button, Flex, IconButton, Text } from '@radix-ui/themes'
 import { useEffect, useRef, useState } from 'react'
 import { Avatar } from './widgets'
 import { ImageIcon } from '@radix-ui/react-icons'
@@ -43,12 +42,18 @@ export const TweetTextarea = () => {
   const isOverLimit = remainingChars < 0
   const isDisabled = text.length === 0 || isOverLimit
 
+  const getCharCountStyles = () => {
+    if (isOverLimit) return 'text-red-500 font-medium'
+    if (isNearLimit) return 'text-amber-500'
+    return 'text-gray-500'
+  }
+
   return (
-    <Box className='bg-gray-50 rounded-xl'>
-      <Box p='4'>
-        <Flex gap='3'>
+    <div className='bg-gray-50 rounded-xl'>
+      <div className='p-4'>
+        <div className='flex gap-3'>
           <Avatar src='/api/placeholder/48/48' className='w-12 h-12' />
-          <Box className='flex-1'>
+          <div className='flex-1'>
             <form action={handleSubmit}>
               <textarea
                 ref={textareaRef}
@@ -59,42 +64,36 @@ export const TweetTextarea = () => {
                 className='w-full bg-transparent border-none focus:outline-none text-lg break-words resize-none overflow-hidden min-h-[24px]'
                 rows={1}
               />
-              <Flex mt='4' justify='between' align='center'>
-                <Flex align='center' gap='3'>
-                  {/* <IconButton
-                    variant='ghost'
-                    color='blue'
-                    radius='full'
-                    aria-label='Add image'
+              <div className='mt-4 flex justify-between items-center'>
+                <div className='flex items-center gap-3'>
+                  {/* <button
+                    type="button"
+                    className="p-2 text-blue-500 hover:bg-blue-50 rounded-full transition-colors"
+                    aria-label="Add image"
                   >
-                    <ImageIcon className='w-5 h-5' />
-                  </IconButton> */}
-                  <Text
-                    size='2'
-                    weight={isOverLimit ? 'medium' : 'regular'}
-                    color={isOverLimit ? 'red' : isNearLimit ? 'amber' : 'gray'}
-                  >
+                    <ImageIcon className="w-5 h-5" />
+                  </button> */}
+                  <span className={`text-sm ${getCharCountStyles()}`}>
                     {remainingChars}
-                  </Text>
-                </Flex>
-                <Button
+                  </span>
+                </div>
+                <button
                   type='submit'
-                  size='2'
-                  radius='full'
-                  disabled={isDisabled ?? pending}
-                  className={`px-4 ${
-                    isDisabled
-                      ? 'bg-blue-300 cursor-not-allowed'
-                      : 'bg-blue-500 hover:bg-blue-600'
-                  }`}
+                  disabled={isDisabled || pending}
+                  className={`px-4 py-2 rounded-full text-white text-sm transition-colors
+                    ${
+                      isDisabled
+                        ? 'bg-blue-300 cursor-not-allowed'
+                        : 'bg-blue-500 hover:bg-blue-600'
+                    }`}
                 >
                   ツイートする
-                </Button>
-              </Flex>
+                </button>
+              </div>
             </form>
-          </Box>
-        </Flex>
-      </Box>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

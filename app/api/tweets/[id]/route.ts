@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 
 export const GET = async (
   request: NextRequest,
-  { params }: { params: Promise<{ id: number }> }
+  { params }: { params: Promise<{ id: number }> },
 ) => {
   const { id } = await params
 
@@ -25,7 +25,7 @@ export const GET = async (
 
 export const DELETE = async (
   request: NextRequest,
-  { params }: { params: Promise<{ id: number }> }
+  { params }: { params: Promise<{ id: number }> },
 ) => {
   const session = await auth()
   if (!session) {

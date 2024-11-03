@@ -13,6 +13,11 @@ export const auth = async () => {
     const { payload } = await jwtVerify(jwt.value, jwtKey)
     return await prisma.user.findUnique({
       where: { username: payload.sub },
+      include: {
+        _count: {
+          select: { followers: true, following: true, tweets: true },
+        },
+      },
     })
   } catch {
     return null

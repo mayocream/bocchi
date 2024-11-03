@@ -1,4 +1,3 @@
-import { Container, Flex } from '@radix-ui/themes'
 import { TopNavigation } from '@/components/navigation'
 import { Tweet } from '@/components/timeline'
 import {
@@ -22,10 +21,10 @@ export default async function Layout({ children }) {
 
         {/* Main Content */}
         <div className='pt-14'>
-          <Container>
-            <Flex gap='4' className='relative'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='flex gap-4 relative'>
               {/* Left Sidebar */}
-              <div className='w-72 py-3 md:flex hidden'>
+              <div className='w-72 py-3 hidden md:block'>
                 <div className='sticky top-16'>
                   <ProfileCard user={user} />
                   {/* <TrendCard /> */}
@@ -35,7 +34,6 @@ export default async function Layout({ children }) {
               {/* Main Timeline */}
               <div className='flex-1 bg-white border-x min-h-screen'>
                 {/* Tweet Input */}
-
                 {user && (
                   <div className='border-b p-4'>
                     <TweetTextarea />
@@ -47,15 +45,14 @@ export default async function Layout({ children }) {
               </div>
 
               {/* Right Sidebar */}
-              <div className='w-72 py-3 md:flex hidden'>
+              <div className='w-72 py-3 hidden md:block'>
                 <div className='sticky top-16'>
                   {/* <RecommendCard /> */}
-
                   <DeveloperCard />
                 </div>
               </div>
-            </Flex>
-          </Container>
+            </div>
+          </div>
         </div>
       </div>
     </UserProvider>

@@ -9,7 +9,7 @@ export const GET = async (
   }: {
     params: Promise<{ username: string }>
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-  }
+  },
 ) => {
   const { username } = await params
   const user = await prisma.user.findUnique({
