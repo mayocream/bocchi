@@ -1,21 +1,21 @@
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Avatar as RadixAvatar } from '@radix-ui/themes'
 import Akkarin from '@/app/assets/transparent_akkarin.jpg'
 
 export const Avatar = ({ src, className }) => {
   return (
-    <div className={`rounded-full overflow-hidden ${className}`}>
-      {src ? (
-        <img src={src} alt='avatar' className='w-full h-full object-cover' />
-      ) : (
+    <RadixAvatar
+      src={src}
+      fallback={
         <Image
           src={Akkarin}
           alt='akkarin'
           className='w-full h-full rounded-full'
         />
-      )}
-    </div>
+      }
+    />
   )
 }
 
