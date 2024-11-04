@@ -21,7 +21,7 @@ const useTweetText = (maxChars: number) => {
   const remainingChars = maxChars - charCount
   const isNearLimit = remainingChars <= 20
   const isOverLimit = remainingChars < 0
-  const isDisabled = charCount === 0 || isOverLimit
+  const isDisabled = isOverLimit // Removed charCount === 0 condition
 
   const getCharCountStyles = () => {
     if (isOverLimit) return 'text-red-500 font-medium'
@@ -96,11 +96,6 @@ const MediaUpload = ({
         disabled={!canAddMoreImages}
       >
         <ImageIcon className='w-5 h-5' />
-        {selectedImages.length > 0 && (
-          <span className='ml-1 text-sm'>
-            {selectedImages.length}/{maxImages}
-          </span>
-        )}
       </Button>
     </div>
   )
@@ -188,6 +183,7 @@ const Editor = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    if (text.trim().length === 0 && selectedImages.length === 0) return
     await onTweetSubmit(text, selectedImages)
     setText('')
     setSelectedImages([])
@@ -196,9 +192,7 @@ const Editor = ({
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      if (!isDisabled) {
-        handleSubmit(e)
-      }
+      handleSubmit(e)
     }
   }
 
@@ -209,6 +203,10 @@ const Editor = ({
   const handleRemoveImage = (index: number) => {
     setSelectedImages((prev) => prev.filter((_, i) => i !== index))
   }
+
+  // Determine if the tweet can be submitted
+  const canSubmit =
+    !isDisabled && (text.trim().length > 0 || selectedImages.length > 0)
 
   return (
     <div className='bg-gray-50 rounded-xl'>
@@ -242,7 +240,7 @@ const Editor = ({
                     className={getCharCountStyles()}
                   />
                 </div>
-                <Button type='submit' disabled={isDisabled}>
+                <Button type='submit' disabled={!canSubmit}>
                   ツイートする
                 </Button>
               </div>

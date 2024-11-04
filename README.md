@@ -6,17 +6,11 @@ Yet another Twitter. Self-hosted, privacy-focused, and open-source federated soc
 
 This project is not affiliated with Twitter, Inc. in any way.
 
-## Features
+## Principles
 
-- [x] Sign up
-- [ ] Timeline
-- [ ] Tweet
-- [ ] Retweet
-- [ ] Like
-- [ ] Follow
-- [ ] Unfollow
-- [ ] Notifications
-- [ ] Search
+- **Web-first**: Next.js is used for the frontend and BFF.
+- **Privacy-focused**: No tracking, no ads, no data selling.
+- **Community-driven**: Open-source, federated, and self-hosted.
 
 ## License
 

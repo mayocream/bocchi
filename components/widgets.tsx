@@ -7,6 +7,7 @@ import Akkarin from '@/app/assets/transparent_akkarin.jpg'
 export const Avatar = ({ src, className }) => {
   return (
     <RadixAvatar
+      className={className}
       src={src}
       fallback={
         <Image
@@ -25,12 +26,14 @@ export const ProfileCard = async ({ user }) => {
       <div className='flex flex-col gap-3'>
         <Avatar src={user?.avatar} className='w-12 h-12' />
         <div>
-          <div className='flex items-center gap-1'>
-            <span className='text-lg font-bold'>
-              {user?.name ?? '吾輩は猫である'}
-            </span>
-          </div>
-          <span className='text-sm text-gray-500'>@{user?.username}</span>
+          <Link href={user?.username}>
+            <div className='flex items-center gap-1'>
+              <span className='text-lg font-bold'>
+                {user?.name ?? '吾輩は猫である'}
+              </span>
+            </div>
+            <span className='text-sm text-gray-500'>@{user?.username}</span>
+          </Link>
         </div>
         <div className='flex gap-4 mt-2'>
           <div>
