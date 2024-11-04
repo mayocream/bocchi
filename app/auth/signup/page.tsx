@@ -1,9 +1,22 @@
+'use client'
+
 import { X, Mail, Lock, AtSign } from 'lucide-react'
 import Link from 'next/link'
 import { IconButton, Button, Text, TextField } from '@radix-ui/themes'
 import { Turnstile } from '@marsidev/react-turnstile'
+import { signup } from '@/app/actionts'
+import toast from 'react-hot-toast'
 
 export default function Page() {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const state = await signup(formData)
+    if (state.message) {
+      toast.error(state.message)
+    }
+  }
+
   return (
     <div className='min-h-screen flex'>
       {/* Left Panel */}
@@ -31,7 +44,7 @@ export default function Page() {
           <div className='mb-8'>
             <h2 className='text-2xl font-bold mb-8'>あなたのアカウント</h2>
 
-            <form className='space-y-6'>
+            <form onSubmit={handleSubmit} className='space-y-6'>
               {/* Username */}
               <div>
                 <label className='block text-sm mb-2'>ユーザーハンドル</label>

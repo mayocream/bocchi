@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { IconButton, Button } from '@radix-ui/themes'
 
-export default async function Page() {
+export default function Page() {
   return (
     <div className='relative min-h-screen flex flex-col bg-white'>
       {/* Close button - fixed to top right */}
