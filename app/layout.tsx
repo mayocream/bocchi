@@ -40,7 +40,7 @@ export default async function RootLayout({
   return (
     <html lang='ja' suppressHydrationWarning>
       <body className={notoSansJP.className}>
-        <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+        <ThemeProvider attribute='class' defaultTheme='light' enableSystem>
           <Theme accentColor='blue' radius='full'>
             <QueryProvider>
               {children}

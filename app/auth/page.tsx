@@ -8,8 +8,10 @@ export default function Page() {
     <div className='relative min-h-screen flex flex-col bg-white'>
       {/* Close button - fixed to top right */}
       <div className='fixed top-6 right-6'>
-        <IconButton variant='ghost' color='gray'>
-          <X size={24} className='text-gray-600' />
+        <IconButton asChild variant='ghost' color='gray'>
+          <Link href='/'>
+            <X size={24} className='text-gray-600' />
+          </Link>
         </IconButton>
       </div>
 
