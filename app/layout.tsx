@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Noto_Sans_JP } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
+import { Toaster } from 'react-hot-toast'
 import { QueryProvider } from '@/providers/query'
 import { Theme } from '@radix-ui/themes'
 import '@radix-ui/themes/styles.css'
@@ -41,7 +42,14 @@ export default async function RootLayout({
       <body className={notoSansJP.className}>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <Theme accentColor='blue' radius='full'>
-            <QueryProvider>{children}</QueryProvider>
+            <QueryProvider>
+              {children}
+              <Toaster
+                toastOptions={{
+                  className: 'bg-blue-500 text-white',
+                }}
+              />
+            </QueryProvider>
           </Theme>
         </ThemeProvider>
       </body>

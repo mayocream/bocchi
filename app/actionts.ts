@@ -7,8 +7,9 @@ import { prisma } from '@/lib/storage'
 import { createSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import * as argon2 from 'argon2'
+import { revalidatePath } from 'next/cache'
 
-export const signup = async (prev, form: FormData) => {
+export const signup = async (form: FormData) => {
   if (!verify(form.get('cf-turnstile-response') as string)) {
     return { message: '人間が確認できませんでした。' }
   }
@@ -51,10 +52,11 @@ export const signup = async (prev, form: FormData) => {
   })
 
   createSession(user)
+  revalidatePath('/')
   return redirect('/')
 }
 
-export const login = async (prev, form: FormData) => {
+export const login = async (form: FormData) => {
   if (!verify(form.get('cf-turnstile-response') as string)) {
     return { message: '人間が確認できませんでした。' }
   }
@@ -77,5 +79,6 @@ export const login = async (prev, form: FormData) => {
   }
 
   createSession(user)
+  revalidatePath('/')
   return redirect('/')
 }

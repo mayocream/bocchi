@@ -3,18 +3,29 @@
 import { Text, Button, TextField } from '@radix-ui/themes'
 import { Turnstile } from '@marsidev/react-turnstile'
 import Link from 'next/link'
-import { useActionState } from 'react'
 import { login } from '@/app/actionts'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 const Page = () => {
-  const [state, action, pending] = useActionState(login, null)
+  const [pending, setPending] = useState(false)
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const form = event.currentTarget as HTMLFormElement
+    const data = new FormData(form)
+
+    setPending(true)
+    const state = await login(data)
+    if (state.message) {
+      toast.error(state.message)
+    }
+    setPending(false)
+  }
 
   return (
     <>
-      <Text size='2' className='text-red-500'>
-        {state?.message}
-      </Text>
-      <form action={action} className='space-y-6 text-white'>
+      <form onSubmit={handleSubmit} className='space-y-6 text-white'>
         <div className='space-y-2'>
           <Text as='label' size='2'>
             ユーザー名
