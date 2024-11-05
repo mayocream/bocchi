@@ -44,11 +44,7 @@ export default async function RootLayout({
           <Theme accentColor='blue' radius='full'>
             <QueryProvider>
               {children}
-              <Toaster
-                toastOptions={{
-                  className: 'bg-blue-500 text-white',
-                }}
-              />
+              <Toaster />
             </QueryProvider>
           </Theme>
         </ThemeProvider>

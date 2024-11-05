@@ -1,10 +1,11 @@
 'use server'
 
 import { Navigation } from '@/components/navigation'
+import { TweetDialog } from '@/components/tweet'
 import { auth } from '@/lib/auth'
 import { UserProvider } from '@/providers/user'
 import { Avatar, Button, Text, TextField } from '@radix-ui/themes'
-import { Search, PenSquare } from 'lucide-react'
+import { Search } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -22,10 +23,7 @@ const Sidebar = ({ user }) => {
 
       <Navigation user={user} />
 
-      <Button className='w-full h-12 font-bold'>
-        <PenSquare className='w-5 h-5 mr-2' />
-        新しい投稿
-      </Button>
+      <TweetDialog />
     </div>
   )
 }
@@ -53,8 +51,8 @@ export default async function Page({
           )}
 
           {/* Main Content */}
-          <div className='w-[600px] border-x border-gray-200'>
-            <div className='border-b border-gray-200 sticky top-0 z-10 bg-white/80 backdrop-blur-sm'>
+          <div className='w-[600px] border-x'>
+            <div className='border-b sticky top-0 z-10 backdrop-blur-sm'>
               <Image
                 src='/icon.svg'
                 alt='Logo'
