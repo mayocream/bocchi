@@ -134,7 +134,9 @@ export const ProfileEditor = () => {
                 キャンセル
               </Button>
             </Dialog.Close>
-            <Button>変更を保存</Button>
+            <Dialog.Close>
+              <Button type='submit'>変更を保存</Button>
+            </Dialog.Close>
           </Flex>
         </form>
       </Dialog.Content>
