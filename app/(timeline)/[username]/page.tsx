@@ -9,10 +9,19 @@ import {
   Box,
   Card,
   ScrollArea,
+  Dialog,
+  TextArea,
+  TextField,
 } from '@radix-ui/themes'
-import { MoreHorizontal, Heart, MessageCircle, Repeat } from 'lucide-react'
+import {
+  MoreHorizontal,
+  Heart,
+  MessageCircle,
+  Repeat,
+  ImagePlus,
+} from 'lucide-react'
 import { fetchApiEndpoint } from '@/lib/api'
-import { ProfileDialog } from '@/components/profile'
+import { ProfileEditor } from '@/components/profile'
 
 export default async function Page({
   params,
@@ -20,7 +29,26 @@ export default async function Page({
   params: Promise<{ username: string }>
 }) {
   const { username } = await params
+
+  // Early return if username is not available
+  if (!username) {
+    return (
+      <Container>
+        <Text color='gray'>Profile not found</Text>
+      </Container>
+    )
+  }
+
   const profile = await fetchApiEndpoint(`/accounts/${username}`)
+
+  // Handle case where profile fetch fails or returns null
+  if (!profile) {
+    return (
+      <Container>
+        <Text color='gray'>Could not load profile</Text>
+      </Container>
+    )
+  }
 
   return (
     <Container>
@@ -30,8 +58,8 @@ export default async function Page({
         <Avatar
           size='6'
           className='absolute -bottom-8 left-4 border-4 border-white'
-          src={profile?.avatar}
-          fallback={profile?.username?.charAt(0)}
+          src={profile.avatar}
+          fallback={profile.username?.charAt(0) || '?'}
         />
       </div>
 
@@ -47,7 +75,8 @@ export default async function Page({
             </Text>
           </Box>
           <Flex gap='2'>
-            <ProfileDialog profile={profile} />
+            {/* Only render ProfileDialog if we have valid profile data */}
+            <ProfileEditor />
             <Button variant='ghost'>
               <MoreHorizontal className='h-4 w-4' />
             </Button>
@@ -59,20 +88,21 @@ export default async function Page({
         {/* Stats */}
         <Flex gap='4' className='mt-4'>
           <Text size='2'>
-            <span className='font-bold'>{profile._count?.following}</span>{' '}
+            <span className='font-bold'>{profile._count?.following || 0}</span>{' '}
             フォロー中
           </Text>
           <Text size='2'>
-            <span className='font-bold'>{profile._count?.followers}</span>{' '}
+            <span className='font-bold'>{profile._count?.followers || 0}</span>{' '}
             フォロワー
           </Text>
           <Text size='2'>
-            <span className='font-bold'>{profile._count?.tweets}</span> 投稿
+            <span className='font-bold'>{profile._count?.tweets || 0}</span>{' '}
+            投稿
           </Text>
         </Flex>
       </Box>
 
-      {/* Radix Tabs */}
+      {/* Rest of the component remains the same */}
       <Tabs.Root defaultValue='posts' className='mt-6'>
         <Tabs.List>
           <Tabs.Trigger value='posts'>投稿</Tabs.Trigger>

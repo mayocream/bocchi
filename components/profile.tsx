@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import {
   Avatar,
   Dialog,
@@ -12,27 +12,28 @@ import {
   TextArea,
 } from '@radix-ui/themes'
 import { ImagePlus } from 'lucide-react'
+import { useUser } from '@/providers/user'
 
-export const ProfileDialog = ({ profile }: { profile: any }) => {
-  const [bannerPreview, setBannerPreview] = useState<string | null>(null)
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+export const ProfileEditor = () => {
+  const profile = useUser()
+  const [previewData, setPreviewData] = useState({
+    avatar: null,
+    banner: null,
+  })
 
-  const handleImageUpload = useCallback(
-    (
-      e: React.ChangeEvent<HTMLInputElement>,
-      setPreview: (url: string | null) => void
-    ) => {
-      const file = e.target.files?.[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          setPreview(reader.result as string)
-        }
-        reader.readAsDataURL(file)
+  const handleImageChange = (event, type) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setPreviewData((prev) => ({
+          ...prev,
+          [type]: e?.target?.result as string,
+        }))
       }
-    },
-    []
-  )
+      reader.readAsDataURL(file)
+    }
+  }
 
   return (
     <Dialog.Root>
@@ -49,11 +50,10 @@ export const ProfileDialog = ({ profile }: { profile: any }) => {
             <div
               className='h-[200px] rounded-lg mb-16 relative bg-cover bg-center'
               style={{
-                backgroundImage: `url(${bannerPreview || profile?.banner})`,
-                backgroundColor:
-                  !bannerPreview && !profile?.banner
-                    ? 'rgb(243 244 246)'
-                    : undefined,
+                backgroundImage: previewData.banner
+                  ? `url(${previewData.banner})`
+                  : 'none',
+                backgroundColor: previewData.banner ? 'transparent' : '#f0f0f0',
               }}
             >
               <label>
@@ -61,7 +61,7 @@ export const ProfileDialog = ({ profile }: { profile: any }) => {
                   type='file'
                   className='hidden'
                   accept='image/*'
-                  onChange={(e) => handleImageUpload(e, setBannerPreview)}
+                  onChange={(e) => handleImageChange(e, 'banner')}
                 />
                 <Button
                   variant='solid'
@@ -81,16 +81,16 @@ export const ProfileDialog = ({ profile }: { profile: any }) => {
                 <Avatar
                   size='6'
                   className='border-4 border-white'
-                  src={avatarPreview || profile?.avatar}
                   fallback={profile?.username?.charAt(0)}
                   radius='full'
+                  src={previewData.avatar!}
                 />
                 <label>
                   <input
                     type='file'
                     className='hidden'
                     accept='image/*'
-                    onChange={(e) => handleImageUpload(e, setAvatarPreview)}
+                    onChange={(e) => handleImageChange(e, 'avatar')}
                   />
                   <Button
                     variant='solid'
