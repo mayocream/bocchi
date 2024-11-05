@@ -4,7 +4,6 @@ import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'react-hot-toast'
 import { QueryProvider } from '@/providers/query'
 import { Theme } from '@radix-ui/themes'
-import '@radix-ui/themes/styles.css'
 import './globals.css'
 
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
