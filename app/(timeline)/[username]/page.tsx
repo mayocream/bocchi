@@ -30,7 +30,7 @@ export default async function Page({
         <Avatar
           size='6'
           className='absolute -bottom-8 left-4 border-4 border-white'
-          src='/api/placeholder/80/80'
+          src={profile?.avatar}
           fallback={profile?.username?.charAt(0)}
         />
       </div>
