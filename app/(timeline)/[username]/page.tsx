@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Container,
   Avatar,
@@ -9,17 +8,8 @@ import {
   Box,
   Card,
   ScrollArea,
-  Dialog,
-  TextArea,
-  TextField,
 } from '@radix-ui/themes'
-import {
-  MoreHorizontal,
-  Heart,
-  MessageCircle,
-  Repeat,
-  ImagePlus,
-} from 'lucide-react'
+import { MoreHorizontal, Heart, MessageCircle, Repeat } from 'lucide-react'
 import { fetchApiEndpoint } from '@/lib/api'
 import { ProfileEditor } from '@/components/profile'
 

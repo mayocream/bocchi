@@ -5,15 +5,13 @@
   "description": "Twitter project",
   "scripts": {
     "build": "next build",
-    "build-storybook": "storybook build",
     "dev": "next dev --turbo",
     "format": "prettier --write .",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "migrate:local": "dotenv -e .env.local -- prisma db push",
     "migrate:prod": "dotenv -e .vercel/.env.development.local -- prisma db push",
-    "start": "next start",
-    "storybook": "storybook dev -p 6006 --no-open"
+    "start": "next start"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.685.0",
@@ -38,13 +36,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^3.2.2",
-    "@storybook/addon-essentials": "^8.4.1",
-    "@storybook/addon-interactions": "^8.4.1",
-    "@storybook/blocks": "^8.4.1",
-    "@storybook/nextjs": "^8.4.1",
-    "@storybook/react": "^8.4.1",
-    "@storybook/test": "^8.4.1",
     "@types/node": "22.9.0",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
