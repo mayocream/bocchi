@@ -6,14 +6,8 @@ import { Image, Pen, PenSquare, X } from 'lucide-react'
 import { useUser } from '@/providers/user'
 import toast from 'react-hot-toast'
 
-interface User {
-  avatar: string
-  name: string
-  username: string
-}
-
 export const TweetDialog = () => {
-  const user = useUser() as User
+  const user = useUser()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [tweetText, setTweetText] = React.useState<string>('')
   const [tweetImages, setTweetImages] = React.useState<File[]>([])
