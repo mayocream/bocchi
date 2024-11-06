@@ -1,13 +1,11 @@
 'use client'
 
-import { useUser } from '@/providers/user'
-import { SegmentedControl, TextField } from '@radix-ui/themes'
+import { SegmentedControl } from '@radix-ui/themes'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme()
-  const user = useUser()
 
   return (
     <div className='flex flex-col max-w-2xl mx-auto p-6 space-y-8'>

@@ -9,9 +9,10 @@ import {
   Card,
   ScrollArea,
 } from '@radix-ui/themes'
-import { MoreHorizontal, Heart, MessageCircle, Repeat } from 'lucide-react'
+import { Heart, MessageCircle, Repeat } from 'lucide-react'
 import { fetchApiEndpoint } from '@/lib/api'
 import { ProfileEditor } from '@/components/profile'
+import { auth } from '@/lib/auth'
 
 export default async function Page({
   params,
@@ -40,6 +41,8 @@ export default async function Page({
     )
   }
 
+  const user = await auth()
+
   return (
     <Container>
       {/* Header Banner */}
@@ -49,7 +52,7 @@ export default async function Page({
           size='6'
           className='absolute -bottom-8 left-4 border-4 border-white'
           src={profile.avatar}
-          fallback={profile.username?.charAt(0) || '?'}
+          fallback={profile.username?.charAt(0)}
         />
       </div>
 
@@ -65,11 +68,7 @@ export default async function Page({
             </Text>
           </Box>
           <Flex gap='2'>
-            {/* Only render ProfileDialog if we have valid profile data */}
-            <ProfileEditor />
-            <Button variant='ghost'>
-              <MoreHorizontal className='h-4 w-4' />
-            </Button>
+            {user?.username === profile.username && <ProfileEditor />}
           </Flex>
         </Flex>
 

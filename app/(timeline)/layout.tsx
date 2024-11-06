@@ -79,12 +79,6 @@ export default async function Page({
                   <Search className='w-5 h-5 text-gray-500' />
                 </TextField.Slot>
               </TextField.Root>
-
-              <div className='mt-4 bg-gray-50 rounded-2xl p-4 space-y-4'>
-                <h2 className='font-semibold text-xl'>Following</h2>
-                <h2 className='font-semibold text-xl'>Discover</h2>
-                <h2 className='font-semibold text-xl'>For You</h2>
-              </div>
             </div>
           </div>
         </div>

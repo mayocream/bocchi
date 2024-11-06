@@ -2,7 +2,7 @@
 
 import React, { useRef, ChangeEvent } from 'react'
 import { Avatar, Button, Dialog, IconButton, TextArea } from '@radix-ui/themes'
-import { Image, Pen, PenSquare, X } from 'lucide-react'
+import { Image, PenSquare, X } from 'lucide-react'
 import { useUser } from '@/providers/user'
 import toast from 'react-hot-toast'
 
