@@ -22,7 +22,7 @@ docker compose up -d
 pnpm i
 
 # configure environment variables
-cp .env.example .env
+cp .env.example .env.local
 
 # generate JWT secret
 pnpx auth secret
