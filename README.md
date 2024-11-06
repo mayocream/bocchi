@@ -12,6 +12,22 @@ This project is not affiliated with Twitter, Inc. in any way.
 - **Privacy-focused**: No tracking, no ads, no data selling.
 - **Community-driven**: Open-source, federated, and self-hosted.
 
+## Development
+
+```bash
+# setup development environment
+docker compose up -d
+
+# install dependencies
+pnpm i
+
+# configure environment variables
+cp .env.example .env
+
+# generate JWT secret
+pnpx auth secret
+```
+
 ## License
 
 AGPL-3.0
