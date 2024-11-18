@@ -1,3 +1,4 @@
+// https://github.com/marteinn/The-Big-Username-Blocklist/blob/main/list.json
 export const usernames = [
   '.git',
   '.htaccess',
