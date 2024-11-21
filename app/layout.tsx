@@ -3,7 +3,6 @@ import { Noto_Sans_JP } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'react-hot-toast'
 import { QueryProvider } from '@/providers/query'
-import { Theme } from '@radix-ui/themes'
 import './globals.css'
 
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
@@ -40,12 +39,10 @@ export default async function RootLayout({
     <html lang='ja' suppressHydrationWarning>
       <body className={notoSansJP.className}>
         <ThemeProvider attribute='class' defaultTheme='light' enableSystem>
-          <Theme accentColor='blue' radius='full'>
-            <QueryProvider>
-              {children}
-              <Toaster />
-            </QueryProvider>
-          </Theme>
+          <QueryProvider>
+            {children}
+            <Toaster />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

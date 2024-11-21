@@ -4,7 +4,7 @@ Yet another Twitter. Self-hosted, privacy-focused, and open-source federated soc
 
 ## Disclaimer
 
-This project is not affiliated with Twitter, Inc. in any way.
+This project is not affiliated with X, Inc. in any way.
 
 ## Principles
 
