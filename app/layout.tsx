@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import { Noto_Sans_JP } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'react-hot-toast'
-import { QueryProvider } from '@/providers/query'
 import './globals.css'
 
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
@@ -39,10 +38,8 @@ export default async function RootLayout({
     <html lang='ja' suppressHydrationWarning>
       <body className={notoSansJP.className}>
         <ThemeProvider attribute='class' defaultTheme='light' enableSystem>
-          <QueryProvider>
-            {children}
-            <Toaster />
-          </QueryProvider>
+          {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
