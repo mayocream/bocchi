@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+
 import { motion } from 'framer-motion'
 import {
   HomeIcon,
@@ -15,6 +16,7 @@ import {
   Cog6ToothIcon as CogSolidIcon,
 } from '@heroicons/react/24/solid'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 const menus = [
   { name: 'ホーム', path: '/', icon: HomeIcon, activeIcon: HouseSolidIcon },
@@ -49,17 +51,21 @@ export const Navigation = () => {
     <motion.nav className='w-64 p-4'>
       <motion.ul className='flex flex-col space-y-6'>
         {menus.map((menu) => (
-          <motion.li
-            key={menu.path}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.li key={menu.path}>
             <Link
               className='flex items-center space-x-4 text-xl rounded-lg p-2'
               href={menu.path}
             >
-              <menu.icon className='w-7 h-7' />
-              <span>{menu.name}</span>
+              {usePathname() === menu.path ? (
+                <menu.activeIcon className='w-7 h-7' />
+              ) : (
+                <menu.icon className='w-7 h-7' />
+              )}
+              <span
+                className={`${usePathname() === menu.path ? 'font-bold' : ''}`}
+              >
+                {menu.name}
+              </span>
             </Link>
           </motion.li>
         ))}
