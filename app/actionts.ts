@@ -1,6 +1,6 @@
 'use server'
 
-import { User } from '@/lib/scehma'
+import { User } from '@/lib/schema'
 import { verify } from '@/lib/turnstile'
 import * as blocklist from '@/lib/blocklist'
 import { prisma } from '@/lib/storage'

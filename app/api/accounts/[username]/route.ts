@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth'
-import { User } from '@/lib/scehma'
+import { User } from '@/lib/schema'
 import { prisma } from '@/lib/storage'
 import { NextRequest, NextResponse } from 'next/server'
 
