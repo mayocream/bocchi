@@ -11,7 +11,7 @@
     "migrate:local": "dotenv -e .env.local -- prisma db push",
     "migrate:prod": "dotenv -e .vercel/.env.development.local -- prisma db push",
     "start": "next start",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build"
   },
   "dependencies": {
@@ -36,7 +36,6 @@
     "@chromatic-com/storybook": "^3.2.2",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",
-    "@storybook/addon-onboarding": "^8.4.7",
     "@storybook/blocks": "^8.4.7",
     "@storybook/nextjs": "^8.4.7",
     "@storybook/react": "^8.4.7",
