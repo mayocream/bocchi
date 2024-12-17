@@ -1,7 +1,10 @@
-import { HomeIcon } from '@heroicons/react/24/outline'
-import { HomeIcon as HouseSolidIcon } from '@heroicons/react/24/solid'
+import { Navigation } from '@/components/navigation'
 
-const menus = [
-  { name: 'ホーム', path: '/', icon: HomeIcon, activeIcon: HouseSolidIcon },
-  { name: 'プロフィール', path: '/profile' },
-]
+export default function Layout({ children }) {
+  return (
+    <>
+      <Navigation />
+      {children}
+    </>
+  )
+}
