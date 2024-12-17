@@ -36,7 +36,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang='ja' suppressHydrationWarning>
-      <body className={notoSansJP.className}>
+      <body className={`${notoSansJP.className} antialiased`}>
         <ThemeProvider attribute='class' defaultTheme='light' enableSystem>
           {children}
           <Toaster />

@@ -10,13 +10,16 @@
     "postinstall": "prisma generate",
     "migrate:local": "dotenv -e .env.local -- prisma db push",
     "migrate:prod": "dotenv -e .vercel/.env.development.local -- prisma db push",
-    "start": "next start"
+    "start": "next start",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.713.0",
     "@prisma/client": "6.0.1",
     "argon2": "^0.41.1",
     "date-fns": "4.1.0",
+    "framer-motion": "^11.15.0",
     "jose": "^5.9.6",
     "mailgun.js": "^10.2.4",
     "nanoid": "^5.0.9",
@@ -29,11 +32,20 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^3.2.2",
+    "@storybook/addon-essentials": "^8.4.7",
+    "@storybook/addon-interactions": "^8.4.7",
+    "@storybook/addon-onboarding": "^8.4.7",
+    "@storybook/blocks": "^8.4.7",
+    "@storybook/nextjs": "^8.4.7",
+    "@storybook/react": "^8.4.7",
+    "@storybook/test": "^8.4.7",
     "@types/node": "22.10.2",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "dotenv-cli": "^7.4.4",
     "postcss": "8.4.49",
+    "storybook": "^8.4.7",
     "tailwindcss": "3.4.16",
     "typescript": "5.7.2"
   },
