@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import {
   HomeIcon,
   MagnifyingGlassIcon,
@@ -48,10 +47,10 @@ const menus = [
 
 export const Navigation = () => {
   return (
-    <motion.nav className='w-64 p-4'>
-      <motion.ul className='flex flex-col space-y-6'>
+    <nav className='w-64 p-4'>
+      <ul className='flex flex-col space-y-6'>
         {menus.map((menu) => (
-          <motion.li key={menu.path}>
+          <li key={menu.path}>
             <Link
               className='flex items-center space-x-4 text-xl rounded-lg p-2'
               href={menu.path}
@@ -67,9 +66,9 @@ export const Navigation = () => {
                 {menu.name}
               </span>
             </Link>
-          </motion.li>
+          </li>
         ))}
-      </motion.ul>
-    </motion.nav>
+      </ul>
+    </nav>
   )
 }
