@@ -12,16 +12,17 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  username  String   @unique
-  password  String
-  avatar    String?
-  bio       String?
-  banner    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  emialVerified Boolean  @default(false)
+  name          String?
+  username      String   @unique
+  password      String
+  avatar        String?
+  bio           String?
+  banner        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // Content relations
   tweets   Tweet[]

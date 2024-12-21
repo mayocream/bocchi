@@ -2,13 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/storage'
 import { auth } from '@/lib/auth'
 
-export const GET = async (request: NextRequest, segmentData) => {
-  const { cursor, limit = 10 } = await segmentData.searchParams
+export const GET = async (request: NextRequest) => {
+  const { cursor, limit = 10 } = Object.fromEntries(
+    request.nextUrl.searchParams
+  )
 
   const user = await auth()
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
 
   // Get tweets from users the current user follows, plus their own tweets
   const tweets = await prisma.tweet.findMany({
@@ -26,14 +25,14 @@ export const GET = async (request: NextRequest, segmentData) => {
           author: {
             followers: {
               some: {
-                followerId: user.id,
+                followerId: user?.id,
               },
             },
           },
         },
         // Include the user's own tweets
         {
-          authorId: user.id,
+          authorId: user?.id,
         },
       ],
     },

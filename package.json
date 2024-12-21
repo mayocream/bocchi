@@ -8,12 +8,15 @@
     "dev": "next dev --turbo",
     "format": "prettier --write .",
     "postinstall": "prisma generate",
-    "start": "next start"
+    "start": "next start",
+    "migrate:local": "dotenv -e .env.local -- prisma db push",
+    "migrate:dev": "dotenv -e .vercel/.env.development.local -- prisma db push"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.717.0",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "6.1.0",
+    "@tailwindcss/typography": "^0.5.15",
     "argon2": "^0.41.1",
     "date-fns": "4.1.0",
     "framer-motion": "^11.15.0",
