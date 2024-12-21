@@ -15,7 +15,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.716.0",
+    "@aws-sdk/client-s3": "^3.717.0",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "6.1.0",
     "argon2": "^0.41.1",
@@ -43,7 +43,7 @@
     "@types/node": "22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
-    "dotenv-cli": "^7.4.4",
+    "dotenv-cli": "^8.0.0",
     "postcss": "8.4.49",
     "storybook": "^8.4.7",
     "tailwindcss": "3.4.17",
