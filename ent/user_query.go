@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/mayocream/twitter2/ent/like"
 	"github.com/mayocream/twitter2/ent/predicate"
+	"github.com/mayocream/twitter2/ent/retweet"
 	"github.com/mayocream/twitter2/ent/tweet"
 	"github.com/mayocream/twitter2/ent/user"
 )
@@ -21,12 +22,13 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx        *QueryContext
-	order      []user.OrderOption
-	inters     []Interceptor
-	predicates []predicate.User
-	withTweets *TweetQuery
-	withLikes  *LikeQuery
+	ctx          *QueryContext
+	order        []user.OrderOption
+	inters       []Interceptor
+	predicates   []predicate.User
+	withTweets   *TweetQuery
+	withLikes    *LikeQuery
+	withRetweets *RetweetQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -100,6 +102,28 @@ func (uq *UserQuery) QueryLikes() *LikeQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(like.Table, like.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.LikesTable, user.LikesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRetweets chains the current query on the "retweets" edge.
+func (uq *UserQuery) QueryRetweets() *RetweetQuery {
+	query := (&RetweetClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(retweet.Table, retweet.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.RetweetsTable, user.RetweetsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -294,13 +318,14 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:     uq.config,
-		ctx:        uq.ctx.Clone(),
-		order:      append([]user.OrderOption{}, uq.order...),
-		inters:     append([]Interceptor{}, uq.inters...),
-		predicates: append([]predicate.User{}, uq.predicates...),
-		withTweets: uq.withTweets.Clone(),
-		withLikes:  uq.withLikes.Clone(),
+		config:       uq.config,
+		ctx:          uq.ctx.Clone(),
+		order:        append([]user.OrderOption{}, uq.order...),
+		inters:       append([]Interceptor{}, uq.inters...),
+		predicates:   append([]predicate.User{}, uq.predicates...),
+		withTweets:   uq.withTweets.Clone(),
+		withLikes:    uq.withLikes.Clone(),
+		withRetweets: uq.withRetweets.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -326,6 +351,17 @@ func (uq *UserQuery) WithLikes(opts ...func(*LikeQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withLikes = query
+	return uq
+}
+
+// WithRetweets tells the query-builder to eager-load the nodes that are connected to
+// the "retweets" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithRetweets(opts ...func(*RetweetQuery)) *UserQuery {
+	query := (&RetweetClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withRetweets = query
 	return uq
 }
 
@@ -407,9 +443,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			uq.withTweets != nil,
 			uq.withLikes != nil,
+			uq.withRetweets != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -441,6 +478,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadLikes(ctx, query, nodes,
 			func(n *User) { n.Edges.Likes = []*Like{} },
 			func(n *User, e *Like) { n.Edges.Likes = append(n.Edges.Likes, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withRetweets; query != nil {
+		if err := uq.loadRetweets(ctx, query, nodes,
+			func(n *User) { n.Edges.Retweets = []*Retweet{} },
+			func(n *User, e *Retweet) { n.Edges.Retweets = append(n.Edges.Retweets, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -504,6 +548,67 @@ func (uq *UserQuery) loadLikes(ctx context.Context, query *LikeQuery, nodes []*U
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadRetweets(ctx context.Context, query *RetweetQuery, nodes []*User, init func(*User), assign func(*User, *Retweet)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*User)
+	nids := make(map[int]map[*User]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(user.RetweetsTable)
+		s.Join(joinT).On(s.C(retweet.FieldID), joinT.C(user.RetweetsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.RetweetsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(user.RetweetsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*User]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Retweet](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "retweets" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
 	}
 	return nil
 }

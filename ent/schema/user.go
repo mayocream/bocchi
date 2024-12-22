@@ -46,5 +46,7 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("likes", Like.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("retweets", Retweet.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

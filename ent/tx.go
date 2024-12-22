@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Like is the client for interacting with the Like builders.
 	Like *LikeClient
+	// Retweet is the client for interacting with the Retweet builders.
+	Retweet *RetweetClient
 	// Tweet is the client for interacting with the Tweet builders.
 	Tweet *TweetClient
 	// User is the client for interacting with the User builders.
@@ -150,6 +152,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Like = NewLikeClient(tx.config)
+	tx.Retweet = NewRetweetClient(tx.config)
 	tx.Tweet = NewTweetClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

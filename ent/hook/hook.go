@@ -21,6 +21,18 @@ func (f LikeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LikeMutation", m)
 }
 
+// The RetweetFunc type is an adapter to allow the use of ordinary
+// function as Retweet mutator.
+type RetweetFunc func(context.Context, *ent.RetweetMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RetweetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RetweetMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RetweetMutation", m)
+}
+
 // The TweetFunc type is an adapter to allow the use of ordinary
 // function as Tweet mutator.
 type TweetFunc func(context.Context, *ent.TweetMutation) (ent.Value, error)

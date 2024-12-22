@@ -42,9 +42,11 @@ type TweetEdges struct {
 	Author *User `json:"author,omitempty"`
 	// Likes holds the value of the likes edge.
 	Likes []*Like `json:"likes,omitempty"`
+	// Retweets holds the value of the retweets edge.
+	Retweets []*Retweet `json:"retweets,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // ParentOrErr returns the Parent value or an error if the edge
@@ -76,6 +78,15 @@ func (e TweetEdges) LikesOrErr() ([]*Like, error) {
 		return e.Likes, nil
 	}
 	return nil, &NotLoadedError{edge: "likes"}
+}
+
+// RetweetsOrErr returns the Retweets value or an error if the edge
+// was not loaded in eager-loading.
+func (e TweetEdges) RetweetsOrErr() ([]*Retweet, error) {
+	if e.loadedTypes[3] {
+		return e.Retweets, nil
+	}
+	return nil, &NotLoadedError{edge: "retweets"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -166,6 +177,11 @@ func (t *Tweet) QueryAuthor() *UserQuery {
 // QueryLikes queries the "likes" edge of the Tweet entity.
 func (t *Tweet) QueryLikes() *LikeQuery {
 	return NewTweetClient(t.config).QueryLikes(t)
+}
+
+// QueryRetweets queries the "retweets" edge of the Tweet entity.
+func (t *Tweet) QueryRetweets() *RetweetQuery {
+	return NewTweetClient(t.config).QueryRetweets(t)
 }
 
 // Update returns a builder for updating this Tweet.

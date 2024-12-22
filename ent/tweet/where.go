@@ -344,6 +344,29 @@ func HasLikesWith(preds ...predicate.Like) predicate.Tweet {
 	})
 }
 
+// HasRetweets applies the HasEdge predicate on the "retweets" edge.
+func HasRetweets() predicate.Tweet {
+	return predicate.Tweet(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RetweetsTable, RetweetsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRetweetsWith applies the HasEdge predicate on the "retweets" edge with a given conditions (other predicates).
+func HasRetweetsWith(preds ...predicate.Retweet) predicate.Tweet {
+	return predicate.Tweet(func(s *sql.Selector) {
+		step := newRetweetsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Tweet) predicate.Tweet {
 	return predicate.Tweet(sql.AndPredicates(predicates...))

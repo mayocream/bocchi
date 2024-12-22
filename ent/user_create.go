@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/mayocream/twitter2/ent/like"
+	"github.com/mayocream/twitter2/ent/retweet"
 	"github.com/mayocream/twitter2/ent/tweet"
 	"github.com/mayocream/twitter2/ent/user"
 )
@@ -158,6 +159,21 @@ func (uc *UserCreate) AddLikes(l ...*Like) *UserCreate {
 		ids[i] = l[i].ID
 	}
 	return uc.AddLikeIDs(ids...)
+}
+
+// AddRetweetIDs adds the "retweets" edge to the Retweet entity by IDs.
+func (uc *UserCreate) AddRetweetIDs(ids ...int) *UserCreate {
+	uc.mutation.AddRetweetIDs(ids...)
+	return uc
+}
+
+// AddRetweets adds the "retweets" edges to the Retweet entity.
+func (uc *UserCreate) AddRetweets(r ...*Retweet) *UserCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddRetweetIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -323,6 +339,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(like.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RetweetsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RetweetsTable,
+			Columns: user.RetweetsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

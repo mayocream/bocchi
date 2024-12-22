@@ -30,6 +30,8 @@ const (
 	EdgeAuthor = "author"
 	// EdgeLikes holds the string denoting the likes edge name in mutations.
 	EdgeLikes = "likes"
+	// EdgeRetweets holds the string denoting the retweets edge name in mutations.
+	EdgeRetweets = "retweets"
 	// Table holds the table name of the tweet in the database.
 	Table = "tweets"
 	// ParentTable is the table that holds the parent relation/edge.
@@ -50,6 +52,11 @@ const (
 	LikesInverseTable = "likes"
 	// LikesColumn is the table column denoting the likes relation/edge.
 	LikesColumn = "tweet_id"
+	// RetweetsTable is the table that holds the retweets relation/edge. The primary key declared below.
+	RetweetsTable = "tweet_retweets"
+	// RetweetsInverseTable is the table name for the Retweet entity.
+	// It exists in this package in order to avoid circular dependency with the "retweet" package.
+	RetweetsInverseTable = "retweets"
 )
 
 // Columns holds all SQL columns for tweet fields.
@@ -61,6 +68,12 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
+
+var (
+	// RetweetsPrimaryKey and RetweetsColumn2 are the table columns denoting the
+	// primary key for the retweets relation (M2M).
+	RetweetsPrimaryKey = []string{"tweet_id", "retweet_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -141,6 +154,20 @@ func ByLikes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newLikesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByRetweetsCount orders the results by retweets count.
+func ByRetweetsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRetweetsStep(), opts...)
+	}
+}
+
+// ByRetweets orders the results by retweets terms.
+func ByRetweets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRetweetsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newParentStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -160,5 +187,12 @@ func newLikesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LikesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, LikesTable, LikesColumn),
+	)
+}
+func newRetweetsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RetweetsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, RetweetsTable, RetweetsPrimaryKey...),
 	)
 }

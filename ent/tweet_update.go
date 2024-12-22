@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/mayocream/twitter2/ent/like"
 	"github.com/mayocream/twitter2/ent/predicate"
+	"github.com/mayocream/twitter2/ent/retweet"
 	"github.com/mayocream/twitter2/ent/tweet"
 	"github.com/mayocream/twitter2/ent/user"
 )
@@ -123,6 +124,21 @@ func (tu *TweetUpdate) AddLikes(l ...*Like) *TweetUpdate {
 	return tu.AddLikeIDs(ids...)
 }
 
+// AddRetweetIDs adds the "retweets" edge to the Retweet entity by IDs.
+func (tu *TweetUpdate) AddRetweetIDs(ids ...int) *TweetUpdate {
+	tu.mutation.AddRetweetIDs(ids...)
+	return tu
+}
+
+// AddRetweets adds the "retweets" edges to the Retweet entity.
+func (tu *TweetUpdate) AddRetweets(r ...*Retweet) *TweetUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tu.AddRetweetIDs(ids...)
+}
+
 // Mutation returns the TweetMutation object of the builder.
 func (tu *TweetUpdate) Mutation() *TweetMutation {
 	return tu.mutation
@@ -159,6 +175,27 @@ func (tu *TweetUpdate) RemoveLikes(l ...*Like) *TweetUpdate {
 		ids[i] = l[i].ID
 	}
 	return tu.RemoveLikeIDs(ids...)
+}
+
+// ClearRetweets clears all "retweets" edges to the Retweet entity.
+func (tu *TweetUpdate) ClearRetweets() *TweetUpdate {
+	tu.mutation.ClearRetweets()
+	return tu
+}
+
+// RemoveRetweetIDs removes the "retweets" edge to Retweet entities by IDs.
+func (tu *TweetUpdate) RemoveRetweetIDs(ids ...int) *TweetUpdate {
+	tu.mutation.RemoveRetweetIDs(ids...)
+	return tu
+}
+
+// RemoveRetweets removes "retweets" edges to Retweet entities.
+func (tu *TweetUpdate) RemoveRetweets(r ...*Retweet) *TweetUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tu.RemoveRetweetIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -329,6 +366,51 @@ func (tu *TweetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tu.mutation.RetweetsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   tweet.RetweetsTable,
+			Columns: tweet.RetweetsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedRetweetsIDs(); len(nodes) > 0 && !tu.mutation.RetweetsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   tweet.RetweetsTable,
+			Columns: tweet.RetweetsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RetweetsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   tweet.RetweetsTable,
+			Columns: tweet.RetweetsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{tweet.Label}
@@ -442,6 +524,21 @@ func (tuo *TweetUpdateOne) AddLikes(l ...*Like) *TweetUpdateOne {
 	return tuo.AddLikeIDs(ids...)
 }
 
+// AddRetweetIDs adds the "retweets" edge to the Retweet entity by IDs.
+func (tuo *TweetUpdateOne) AddRetweetIDs(ids ...int) *TweetUpdateOne {
+	tuo.mutation.AddRetweetIDs(ids...)
+	return tuo
+}
+
+// AddRetweets adds the "retweets" edges to the Retweet entity.
+func (tuo *TweetUpdateOne) AddRetweets(r ...*Retweet) *TweetUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tuo.AddRetweetIDs(ids...)
+}
+
 // Mutation returns the TweetMutation object of the builder.
 func (tuo *TweetUpdateOne) Mutation() *TweetMutation {
 	return tuo.mutation
@@ -478,6 +575,27 @@ func (tuo *TweetUpdateOne) RemoveLikes(l ...*Like) *TweetUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return tuo.RemoveLikeIDs(ids...)
+}
+
+// ClearRetweets clears all "retweets" edges to the Retweet entity.
+func (tuo *TweetUpdateOne) ClearRetweets() *TweetUpdateOne {
+	tuo.mutation.ClearRetweets()
+	return tuo
+}
+
+// RemoveRetweetIDs removes the "retweets" edge to Retweet entities by IDs.
+func (tuo *TweetUpdateOne) RemoveRetweetIDs(ids ...int) *TweetUpdateOne {
+	tuo.mutation.RemoveRetweetIDs(ids...)
+	return tuo
+}
+
+// RemoveRetweets removes "retweets" edges to Retweet entities.
+func (tuo *TweetUpdateOne) RemoveRetweets(r ...*Retweet) *TweetUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tuo.RemoveRetweetIDs(ids...)
 }
 
 // Where appends a list predicates to the TweetUpdate builder.
@@ -671,6 +789,51 @@ func (tuo *TweetUpdateOne) sqlSave(ctx context.Context) (_node *Tweet, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(like.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.RetweetsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   tweet.RetweetsTable,
+			Columns: tweet.RetweetsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedRetweetsIDs(); len(nodes) > 0 && !tuo.mutation.RetweetsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   tweet.RetweetsTable,
+			Columns: tweet.RetweetsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RetweetsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   tweet.RetweetsTable,
+			Columns: tweet.RetweetsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

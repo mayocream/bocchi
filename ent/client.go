@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/mayocream/twitter2/ent/like"
+	"github.com/mayocream/twitter2/ent/retweet"
 	"github.com/mayocream/twitter2/ent/tweet"
 	"github.com/mayocream/twitter2/ent/user"
 )
@@ -27,6 +28,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Like is the client for interacting with the Like builders.
 	Like *LikeClient
+	// Retweet is the client for interacting with the Retweet builders.
+	Retweet *RetweetClient
 	// Tweet is the client for interacting with the Tweet builders.
 	Tweet *TweetClient
 	// User is the client for interacting with the User builders.
@@ -43,6 +46,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Like = NewLikeClient(c.config)
+	c.Retweet = NewRetweetClient(c.config)
 	c.Tweet = NewTweetClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -135,11 +139,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Like:   NewLikeClient(cfg),
-		Tweet:  NewTweetClient(cfg),
-		User:   NewUserClient(cfg),
+		ctx:     ctx,
+		config:  cfg,
+		Like:    NewLikeClient(cfg),
+		Retweet: NewRetweetClient(cfg),
+		Tweet:   NewTweetClient(cfg),
+		User:    NewUserClient(cfg),
 	}, nil
 }
 
@@ -157,11 +162,12 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Like:   NewLikeClient(cfg),
-		Tweet:  NewTweetClient(cfg),
-		User:   NewUserClient(cfg),
+		ctx:     ctx,
+		config:  cfg,
+		Like:    NewLikeClient(cfg),
+		Retweet: NewRetweetClient(cfg),
+		Tweet:   NewTweetClient(cfg),
+		User:    NewUserClient(cfg),
 	}, nil
 }
 
@@ -191,6 +197,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Like.Use(hooks...)
+	c.Retweet.Use(hooks...)
 	c.Tweet.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -199,6 +206,7 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Like.Intercept(interceptors...)
+	c.Retweet.Intercept(interceptors...)
 	c.Tweet.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
@@ -208,6 +216,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *LikeMutation:
 		return c.Like.mutate(ctx, m)
+	case *RetweetMutation:
+		return c.Retweet.mutate(ctx, m)
 	case *TweetMutation:
 		return c.Tweet.mutate(ctx, m)
 	case *UserMutation:
@@ -382,6 +392,171 @@ func (c *LikeClient) mutate(ctx context.Context, m *LikeMutation) (Value, error)
 	}
 }
 
+// RetweetClient is a client for the Retweet schema.
+type RetweetClient struct {
+	config
+}
+
+// NewRetweetClient returns a client for the Retweet from the given config.
+func NewRetweetClient(c config) *RetweetClient {
+	return &RetweetClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `retweet.Hooks(f(g(h())))`.
+func (c *RetweetClient) Use(hooks ...Hook) {
+	c.hooks.Retweet = append(c.hooks.Retweet, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `retweet.Intercept(f(g(h())))`.
+func (c *RetweetClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Retweet = append(c.inters.Retweet, interceptors...)
+}
+
+// Create returns a builder for creating a Retweet entity.
+func (c *RetweetClient) Create() *RetweetCreate {
+	mutation := newRetweetMutation(c.config, OpCreate)
+	return &RetweetCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Retweet entities.
+func (c *RetweetClient) CreateBulk(builders ...*RetweetCreate) *RetweetCreateBulk {
+	return &RetweetCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RetweetClient) MapCreateBulk(slice any, setFunc func(*RetweetCreate, int)) *RetweetCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RetweetCreateBulk{err: fmt.Errorf("calling to RetweetClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RetweetCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RetweetCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Retweet.
+func (c *RetweetClient) Update() *RetweetUpdate {
+	mutation := newRetweetMutation(c.config, OpUpdate)
+	return &RetweetUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RetweetClient) UpdateOne(r *Retweet) *RetweetUpdateOne {
+	mutation := newRetweetMutation(c.config, OpUpdateOne, withRetweet(r))
+	return &RetweetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RetweetClient) UpdateOneID(id int) *RetweetUpdateOne {
+	mutation := newRetweetMutation(c.config, OpUpdateOne, withRetweetID(id))
+	return &RetweetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Retweet.
+func (c *RetweetClient) Delete() *RetweetDelete {
+	mutation := newRetweetMutation(c.config, OpDelete)
+	return &RetweetDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RetweetClient) DeleteOne(r *Retweet) *RetweetDeleteOne {
+	return c.DeleteOneID(r.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RetweetClient) DeleteOneID(id int) *RetweetDeleteOne {
+	builder := c.Delete().Where(retweet.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RetweetDeleteOne{builder}
+}
+
+// Query returns a query builder for Retweet.
+func (c *RetweetClient) Query() *RetweetQuery {
+	return &RetweetQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRetweet},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Retweet entity by its id.
+func (c *RetweetClient) Get(ctx context.Context, id int) (*Retweet, error) {
+	return c.Query().Where(retweet.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RetweetClient) GetX(ctx context.Context, id int) *Retweet {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTweet queries the tweet edge of a Retweet.
+func (c *RetweetClient) QueryTweet(r *Retweet) *TweetQuery {
+	query := (&TweetClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(retweet.Table, retweet.FieldID, id),
+			sqlgraph.To(tweet.Table, tweet.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, retweet.TweetTable, retweet.TweetPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUser queries the user edge of a Retweet.
+func (c *RetweetClient) QueryUser(r *Retweet) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(retweet.Table, retweet.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, retweet.UserTable, retweet.UserPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RetweetClient) Hooks() []Hook {
+	return c.hooks.Retweet
+}
+
+// Interceptors returns the client interceptors.
+func (c *RetweetClient) Interceptors() []Interceptor {
+	return c.inters.Retweet
+}
+
+func (c *RetweetClient) mutate(ctx context.Context, m *RetweetMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RetweetCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RetweetUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RetweetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RetweetDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Retweet mutation op: %q", m.Op())
+	}
+}
+
 // TweetClient is a client for the Tweet schema.
 type TweetClient struct {
 	config
@@ -531,6 +706,22 @@ func (c *TweetClient) QueryLikes(t *Tweet) *LikeQuery {
 			sqlgraph.From(tweet.Table, tweet.FieldID, id),
 			sqlgraph.To(like.Table, like.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, tweet.LikesTable, tweet.LikesColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRetweets queries the retweets edge of a Tweet.
+func (c *TweetClient) QueryRetweets(t *Tweet) *RetweetQuery {
+	query := (&RetweetClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tweet.Table, tweet.FieldID, id),
+			sqlgraph.To(retweet.Table, retweet.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, tweet.RetweetsTable, tweet.RetweetsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -703,6 +894,22 @@ func (c *UserClient) QueryLikes(u *User) *LikeQuery {
 	return query
 }
 
+// QueryRetweets queries the retweets edge of a User.
+func (c *UserClient) QueryRetweets(u *User) *RetweetQuery {
+	query := (&RetweetClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(retweet.Table, retweet.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.RetweetsTable, user.RetweetsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -731,9 +938,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Like, Tweet, User []ent.Hook
+		Like, Retweet, Tweet, User []ent.Hook
 	}
 	inters struct {
-		Like, Tweet, User []ent.Interceptor
+		Like, Retweet, Tweet, User []ent.Interceptor
 	}
 )

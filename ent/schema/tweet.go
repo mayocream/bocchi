@@ -43,5 +43,7 @@ func (Tweet) Edges() []ent.Edge {
 			Field("author_id"),
 		edge.To("likes", Like.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("retweets", Retweet.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
