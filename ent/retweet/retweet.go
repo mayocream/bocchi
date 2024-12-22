@@ -24,16 +24,20 @@ const (
 	EdgeUser = "user"
 	// Table holds the table name of the retweet in the database.
 	Table = "retweets"
-	// TweetTable is the table that holds the tweet relation/edge. The primary key declared below.
-	TweetTable = "tweet_retweets"
+	// TweetTable is the table that holds the tweet relation/edge.
+	TweetTable = "retweets"
 	// TweetInverseTable is the table name for the Tweet entity.
 	// It exists in this package in order to avoid circular dependency with the "tweet" package.
 	TweetInverseTable = "tweets"
-	// UserTable is the table that holds the user relation/edge. The primary key declared below.
-	UserTable = "user_retweets"
+	// TweetColumn is the table column denoting the tweet relation/edge.
+	TweetColumn = "tweet_id"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "retweets"
 	// UserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_id"
 )
 
 // Columns holds all SQL columns for retweet fields.
@@ -43,15 +47,6 @@ var Columns = []string{
 	FieldUserID,
 	FieldCreatedAt,
 }
-
-var (
-	// TweetPrimaryKey and TweetColumn2 are the table columns denoting the
-	// primary key for the tweet relation (M2M).
-	TweetPrimaryKey = []string{"tweet_id", "retweet_id"}
-	// UserPrimaryKey and UserColumn2 are the table columns denoting the
-	// primary key for the user relation (M2M).
-	UserPrimaryKey = []string{"user_id", "retweet_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -86,44 +81,30 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
-// ByTweetCount orders the results by tweet count.
-func ByTweetCount(opts ...sql.OrderTermOption) OrderOption {
+// ByTweetField orders the results by tweet field.
+func ByTweetField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newTweetStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newTweetStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByTweet orders the results by tweet terms.
-func ByTweet(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTweetStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByUserCount orders the results by user count.
-func ByUserCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newUserStep(), opts...)
-	}
-}
-
-// ByUser orders the results by user terms.
-func ByUser(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUserStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newTweetStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TweetInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, TweetTable, TweetPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2O, true, TweetTable, TweetColumn),
 	)
 }
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, UserTable, UserPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }

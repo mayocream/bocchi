@@ -24,8 +24,14 @@ func (Retweet) Fields() []ent.Field {
 func (Retweet) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("tweet", Tweet.Type).
-			Ref("retweets"),
+			Ref("retweets").
+			Required().
+			Unique().
+			Field("tweet_id"),
 		edge.From("user", User.Type).
-			Ref("retweets"),
+			Ref("retweets").
+			Required().
+			Unique().
+			Field("user_id"),
 	}
 }

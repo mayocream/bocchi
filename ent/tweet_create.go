@@ -269,10 +269,10 @@ func (tc *TweetCreate) createSpec() (*Tweet, *sqlgraph.CreateSpec) {
 	}
 	if nodes := tc.mutation.RetweetsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   tweet.RetweetsTable,
-			Columns: tweet.RetweetsPrimaryKey,
+			Columns: []string{tweet.RetweetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt),

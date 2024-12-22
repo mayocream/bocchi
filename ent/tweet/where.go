@@ -349,7 +349,7 @@ func HasRetweets() predicate.Tweet {
 	return predicate.Tweet(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, RetweetsTable, RetweetsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, RetweetsTable, RetweetsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

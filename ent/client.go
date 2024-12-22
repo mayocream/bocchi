@@ -508,7 +508,7 @@ func (c *RetweetClient) QueryTweet(r *Retweet) *TweetQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(retweet.Table, retweet.FieldID, id),
 			sqlgraph.To(tweet.Table, tweet.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, retweet.TweetTable, retweet.TweetPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, retweet.TweetTable, retweet.TweetColumn),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil
@@ -524,7 +524,7 @@ func (c *RetweetClient) QueryUser(r *Retweet) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(retweet.Table, retweet.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, retweet.UserTable, retweet.UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, retweet.UserTable, retweet.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil
@@ -721,7 +721,7 @@ func (c *TweetClient) QueryRetweets(t *Tweet) *RetweetQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tweet.Table, tweet.FieldID, id),
 			sqlgraph.To(retweet.Table, retweet.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, tweet.RetweetsTable, tweet.RetweetsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, tweet.RetweetsTable, tweet.RetweetsColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -902,7 +902,7 @@ func (c *UserClient) QueryRetweets(u *User) *RetweetQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(retweet.Table, retweet.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.RetweetsTable, user.RetweetsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RetweetsTable, user.RetweetsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

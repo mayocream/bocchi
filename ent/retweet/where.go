@@ -90,26 +90,6 @@ func TweetIDNotIn(vs ...int) predicate.Retweet {
 	return predicate.Retweet(sql.FieldNotIn(FieldTweetID, vs...))
 }
 
-// TweetIDGT applies the GT predicate on the "tweet_id" field.
-func TweetIDGT(v int) predicate.Retweet {
-	return predicate.Retweet(sql.FieldGT(FieldTweetID, v))
-}
-
-// TweetIDGTE applies the GTE predicate on the "tweet_id" field.
-func TweetIDGTE(v int) predicate.Retweet {
-	return predicate.Retweet(sql.FieldGTE(FieldTweetID, v))
-}
-
-// TweetIDLT applies the LT predicate on the "tweet_id" field.
-func TweetIDLT(v int) predicate.Retweet {
-	return predicate.Retweet(sql.FieldLT(FieldTweetID, v))
-}
-
-// TweetIDLTE applies the LTE predicate on the "tweet_id" field.
-func TweetIDLTE(v int) predicate.Retweet {
-	return predicate.Retweet(sql.FieldLTE(FieldTweetID, v))
-}
-
 // UserIDEQ applies the EQ predicate on the "user_id" field.
 func UserIDEQ(v int) predicate.Retweet {
 	return predicate.Retweet(sql.FieldEQ(FieldUserID, v))
@@ -128,26 +108,6 @@ func UserIDIn(vs ...int) predicate.Retweet {
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
 func UserIDNotIn(vs ...int) predicate.Retweet {
 	return predicate.Retweet(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v int) predicate.Retweet {
-	return predicate.Retweet(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v int) predicate.Retweet {
-	return predicate.Retweet(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v int) predicate.Retweet {
-	return predicate.Retweet(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v int) predicate.Retweet {
-	return predicate.Retweet(sql.FieldLTE(FieldUserID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -195,7 +155,7 @@ func HasTweet() predicate.Retweet {
 	return predicate.Retweet(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, TweetTable, TweetPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, TweetTable, TweetColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -218,7 +178,7 @@ func HasUser() predicate.Retweet {
 	return predicate.Retweet(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, UserTable, UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

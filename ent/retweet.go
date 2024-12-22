@@ -10,6 +10,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/mayocream/twitter2/ent/retweet"
+	"github.com/mayocream/twitter2/ent/tweet"
+	"github.com/mayocream/twitter2/ent/user"
 )
 
 // Retweet is the model entity for the Retweet schema.
@@ -32,28 +34,32 @@ type Retweet struct {
 // RetweetEdges holds the relations/edges for other nodes in the graph.
 type RetweetEdges struct {
 	// Tweet holds the value of the tweet edge.
-	Tweet []*Tweet `json:"tweet,omitempty"`
+	Tweet *Tweet `json:"tweet,omitempty"`
 	// User holds the value of the user edge.
-	User []*User `json:"user,omitempty"`
+	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 }
 
 // TweetOrErr returns the Tweet value or an error if the edge
-// was not loaded in eager-loading.
-func (e RetweetEdges) TweetOrErr() ([]*Tweet, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e RetweetEdges) TweetOrErr() (*Tweet, error) {
+	if e.Tweet != nil {
 		return e.Tweet, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: tweet.Label}
 	}
 	return nil, &NotLoadedError{edge: "tweet"}
 }
 
 // UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading.
-func (e RetweetEdges) UserOrErr() ([]*User, error) {
-	if e.loadedTypes[1] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e RetweetEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
 		return e.User, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "user"}
 }

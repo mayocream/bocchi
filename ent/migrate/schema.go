@@ -3,7 +3,6 @@
 package migrate
 
 import (
-	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
@@ -40,15 +39,29 @@ var (
 	// RetweetsColumns holds the columns for the "retweets" table.
 	RetweetsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "tweet_id", Type: field.TypeInt},
 		{Name: "user_id", Type: field.TypeInt},
-		{Name: "created_at", Type: field.TypeTime},
 	}
 	// RetweetsTable holds the schema information for the "retweets" table.
 	RetweetsTable = &schema.Table{
 		Name:       "retweets",
 		Columns:    RetweetsColumns,
 		PrimaryKey: []*schema.Column{RetweetsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "retweets_tweets_retweets",
+				Columns:    []*schema.Column{RetweetsColumns[2]},
+				RefColumns: []*schema.Column{TweetsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "retweets_users_retweets",
+				Columns:    []*schema.Column{RetweetsColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
 	}
 	// TweetsColumns holds the columns for the "tweets" table.
 	TweetsColumns = []*schema.Column{
@@ -99,76 +112,20 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
-	// TweetRetweetsColumns holds the columns for the "tweet_retweets" table.
-	TweetRetweetsColumns = []*schema.Column{
-		{Name: "tweet_id", Type: field.TypeInt},
-		{Name: "retweet_id", Type: field.TypeInt},
-	}
-	// TweetRetweetsTable holds the schema information for the "tweet_retweets" table.
-	TweetRetweetsTable = &schema.Table{
-		Name:       "tweet_retweets",
-		Columns:    TweetRetweetsColumns,
-		PrimaryKey: []*schema.Column{TweetRetweetsColumns[0], TweetRetweetsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "tweet_retweets_tweet_id",
-				Columns:    []*schema.Column{TweetRetweetsColumns[0]},
-				RefColumns: []*schema.Column{TweetsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "tweet_retweets_retweet_id",
-				Columns:    []*schema.Column{TweetRetweetsColumns[1]},
-				RefColumns: []*schema.Column{RetweetsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// UserRetweetsColumns holds the columns for the "user_retweets" table.
-	UserRetweetsColumns = []*schema.Column{
-		{Name: "user_id", Type: field.TypeInt},
-		{Name: "retweet_id", Type: field.TypeInt},
-	}
-	// UserRetweetsTable holds the schema information for the "user_retweets" table.
-	UserRetweetsTable = &schema.Table{
-		Name:       "user_retweets",
-		Columns:    UserRetweetsColumns,
-		PrimaryKey: []*schema.Column{UserRetweetsColumns[0], UserRetweetsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "user_retweets_user_id",
-				Columns:    []*schema.Column{UserRetweetsColumns[0]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "user_retweets_retweet_id",
-				Columns:    []*schema.Column{UserRetweetsColumns[1]},
-				RefColumns: []*schema.Column{RetweetsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		LikesTable,
 		RetweetsTable,
 		TweetsTable,
 		UsersTable,
-		TweetRetweetsTable,
-		UserRetweetsTable,
 	}
 )
 
 func init() {
 	LikesTable.ForeignKeys[0].RefTable = TweetsTable
 	LikesTable.ForeignKeys[1].RefTable = UsersTable
+	RetweetsTable.ForeignKeys[0].RefTable = TweetsTable
+	RetweetsTable.ForeignKeys[1].RefTable = UsersTable
 	TweetsTable.ForeignKeys[0].RefTable = TweetsTable
 	TweetsTable.ForeignKeys[1].RefTable = UsersTable
-	TweetRetweetsTable.ForeignKeys[0].RefTable = TweetsTable
-	TweetRetweetsTable.ForeignKeys[1].RefTable = RetweetsTable
-	TweetRetweetsTable.Annotation = &entsql.Annotation{}
-	UserRetweetsTable.ForeignKeys[0].RefTable = UsersTable
-	UserRetweetsTable.ForeignKeys[1].RefTable = RetweetsTable
-	UserRetweetsTable.Annotation = &entsql.Annotation{}
 }

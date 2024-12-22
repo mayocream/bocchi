@@ -32,7 +32,6 @@ func (ru *RetweetUpdate) Where(ps ...predicate.Retweet) *RetweetUpdate {
 
 // SetTweetID sets the "tweet_id" field.
 func (ru *RetweetUpdate) SetTweetID(i int) *RetweetUpdate {
-	ru.mutation.ResetTweetID()
 	ru.mutation.SetTweetID(i)
 	return ru
 }
@@ -45,15 +44,8 @@ func (ru *RetweetUpdate) SetNillableTweetID(i *int) *RetweetUpdate {
 	return ru
 }
 
-// AddTweetID adds i to the "tweet_id" field.
-func (ru *RetweetUpdate) AddTweetID(i int) *RetweetUpdate {
-	ru.mutation.AddTweetID(i)
-	return ru
-}
-
 // SetUserID sets the "user_id" field.
 func (ru *RetweetUpdate) SetUserID(i int) *RetweetUpdate {
-	ru.mutation.ResetUserID()
 	ru.mutation.SetUserID(i)
 	return ru
 }
@@ -63,12 +55,6 @@ func (ru *RetweetUpdate) SetNillableUserID(i *int) *RetweetUpdate {
 	if i != nil {
 		ru.SetUserID(*i)
 	}
-	return ru
-}
-
-// AddUserID adds i to the "user_id" field.
-func (ru *RetweetUpdate) AddUserID(i int) *RetweetUpdate {
-	ru.mutation.AddUserID(i)
 	return ru
 }
 
@@ -86,34 +72,14 @@ func (ru *RetweetUpdate) SetNillableCreatedAt(t *time.Time) *RetweetUpdate {
 	return ru
 }
 
-// AddTweetIDs adds the "tweet" edge to the Tweet entity by IDs.
-func (ru *RetweetUpdate) AddTweetIDs(ids ...int) *RetweetUpdate {
-	ru.mutation.AddTweetIDs(ids...)
-	return ru
+// SetTweet sets the "tweet" edge to the Tweet entity.
+func (ru *RetweetUpdate) SetTweet(t *Tweet) *RetweetUpdate {
+	return ru.SetTweetID(t.ID)
 }
 
-// AddTweet adds the "tweet" edges to the Tweet entity.
-func (ru *RetweetUpdate) AddTweet(t ...*Tweet) *RetweetUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return ru.AddTweetIDs(ids...)
-}
-
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (ru *RetweetUpdate) AddUserIDs(ids ...int) *RetweetUpdate {
-	ru.mutation.AddUserIDs(ids...)
-	return ru
-}
-
-// AddUser adds the "user" edges to the User entity.
-func (ru *RetweetUpdate) AddUser(u ...*User) *RetweetUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return ru.AddUserIDs(ids...)
+// SetUser sets the "user" edge to the User entity.
+func (ru *RetweetUpdate) SetUser(u *User) *RetweetUpdate {
+	return ru.SetUserID(u.ID)
 }
 
 // Mutation returns the RetweetMutation object of the builder.
@@ -121,46 +87,16 @@ func (ru *RetweetUpdate) Mutation() *RetweetMutation {
 	return ru.mutation
 }
 
-// ClearTweet clears all "tweet" edges to the Tweet entity.
+// ClearTweet clears the "tweet" edge to the Tweet entity.
 func (ru *RetweetUpdate) ClearTweet() *RetweetUpdate {
 	ru.mutation.ClearTweet()
 	return ru
 }
 
-// RemoveTweetIDs removes the "tweet" edge to Tweet entities by IDs.
-func (ru *RetweetUpdate) RemoveTweetIDs(ids ...int) *RetweetUpdate {
-	ru.mutation.RemoveTweetIDs(ids...)
-	return ru
-}
-
-// RemoveTweet removes "tweet" edges to Tweet entities.
-func (ru *RetweetUpdate) RemoveTweet(t ...*Tweet) *RetweetUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return ru.RemoveTweetIDs(ids...)
-}
-
-// ClearUser clears all "user" edges to the User entity.
+// ClearUser clears the "user" edge to the User entity.
 func (ru *RetweetUpdate) ClearUser() *RetweetUpdate {
 	ru.mutation.ClearUser()
 	return ru
-}
-
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (ru *RetweetUpdate) RemoveUserIDs(ids ...int) *RetweetUpdate {
-	ru.mutation.RemoveUserIDs(ids...)
-	return ru
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (ru *RetweetUpdate) RemoveUser(u ...*User) *RetweetUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return ru.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -190,7 +126,21 @@ func (ru *RetweetUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ru *RetweetUpdate) check() error {
+	if ru.mutation.TweetCleared() && len(ru.mutation.TweetIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Retweet.tweet"`)
+	}
+	if ru.mutation.UserCleared() && len(ru.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Retweet.user"`)
+	}
+	return nil
+}
+
 func (ru *RetweetUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := ru.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(retweet.Table, retweet.Columns, sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt))
 	if ps := ru.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -199,56 +149,28 @@ func (ru *RetweetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ru.mutation.TweetID(); ok {
-		_spec.SetField(retweet.FieldTweetID, field.TypeInt, value)
-	}
-	if value, ok := ru.mutation.AddedTweetID(); ok {
-		_spec.AddField(retweet.FieldTweetID, field.TypeInt, value)
-	}
-	if value, ok := ru.mutation.UserID(); ok {
-		_spec.SetField(retweet.FieldUserID, field.TypeInt, value)
-	}
-	if value, ok := ru.mutation.AddedUserID(); ok {
-		_spec.AddField(retweet.FieldUserID, field.TypeInt, value)
-	}
 	if value, ok := ru.mutation.CreatedAt(); ok {
 		_spec.SetField(retweet.FieldCreatedAt, field.TypeTime, value)
 	}
 	if ru.mutation.TweetCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.TweetTable,
-			Columns: retweet.TweetPrimaryKey,
+			Columns: []string{retweet.TweetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ru.mutation.RemovedTweetIDs(); len(nodes) > 0 && !ru.mutation.TweetCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   retweet.TweetTable,
-			Columns: retweet.TweetPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ru.mutation.TweetIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.TweetTable,
-			Columns: retweet.TweetPrimaryKey,
+			Columns: []string{retweet.TweetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
@@ -261,39 +183,23 @@ func (ru *RetweetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ru.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.UserTable,
-			Columns: retweet.UserPrimaryKey,
+			Columns: []string{retweet.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ru.mutation.RemovedUserIDs(); len(nodes) > 0 && !ru.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   retweet.UserTable,
-			Columns: retweet.UserPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ru.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.UserTable,
-			Columns: retweet.UserPrimaryKey,
+			Columns: []string{retweet.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -326,7 +232,6 @@ type RetweetUpdateOne struct {
 
 // SetTweetID sets the "tweet_id" field.
 func (ruo *RetweetUpdateOne) SetTweetID(i int) *RetweetUpdateOne {
-	ruo.mutation.ResetTweetID()
 	ruo.mutation.SetTweetID(i)
 	return ruo
 }
@@ -339,15 +244,8 @@ func (ruo *RetweetUpdateOne) SetNillableTweetID(i *int) *RetweetUpdateOne {
 	return ruo
 }
 
-// AddTweetID adds i to the "tweet_id" field.
-func (ruo *RetweetUpdateOne) AddTweetID(i int) *RetweetUpdateOne {
-	ruo.mutation.AddTweetID(i)
-	return ruo
-}
-
 // SetUserID sets the "user_id" field.
 func (ruo *RetweetUpdateOne) SetUserID(i int) *RetweetUpdateOne {
-	ruo.mutation.ResetUserID()
 	ruo.mutation.SetUserID(i)
 	return ruo
 }
@@ -357,12 +255,6 @@ func (ruo *RetweetUpdateOne) SetNillableUserID(i *int) *RetweetUpdateOne {
 	if i != nil {
 		ruo.SetUserID(*i)
 	}
-	return ruo
-}
-
-// AddUserID adds i to the "user_id" field.
-func (ruo *RetweetUpdateOne) AddUserID(i int) *RetweetUpdateOne {
-	ruo.mutation.AddUserID(i)
 	return ruo
 }
 
@@ -380,34 +272,14 @@ func (ruo *RetweetUpdateOne) SetNillableCreatedAt(t *time.Time) *RetweetUpdateOn
 	return ruo
 }
 
-// AddTweetIDs adds the "tweet" edge to the Tweet entity by IDs.
-func (ruo *RetweetUpdateOne) AddTweetIDs(ids ...int) *RetweetUpdateOne {
-	ruo.mutation.AddTweetIDs(ids...)
-	return ruo
+// SetTweet sets the "tweet" edge to the Tweet entity.
+func (ruo *RetweetUpdateOne) SetTweet(t *Tweet) *RetweetUpdateOne {
+	return ruo.SetTweetID(t.ID)
 }
 
-// AddTweet adds the "tweet" edges to the Tweet entity.
-func (ruo *RetweetUpdateOne) AddTweet(t ...*Tweet) *RetweetUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return ruo.AddTweetIDs(ids...)
-}
-
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (ruo *RetweetUpdateOne) AddUserIDs(ids ...int) *RetweetUpdateOne {
-	ruo.mutation.AddUserIDs(ids...)
-	return ruo
-}
-
-// AddUser adds the "user" edges to the User entity.
-func (ruo *RetweetUpdateOne) AddUser(u ...*User) *RetweetUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return ruo.AddUserIDs(ids...)
+// SetUser sets the "user" edge to the User entity.
+func (ruo *RetweetUpdateOne) SetUser(u *User) *RetweetUpdateOne {
+	return ruo.SetUserID(u.ID)
 }
 
 // Mutation returns the RetweetMutation object of the builder.
@@ -415,46 +287,16 @@ func (ruo *RetweetUpdateOne) Mutation() *RetweetMutation {
 	return ruo.mutation
 }
 
-// ClearTweet clears all "tweet" edges to the Tweet entity.
+// ClearTweet clears the "tweet" edge to the Tweet entity.
 func (ruo *RetweetUpdateOne) ClearTweet() *RetweetUpdateOne {
 	ruo.mutation.ClearTweet()
 	return ruo
 }
 
-// RemoveTweetIDs removes the "tweet" edge to Tweet entities by IDs.
-func (ruo *RetweetUpdateOne) RemoveTweetIDs(ids ...int) *RetweetUpdateOne {
-	ruo.mutation.RemoveTweetIDs(ids...)
-	return ruo
-}
-
-// RemoveTweet removes "tweet" edges to Tweet entities.
-func (ruo *RetweetUpdateOne) RemoveTweet(t ...*Tweet) *RetweetUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return ruo.RemoveTweetIDs(ids...)
-}
-
-// ClearUser clears all "user" edges to the User entity.
+// ClearUser clears the "user" edge to the User entity.
 func (ruo *RetweetUpdateOne) ClearUser() *RetweetUpdateOne {
 	ruo.mutation.ClearUser()
 	return ruo
-}
-
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (ruo *RetweetUpdateOne) RemoveUserIDs(ids ...int) *RetweetUpdateOne {
-	ruo.mutation.RemoveUserIDs(ids...)
-	return ruo
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (ruo *RetweetUpdateOne) RemoveUser(u ...*User) *RetweetUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return ruo.RemoveUserIDs(ids...)
 }
 
 // Where appends a list predicates to the RetweetUpdate builder.
@@ -497,7 +339,21 @@ func (ruo *RetweetUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ruo *RetweetUpdateOne) check() error {
+	if ruo.mutation.TweetCleared() && len(ruo.mutation.TweetIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Retweet.tweet"`)
+	}
+	if ruo.mutation.UserCleared() && len(ruo.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Retweet.user"`)
+	}
+	return nil
+}
+
 func (ruo *RetweetUpdateOne) sqlSave(ctx context.Context) (_node *Retweet, err error) {
+	if err := ruo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(retweet.Table, retweet.Columns, sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt))
 	id, ok := ruo.mutation.ID()
 	if !ok {
@@ -523,56 +379,28 @@ func (ruo *RetweetUpdateOne) sqlSave(ctx context.Context) (_node *Retweet, err e
 			}
 		}
 	}
-	if value, ok := ruo.mutation.TweetID(); ok {
-		_spec.SetField(retweet.FieldTweetID, field.TypeInt, value)
-	}
-	if value, ok := ruo.mutation.AddedTweetID(); ok {
-		_spec.AddField(retweet.FieldTweetID, field.TypeInt, value)
-	}
-	if value, ok := ruo.mutation.UserID(); ok {
-		_spec.SetField(retweet.FieldUserID, field.TypeInt, value)
-	}
-	if value, ok := ruo.mutation.AddedUserID(); ok {
-		_spec.AddField(retweet.FieldUserID, field.TypeInt, value)
-	}
 	if value, ok := ruo.mutation.CreatedAt(); ok {
 		_spec.SetField(retweet.FieldCreatedAt, field.TypeTime, value)
 	}
 	if ruo.mutation.TweetCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.TweetTable,
-			Columns: retweet.TweetPrimaryKey,
+			Columns: []string{retweet.TweetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ruo.mutation.RemovedTweetIDs(); len(nodes) > 0 && !ruo.mutation.TweetCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   retweet.TweetTable,
-			Columns: retweet.TweetPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ruo.mutation.TweetIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.TweetTable,
-			Columns: retweet.TweetPrimaryKey,
+			Columns: []string{retweet.TweetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
@@ -585,39 +413,23 @@ func (ruo *RetweetUpdateOne) sqlSave(ctx context.Context) (_node *Retweet, err e
 	}
 	if ruo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.UserTable,
-			Columns: retweet.UserPrimaryKey,
+			Columns: []string{retweet.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := ruo.mutation.RemovedUserIDs(); len(nodes) > 0 && !ruo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   retweet.UserTable,
-			Columns: retweet.UserPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ruo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.UserTable,
-			Columns: retweet.UserPrimaryKey,
+			Columns: []string{retweet.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),

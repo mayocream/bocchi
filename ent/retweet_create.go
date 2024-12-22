@@ -40,34 +40,14 @@ func (rc *RetweetCreate) SetCreatedAt(t time.Time) *RetweetCreate {
 	return rc
 }
 
-// AddTweetIDs adds the "tweet" edge to the Tweet entity by IDs.
-func (rc *RetweetCreate) AddTweetIDs(ids ...int) *RetweetCreate {
-	rc.mutation.AddTweetIDs(ids...)
-	return rc
+// SetTweet sets the "tweet" edge to the Tweet entity.
+func (rc *RetweetCreate) SetTweet(t *Tweet) *RetweetCreate {
+	return rc.SetTweetID(t.ID)
 }
 
-// AddTweet adds the "tweet" edges to the Tweet entity.
-func (rc *RetweetCreate) AddTweet(t ...*Tweet) *RetweetCreate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return rc.AddTweetIDs(ids...)
-}
-
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (rc *RetweetCreate) AddUserIDs(ids ...int) *RetweetCreate {
-	rc.mutation.AddUserIDs(ids...)
-	return rc
-}
-
-// AddUser adds the "user" edges to the User entity.
-func (rc *RetweetCreate) AddUser(u ...*User) *RetweetCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return rc.AddUserIDs(ids...)
+// SetUser sets the "user" edge to the User entity.
+func (rc *RetweetCreate) SetUser(u *User) *RetweetCreate {
+	return rc.SetUserID(u.ID)
 }
 
 // Mutation returns the RetweetMutation object of the builder.
@@ -113,6 +93,12 @@ func (rc *RetweetCreate) check() error {
 	if _, ok := rc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Retweet.created_at"`)}
 	}
+	if len(rc.mutation.TweetIDs()) == 0 {
+		return &ValidationError{Name: "tweet", err: errors.New(`ent: missing required edge "Retweet.tweet"`)}
+	}
+	if len(rc.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Retweet.user"`)}
+	}
 	return nil
 }
 
@@ -139,24 +125,16 @@ func (rc *RetweetCreate) createSpec() (*Retweet, *sqlgraph.CreateSpec) {
 		_node = &Retweet{config: rc.config}
 		_spec = sqlgraph.NewCreateSpec(retweet.Table, sqlgraph.NewFieldSpec(retweet.FieldID, field.TypeInt))
 	)
-	if value, ok := rc.mutation.TweetID(); ok {
-		_spec.SetField(retweet.FieldTweetID, field.TypeInt, value)
-		_node.TweetID = value
-	}
-	if value, ok := rc.mutation.UserID(); ok {
-		_spec.SetField(retweet.FieldUserID, field.TypeInt, value)
-		_node.UserID = value
-	}
 	if value, ok := rc.mutation.CreatedAt(); ok {
 		_spec.SetField(retweet.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if nodes := rc.mutation.TweetIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.TweetTable,
-			Columns: retweet.TweetPrimaryKey,
+			Columns: []string{retweet.TweetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tweet.FieldID, field.TypeInt),
@@ -165,14 +143,15 @@ func (rc *RetweetCreate) createSpec() (*Retweet, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.TweetID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := rc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   retweet.UserTable,
-			Columns: retweet.UserPrimaryKey,
+			Columns: []string{retweet.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -181,6 +160,7 @@ func (rc *RetweetCreate) createSpec() (*Retweet, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

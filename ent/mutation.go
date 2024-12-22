@@ -630,17 +630,11 @@ type RetweetMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	tweet_id      *int
-	addtweet_id   *int
-	user_id       *int
-	adduser_id    *int
 	created_at    *time.Time
 	clearedFields map[string]struct{}
-	tweet         map[int]struct{}
-	removedtweet  map[int]struct{}
+	tweet         *int
 	clearedtweet  bool
-	user          map[int]struct{}
-	removeduser   map[int]struct{}
+	user          *int
 	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*Retweet, error)
@@ -747,13 +741,12 @@ func (m *RetweetMutation) IDs(ctx context.Context) ([]int, error) {
 
 // SetTweetID sets the "tweet_id" field.
 func (m *RetweetMutation) SetTweetID(i int) {
-	m.tweet_id = &i
-	m.addtweet_id = nil
+	m.tweet = &i
 }
 
 // TweetID returns the value of the "tweet_id" field in the mutation.
 func (m *RetweetMutation) TweetID() (r int, exists bool) {
-	v := m.tweet_id
+	v := m.tweet
 	if v == nil {
 		return
 	}
@@ -777,39 +770,19 @@ func (m *RetweetMutation) OldTweetID(ctx context.Context) (v int, err error) {
 	return oldValue.TweetID, nil
 }
 
-// AddTweetID adds i to the "tweet_id" field.
-func (m *RetweetMutation) AddTweetID(i int) {
-	if m.addtweet_id != nil {
-		*m.addtweet_id += i
-	} else {
-		m.addtweet_id = &i
-	}
-}
-
-// AddedTweetID returns the value that was added to the "tweet_id" field in this mutation.
-func (m *RetweetMutation) AddedTweetID() (r int, exists bool) {
-	v := m.addtweet_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetTweetID resets all changes to the "tweet_id" field.
 func (m *RetweetMutation) ResetTweetID() {
-	m.tweet_id = nil
-	m.addtweet_id = nil
+	m.tweet = nil
 }
 
 // SetUserID sets the "user_id" field.
 func (m *RetweetMutation) SetUserID(i int) {
-	m.user_id = &i
-	m.adduser_id = nil
+	m.user = &i
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
 func (m *RetweetMutation) UserID() (r int, exists bool) {
-	v := m.user_id
+	v := m.user
 	if v == nil {
 		return
 	}
@@ -833,28 +806,9 @@ func (m *RetweetMutation) OldUserID(ctx context.Context) (v int, err error) {
 	return oldValue.UserID, nil
 }
 
-// AddUserID adds i to the "user_id" field.
-func (m *RetweetMutation) AddUserID(i int) {
-	if m.adduser_id != nil {
-		*m.adduser_id += i
-	} else {
-		m.adduser_id = &i
-	}
-}
-
-// AddedUserID returns the value that was added to the "user_id" field in this mutation.
-func (m *RetweetMutation) AddedUserID() (r int, exists bool) {
-	v := m.adduser_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetUserID resets all changes to the "user_id" field.
 func (m *RetweetMutation) ResetUserID() {
-	m.user_id = nil
-	m.adduser_id = nil
+	m.user = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -893,19 +847,10 @@ func (m *RetweetMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// AddTweetIDs adds the "tweet" edge to the Tweet entity by ids.
-func (m *RetweetMutation) AddTweetIDs(ids ...int) {
-	if m.tweet == nil {
-		m.tweet = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.tweet[ids[i]] = struct{}{}
-	}
-}
-
 // ClearTweet clears the "tweet" edge to the Tweet entity.
 func (m *RetweetMutation) ClearTweet() {
 	m.clearedtweet = true
+	m.clearedFields[retweet.FieldTweetID] = struct{}{}
 }
 
 // TweetCleared reports if the "tweet" edge to the Tweet entity was cleared.
@@ -913,29 +858,12 @@ func (m *RetweetMutation) TweetCleared() bool {
 	return m.clearedtweet
 }
 
-// RemoveTweetIDs removes the "tweet" edge to the Tweet entity by IDs.
-func (m *RetweetMutation) RemoveTweetIDs(ids ...int) {
-	if m.removedtweet == nil {
-		m.removedtweet = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.tweet, ids[i])
-		m.removedtweet[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedTweet returns the removed IDs of the "tweet" edge to the Tweet entity.
-func (m *RetweetMutation) RemovedTweetIDs() (ids []int) {
-	for id := range m.removedtweet {
-		ids = append(ids, id)
-	}
-	return
-}
-
 // TweetIDs returns the "tweet" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TweetID instead. It exists only for internal usage by the builders.
 func (m *RetweetMutation) TweetIDs() (ids []int) {
-	for id := range m.tweet {
-		ids = append(ids, id)
+	if id := m.tweet; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -944,22 +872,12 @@ func (m *RetweetMutation) TweetIDs() (ids []int) {
 func (m *RetweetMutation) ResetTweet() {
 	m.tweet = nil
 	m.clearedtweet = false
-	m.removedtweet = nil
-}
-
-// AddUserIDs adds the "user" edge to the User entity by ids.
-func (m *RetweetMutation) AddUserIDs(ids ...int) {
-	if m.user == nil {
-		m.user = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.user[ids[i]] = struct{}{}
-	}
 }
 
 // ClearUser clears the "user" edge to the User entity.
 func (m *RetweetMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[retweet.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -967,29 +885,12 @@ func (m *RetweetMutation) UserCleared() bool {
 	return m.cleareduser
 }
 
-// RemoveUserIDs removes the "user" edge to the User entity by IDs.
-func (m *RetweetMutation) RemoveUserIDs(ids ...int) {
-	if m.removeduser == nil {
-		m.removeduser = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.user, ids[i])
-		m.removeduser[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedUser returns the removed IDs of the "user" edge to the User entity.
-func (m *RetweetMutation) RemovedUserIDs() (ids []int) {
-	for id := range m.removeduser {
-		ids = append(ids, id)
-	}
-	return
-}
-
 // UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
 func (m *RetweetMutation) UserIDs() (ids []int) {
-	for id := range m.user {
-		ids = append(ids, id)
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -998,7 +899,6 @@ func (m *RetweetMutation) UserIDs() (ids []int) {
 func (m *RetweetMutation) ResetUser() {
 	m.user = nil
 	m.cleareduser = false
-	m.removeduser = nil
 }
 
 // Where appends a list predicates to the RetweetMutation builder.
@@ -1036,10 +936,10 @@ func (m *RetweetMutation) Type() string {
 // AddedFields().
 func (m *RetweetMutation) Fields() []string {
 	fields := make([]string, 0, 3)
-	if m.tweet_id != nil {
+	if m.tweet != nil {
 		fields = append(fields, retweet.FieldTweetID)
 	}
-	if m.user_id != nil {
+	if m.user != nil {
 		fields = append(fields, retweet.FieldUserID)
 	}
 	if m.created_at != nil {
@@ -1112,12 +1012,6 @@ func (m *RetweetMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *RetweetMutation) AddedFields() []string {
 	var fields []string
-	if m.addtweet_id != nil {
-		fields = append(fields, retweet.FieldTweetID)
-	}
-	if m.adduser_id != nil {
-		fields = append(fields, retweet.FieldUserID)
-	}
 	return fields
 }
 
@@ -1126,10 +1020,6 @@ func (m *RetweetMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *RetweetMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case retweet.FieldTweetID:
-		return m.AddedTweetID()
-	case retweet.FieldUserID:
-		return m.AddedUserID()
 	}
 	return nil, false
 }
@@ -1139,20 +1029,6 @@ func (m *RetweetMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *RetweetMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case retweet.FieldTweetID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTweetID(v)
-		return nil
-	case retweet.FieldUserID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUserID(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Retweet numeric field %s", name)
 }
@@ -1210,17 +1086,13 @@ func (m *RetweetMutation) AddedEdges() []string {
 func (m *RetweetMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case retweet.EdgeTweet:
-		ids := make([]ent.Value, 0, len(m.tweet))
-		for id := range m.tweet {
-			ids = append(ids, id)
+		if id := m.tweet; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case retweet.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.user))
-		for id := range m.user {
-			ids = append(ids, id)
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -1228,32 +1100,12 @@ func (m *RetweetMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RetweetMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.removedtweet != nil {
-		edges = append(edges, retweet.EdgeTweet)
-	}
-	if m.removeduser != nil {
-		edges = append(edges, retweet.EdgeUser)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *RetweetMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case retweet.EdgeTweet:
-		ids := make([]ent.Value, 0, len(m.removedtweet))
-		for id := range m.removedtweet {
-			ids = append(ids, id)
-		}
-		return ids
-	case retweet.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.removeduser))
-		for id := range m.removeduser {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
@@ -1285,6 +1137,12 @@ func (m *RetweetMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *RetweetMutation) ClearEdge(name string) error {
 	switch name {
+	case retweet.EdgeTweet:
+		m.ClearTweet()
+		return nil
+	case retweet.EdgeUser:
+		m.ClearUser()
+		return nil
 	}
 	return fmt.Errorf("unknown Retweet unique edge %s", name)
 }

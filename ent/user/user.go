@@ -56,11 +56,13 @@ const (
 	LikesInverseTable = "likes"
 	// LikesColumn is the table column denoting the likes relation/edge.
 	LikesColumn = "user_id"
-	// RetweetsTable is the table that holds the retweets relation/edge. The primary key declared below.
-	RetweetsTable = "user_retweets"
+	// RetweetsTable is the table that holds the retweets relation/edge.
+	RetweetsTable = "retweets"
 	// RetweetsInverseTable is the table name for the Retweet entity.
 	// It exists in this package in order to avoid circular dependency with the "retweet" package.
 	RetweetsInverseTable = "retweets"
+	// RetweetsColumn is the table column denoting the retweets relation/edge.
+	RetweetsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -77,12 +79,6 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
-
-var (
-	// RetweetsPrimaryKey and RetweetsColumn2 are the table columns denoting the
-	// primary key for the retweets relation (M2M).
-	RetweetsPrimaryKey = []string{"user_id", "retweet_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -222,6 +218,6 @@ func newRetweetsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(RetweetsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, RetweetsTable, RetweetsPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, RetweetsTable, RetweetsColumn),
 	)
 }

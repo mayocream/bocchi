@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -77,7 +76,7 @@ func (rq *RetweetQuery) QueryTweet() *TweetQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(retweet.Table, retweet.FieldID, selector),
 			sqlgraph.To(tweet.Table, tweet.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, retweet.TweetTable, retweet.TweetPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, retweet.TweetTable, retweet.TweetColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -99,7 +98,7 @@ func (rq *RetweetQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(retweet.Table, retweet.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, retweet.UserTable, retweet.UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, retweet.UserTable, retweet.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -431,16 +430,14 @@ func (rq *RetweetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Retw
 		return nodes, nil
 	}
 	if query := rq.withTweet; query != nil {
-		if err := rq.loadTweet(ctx, query, nodes,
-			func(n *Retweet) { n.Edges.Tweet = []*Tweet{} },
-			func(n *Retweet, e *Tweet) { n.Edges.Tweet = append(n.Edges.Tweet, e) }); err != nil {
+		if err := rq.loadTweet(ctx, query, nodes, nil,
+			func(n *Retweet, e *Tweet) { n.Edges.Tweet = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := rq.withUser; query != nil {
-		if err := rq.loadUser(ctx, query, nodes,
-			func(n *Retweet) { n.Edges.User = []*User{} },
-			func(n *Retweet, e *User) { n.Edges.User = append(n.Edges.User, e) }); err != nil {
+		if err := rq.loadUser(ctx, query, nodes, nil,
+			func(n *Retweet, e *User) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -448,123 +445,59 @@ func (rq *RetweetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Retw
 }
 
 func (rq *RetweetQuery) loadTweet(ctx context.Context, query *TweetQuery, nodes []*Retweet, init func(*Retweet), assign func(*Retweet, *Tweet)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Retweet)
-	nids := make(map[int]map[*Retweet]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Retweet)
+	for i := range nodes {
+		fk := nodes[i].TweetID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
 		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(retweet.TweetTable)
-		s.Join(joinT).On(s.C(tweet.FieldID), joinT.C(retweet.TweetPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(retweet.TweetPrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(retweet.TweetPrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
+	if len(ids) == 0 {
+		return nil
 	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Retweet]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Tweet](ctx, query, qr, query.inters)
+	query.Where(tweet.IDIn(ids...))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "tweet" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "tweet_id" returned %v`, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil
 }
 func (rq *RetweetQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Retweet, init func(*Retweet), assign func(*Retweet, *User)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Retweet)
-	nids := make(map[int]map[*Retweet]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Retweet)
+	for i := range nodes {
+		fk := nodes[i].UserID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
 		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(retweet.UserTable)
-		s.Join(joinT).On(s.C(user.FieldID), joinT.C(retweet.UserPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(retweet.UserPrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(retweet.UserPrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
+	if len(ids) == 0 {
+		return nil
 	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Retweet]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "user" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil
@@ -594,6 +527,12 @@ func (rq *RetweetQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != retweet.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if rq.withTweet != nil {
+			_spec.Node.AddColumnOnce(retweet.FieldTweetID)
+		}
+		if rq.withUser != nil {
+			_spec.Node.AddColumnOnce(retweet.FieldUserID)
 		}
 	}
 	if ps := rq.predicates; len(ps) > 0 {
