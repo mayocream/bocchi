@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package twitter.v1;
+
+option go_package = "github.com/mayocream/twitter2/gen/twitter/v1;twitterv1";
+
+// Ping
+message PingRequest {}
+message PingResponse {}
+
+service TwitterService {
+  rpc Ping(PingRequest) returns (PingResponse) {}
+}
