@@ -37,3 +37,5 @@ node_modules/
 .vercel
 
 *storybook.log
+
+.DS_Store
