@@ -8,9 +8,7 @@
     "dev": "next dev --turbo",
     "format": "prettier --write .",
     "postinstall": "prisma generate",
-    "start": "next start",
-    "migrate:local": "dotenv -e .env.local -- prisma db push",
-    "migrate:dev": "dotenv -e .vercel/.env.development.local -- prisma db push"
+    "start": "next start"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.2.3",
