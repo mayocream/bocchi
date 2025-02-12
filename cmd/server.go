@@ -7,12 +7,12 @@ import (
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
-	"github.com/mayocream/twitter2/gen/twitter/v1/twitterv1connect"
-	"github.com/mayocream/twitter2/internal/services"
+	"github.com/mayocream/twitter/gen/twitter/v1/twitterv1connect"
+	"github.com/mayocream/twitter/internal/services"
 )
 
 var serverCmd = &cobra.Command{
-	Use:  "server",
+	Use:   "server",
 	Short: "Start the Twitter server",
 	Run: func(cmd *cobra.Command, args []string) {
 		service := &services.TwitterService{}

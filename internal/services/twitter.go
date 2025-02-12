@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
-	twitterv1 "github.com/mayocream/twitter2/gen/twitter/v1"
+	twitterv1 "github.com/mayocream/twitter/gen/twitter/v1"
 )
 
-type TwitterService struct {}
+type TwitterService struct{}
 
 func (s *TwitterService) Ping(
 	ctx context.Context,

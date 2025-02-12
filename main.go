@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/mayocream/twitter2/cmd"
+	"github.com/mayocream/twitter/cmd"
 )
 
 func main() {

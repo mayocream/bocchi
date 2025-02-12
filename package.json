@@ -1,13 +1,12 @@
 {
-  "name": "@mayocream/twitter2",
+  "name": "@mayocream/twitter",
   "version": "0.1.0",
   "private": true,
-  "description": "Twitter2 project",
+  "description": "twitter project",
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbo",
     "format": "prettier --write .",
-    "postinstall": "prisma generate",
     "start": "next start"
   },
   "dependencies": {

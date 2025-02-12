@@ -3,7 +3,7 @@ export default function Page() {
     <section className='p-4 prose'>
       <h2>About</h2>
       <p>
-        Twitter2: <a>https://github.com/mayocream/twitter2</a>
+        twitter: <a>https://github.com/mayocream/twitter</a>
       </p>
       <p>自由へようこそ。</p>
     </section>
