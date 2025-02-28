@@ -1,41 +1,38 @@
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
-# Go workspace file
-go.work
-go.work.sum
-
-# env file
-.env.local
-!.env.test
-
+# dependencies
 node_modules/
-.next/
-.wrangler/
-.worker-next/
 
-# generated keys
-/*.pub
-/*.pem
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
 
-.vercel
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
 
-*storybook.log
+# Metro
+.metro-health-check*
 
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
 .DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+app-example
