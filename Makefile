@@ -2,4 +2,4 @@ migration:
 	goose create -dir migrations $(name) sql
 
 migrate:
-	goose -dir migrations postgres "user=postgres dbname=postgres sslmode=disable" up
+	goose -dir migrations postgres "postgres://postgres:postgres@localhost:5432/postgres" up
