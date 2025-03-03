@@ -3,3 +3,6 @@ migration:
 
 migrate:
 	goose -dir migrations postgres "postgres://postgres:postgres@localhost:5432/postgres" up
+
+generate:
+	sqlc generate
