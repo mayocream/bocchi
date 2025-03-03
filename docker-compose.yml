@@ -1,9 +1,5 @@
 services:
-  postgres:
-    image: postgres:17
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: twitter
+  redis:
+    image: redis:alpine
     ports:
-      - '5432:5432'
+      - "6379:6379"
