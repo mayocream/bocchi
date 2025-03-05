@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.28.0
 
-package db
+package repository
 
 import (
 	"github.com/jackc/pgx/v5/pgtype"
@@ -18,15 +18,15 @@ type Tweet struct {
 }
 
 type User struct {
-	ID              int32
-	Username        string
-	Email           string
-	PasswordHash    string
-	Name            pgtype.Text
-	Bio             pgtype.Text
-	AvatarUrl       pgtype.Text
-	ProfileImageUrl pgtype.Text
-	EmailVerified   pgtype.Bool
-	CreatedAt       pgtype.Timestamptz
-	UpdatedAt       pgtype.Timestamptz
+	ID            int32
+	Username      string
+	Email         string
+	PasswordHash  string
+	Name          pgtype.Text
+	Bio           pgtype.Text
+	AvatarUrl     pgtype.Text
+	BannerUrl     pgtype.Text
+	EmailVerified pgtype.Bool
+	CreatedAt     pgtype.Timestamptz
+	UpdatedAt     pgtype.Timestamptz
 }

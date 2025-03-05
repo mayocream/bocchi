@@ -2,4 +2,55 @@ syntax = "proto3";
 
 package twitter.v1alpha;
 
-option go_package = "github.com/mayocream/twitter/pkg/gen/twitter/v1alpha;twitter";
+option go_package = "github.com/mayocream/twitter/pkg/connectrpc/twitter/v1alpha;twitter";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// Account represents a internal account,
+// which only visible to the owner.
+message Account {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  string name = 4;
+  string avatar_url = 5;
+  string banner_url = 6;
+  string bio = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  bool email_verified = 10;
+}
+
+message CreateAccountRequest {
+  string username = 1;
+  string password = 2;
+  string name = 3;
+}
+
+message UpdateAccountRequest {
+  string name = 1;
+  string avatar_url = 2;
+  string banner_url = 3;
+  string bio = 4;
+}
+
+service AccountService {
+  rpc CreateAccount(CreateAccountRequest) returns (Account);
+  rpc GetAccount(google.protobuf.Empty) returns (Account);
+  rpc UpdateAccount(UpdateAccountRequest) returns (Account);
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+}
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

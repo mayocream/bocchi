@@ -12,6 +12,10 @@ var rootCmd = &cobra.Command{
 	Short: "CLI for Twitter",
 }
 
+func init() {
+	rootCmd.AddCommand(serverCmd)
+}
+
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)

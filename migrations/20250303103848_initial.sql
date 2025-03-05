@@ -8,7 +8,7 @@ CREATE TABLE users (
     name VARCHAR(100),
     bio TEXT,
     avatar_url VARCHAR(255),
-    profile_image_url VARCHAR(255),
+    banner_url VARCHAR(255),
     email_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
