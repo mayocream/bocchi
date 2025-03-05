@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package twitter.v1alpha;
+
+option go_package = "github.com/mayocream/twitter/pkg/gen/twitter/v1alpha;twitter";

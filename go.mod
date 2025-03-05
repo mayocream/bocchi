@@ -5,6 +5,7 @@ go 1.24.0
 require (
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/spf13/cobra v1.9.1
+	google.golang.org/protobuf v1.36.5
 )
 
 require (
