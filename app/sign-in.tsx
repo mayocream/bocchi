@@ -6,7 +6,6 @@ export default function SignIn() {
     <View flex={1} justifyContent='center' alignItems='center'>
       <Stack.Screen
         options={{
-          headerShown: false,
           title: 'Sign In',
         }}
       />

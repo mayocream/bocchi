@@ -8,7 +8,11 @@ export default function RootLayout() {
   return (
     <TamaguiProvider config={config}>
       <Theme name='light'>
-        <Stack />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        />
       </Theme>
     </TamaguiProvider>
   )
