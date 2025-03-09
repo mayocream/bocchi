@@ -14,7 +14,6 @@ export default function Settings() {
         backgroundColor='$background'
         maxWidth={600}
       >
-        <Text fontWeight={600}>Settings</Text>
         <Text>
           {Constants.expoConfig?.name}@{Constants.expoConfig?.version}
         </Text>
