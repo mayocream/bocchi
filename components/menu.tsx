@@ -2,6 +2,7 @@ import { Bell, Home, Settings, User } from '@tamagui/lucide-icons'
 import { XStack, YStack } from 'tamagui'
 import { Text } from '@/components/text'
 import { Link, usePathname, Href } from 'expo-router'
+import { isWeb } from 'tamagui'
 
 const menus: {
   icon: React.ComponentType<any>
@@ -18,10 +19,10 @@ export const Menus = () => {
   const pathname = usePathname()
 
   return (
-    <YStack padding='$4' gap='$4'>
+    <YStack padding='$4' gap='$4' display={isWeb ? 'flex' : 'none'}>
       {menus.map((menu, index) => (
-        <Link href={menu.path}>
-          <XStack gap='$2' key={index}>
+        <Link href={menu.path} key={index}>
+          <XStack gap='$2'>
             <menu.icon size='$1.5' />
             <Text
               fontSize={16}

@@ -11,6 +11,7 @@ export default function Index() {
           .fill(0)
           .map((_, i) => (
             <Tweet
+              key={i}
               tweet={{
                 id: 1,
                 user: {
