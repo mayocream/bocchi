@@ -1,4 +1,4 @@
-package com.anonymous.twitter
+package rocks.mayo.twitter
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

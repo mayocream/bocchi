@@ -1,23 +1,23 @@
 {
   "expo": {
-    "name": "twitter",
+    "name": "Twitter",
     "slug": "twitter",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "twitter",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.twitter"
+      "bundleIdentifier": "rocks.mayo.twitter"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.twitter"
+      "package": "rocks.mayo.twitter"
     },
     "web": {
       "bundler": "metro",
