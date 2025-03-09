@@ -1,5 +1,4 @@
-import { Avatar, XStack, YStack } from 'tamagui'
-import { Text } from './text'
+import { Avatar, XStack, YStack, Text } from 'tamagui'
 import { Heart, MessageCircle, Repeat, Share } from '@tamagui/lucide-icons'
 import { Time } from './time'
 import { useState } from 'react'
@@ -27,8 +26,14 @@ export const Tweet = ({ tweet }: { tweet: TweetProps }) => {
   const [retweeted, setRetweeted] = useState(tweet.retweeted)
 
   return (
-    <XStack padding='$4' backgroundColor='$background' maxWidth={600} gap={10}>
-      <Avatar circular size='$4'>
+    <XStack
+      padding='$4'
+      backgroundColor='$background'
+      maxWidth={600}
+      gap={10}
+      alignItems='flex-start'
+    >
+      <Avatar marginTop={4} circular size='$3'>
         <Avatar.Image src={tweet.user.avatar_url} />
         <Avatar.Fallback />
       </Avatar>

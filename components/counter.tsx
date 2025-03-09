@@ -1,5 +1,4 @@
-import { VisuallyHidden } from 'tamagui'
-import { Text } from './text'
+import { VisuallyHidden, Text } from 'tamagui'
 
 export const Counter = ({ count }: { count: number }) => {
   const formatCount = (count: number) => {

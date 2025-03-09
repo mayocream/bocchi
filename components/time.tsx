@@ -1,7 +1,7 @@
-import { Text } from './text'
 import { useEffect, useState } from 'react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { Text } from 'tamagui'
 
 const formatDistance = (date: Date): string => {
   const now = new Date()

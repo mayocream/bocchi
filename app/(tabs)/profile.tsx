@@ -1,5 +1,4 @@
-import { XStack } from 'tamagui'
-import { Text } from '@/components/text'
+import { XStack, Text } from 'tamagui'
 
 export default function Profile() {
   return (

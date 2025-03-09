@@ -1,5 +1,4 @@
-import { XStack, YStack } from 'tamagui'
-import { Text } from '@/components/text'
+import { XStack, YStack, Text } from 'tamagui'
 import { Menus } from '@/components/menu'
 import Constants from 'expo-constants'
 

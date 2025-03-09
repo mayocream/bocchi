@@ -1,6 +1,5 @@
 import { Bell, Home, Settings, User } from '@tamagui/lucide-icons'
-import { XStack, YStack } from 'tamagui'
-import { Text } from '@/components/text'
+import { XStack, YStack, Text } from 'tamagui'
 import { Link, usePathname, Href } from 'expo-router'
 import { isWeb } from 'tamagui'
 

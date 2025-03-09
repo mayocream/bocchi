@@ -6,7 +6,7 @@ export default function SignIn() {
     <View flex={1} justifyContent='center' alignItems='center'>
       <Stack.Screen
         options={{
-          title: 'Sign In',
+          title: 'ログイン',
         }}
       />
       <Image
@@ -15,16 +15,20 @@ export default function SignIn() {
         height={100}
       />
       <Form gap={10} width={300}>
-        <Input id='email' placeholder='Email' keyboardType='email-address' />
-        <Input id='password' placeholder='Password' secureTextEntry />
+        <Input
+          id='email'
+          placeholder='メールまたはユーザー名'
+          keyboardType='email-address'
+        />
+        <Input id='password' placeholder='パスワード' secureTextEntry />
         <Form.Trigger asChild>
-          <Button>Submit</Button>
+          <Button>ログイン</Button>
         </Form.Trigger>
 
         <Separator />
 
-        <Link href='/sign-up' asChild>
-          <Button variant='outlined'>Sign Up</Button>
+        <Link href='/sign-up' replace asChild>
+          <Button variant='outlined'>新規登録</Button>
         </Link>
       </Form>
     </View>
