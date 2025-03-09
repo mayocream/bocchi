@@ -20,9 +20,6 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerTitleStyle: {
-          fontFamily: 'NotoSansJP_700Bold',
-        },
         tabBarActiveTintColor: '#1E88E5',
       }}
     >

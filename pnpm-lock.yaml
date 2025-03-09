@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@expo-google-fonts/noto-sans-jp':
-        specifier: ^0.2.3
-        version: 0.2.3
       '@expo/vector-icons':
         specifier: ^14.0.2
         version: 14.0.4
@@ -849,9 +846,6 @@ packages:
 
   '@emotion/memoize@0.7.4':
     resolution: {integrity: sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==}
-
-  '@expo-google-fonts/noto-sans-jp@0.2.3':
-    resolution: {integrity: sha512-TpIEQqu9nJdAC4qvnd0g6aHeby/Ks8Pc/dxXLrVJQXkz3EXJDIW0IOtbhWQT1bnw+u9lE4+8PdSY/zL7sJZXGw==}
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
@@ -5459,8 +5453,6 @@ snapshots:
 
   '@emotion/memoize@0.7.4':
     optional: true
-
-  '@expo-google-fonts/noto-sans-jp@0.2.3': {}
 
   '@expo/bunyan@4.0.1':
     dependencies:
