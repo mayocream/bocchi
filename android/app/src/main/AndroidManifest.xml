@@ -24,10 +24,6 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="myapp"/>
-        <data android:scheme="com.anonymous.twitter"/>
-        <data android:scheme="rocks.mayo.twitter"/>
-        <data android:scheme="twitter"/>
         <data android:scheme="bocchi"/>
         <data android:scheme="social.bocchi"/>
       </intent-filter>
