@@ -4,15 +4,15 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
-	twitter "github.com/mayocream/twitter/pkg/connectrpc/twitter/v1alpha"
-	"github.com/mayocream/twitter/pkg/connectrpc/twitter/v1alpha/twitterconnect"
-	"github.com/mayocream/twitter/pkg/repository"
+	bocchi "github.com/mayocream/bocchi/pkg/connectrpc/bocchi/v1alpha"
+	"github.com/mayocream/bocchi/pkg/connectrpc/bocchi/v1alpha/bocchiconnect"
+	"github.com/mayocream/bocchi/pkg/repository"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var _ twitterconnect.AccountServiceHandler = (*AccountHandler)(nil)
+var _ bocchiconnect.AccountServiceHandler = (*AccountHandler)(nil)
 
 type AccountHandler struct {
 	repository *repository.Queries
@@ -22,8 +22,8 @@ func NewAccountHandler(repository *repository.Queries) *AccountHandler {
 	return &AccountHandler{repository: repository}
 }
 
-// CreateAccount implements twitterconnect.AccountServiceHandler.
-func (h *AccountHandler) CreateAccount(ctx context.Context, req *connect.Request[twitter.CreateAccountRequest]) (*connect.Response[twitter.Account], error) {
+// CreateAccount implements bocchiconnect.AccountServiceHandler.
+func (h *AccountHandler) CreateAccount(ctx context.Context, req *connect.Request[bocchi.CreateAccountRequest]) (*connect.Response[bocchi.Account], error) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Msg.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -36,8 +36,8 @@ func (h *AccountHandler) CreateAccount(ctx context.Context, req *connect.Request
 		return nil, err
 	}
 
-	return &connect.Response[twitter.Account]{
-		Msg: &twitter.Account{
+	return &connect.Response[bocchi.Account]{
+		Msg: &bocchi.Account{
 			Id:            account.ID,
 			Username:      account.Username,
 			Name:          account.Name.String,
@@ -51,12 +51,12 @@ func (h *AccountHandler) CreateAccount(ctx context.Context, req *connect.Request
 	}, nil
 }
 
-// GetAccount implements twitterconnect.AccountServiceHandler.
-func (h *AccountHandler) GetAccount(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[twitter.Account], error) {
+// GetAccount implements bocchiconnect.AccountServiceHandler.
+func (h *AccountHandler) GetAccount(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[bocchi.Account], error) {
 	panic("unimplemented")
 }
 
-// UpdateAccount implements twitterconnect.AccountServiceHandler.
-func (h *AccountHandler) UpdateAccount(context.Context, *connect.Request[twitter.UpdateAccountRequest]) (*connect.Response[twitter.Account], error) {
+// UpdateAccount implements bocchiconnect.AccountServiceHandler.
+func (h *AccountHandler) UpdateAccount(context.Context, *connect.Request[bocchi.UpdateAccountRequest]) (*connect.Response[bocchi.Account], error) {
 	panic("unimplemented")
 }

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/mayocream/twitter/cmd"
+import "github.com/mayocream/bocchi/cmd"
 
 func main() {
 	cmd.Execute()

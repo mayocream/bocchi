@@ -3,10 +3,10 @@ package cmd
 import (
 	"net/http"
 
-	"github.com/mayocream/twitter/pkg/config"
-	"github.com/mayocream/twitter/pkg/connectrpc/twitter/v1alpha/twitterconnect"
-	"github.com/mayocream/twitter/pkg/handler"
-	"github.com/mayocream/twitter/pkg/postgres"
+	"github.com/mayocream/bocchi/pkg/config"
+	"github.com/mayocream/bocchi/pkg/connectrpc/bocchi/v1alpha/bocchiconnect"
+	"github.com/mayocream/bocchi/pkg/handler"
+	"github.com/mayocream/bocchi/pkg/postgres"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 )
@@ -32,7 +32,7 @@ func serve(
 	accountHandler *handler.AccountHandler,
 ) error {
 	mux := http.NewServeMux()
-	path, handler := twitterconnect.NewAccountServiceHandler(accountHandler)
+	path, handler := bocchiconnect.NewAccountServiceHandler(accountHandler)
 	mux.Handle(path, handler)
 	if err := http.ListenAndServe(config.ServerAddr, mux); err != nil {
 		return err

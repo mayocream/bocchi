@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/mayocream/twitter/pkg/config"
-	"github.com/mayocream/twitter/pkg/repository"
+	"github.com/mayocream/bocchi/pkg/config"
+	"github.com/mayocream/bocchi/pkg/repository"
 	"go.uber.org/fx"
 )
 

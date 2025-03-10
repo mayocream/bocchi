@@ -1,4 +1,4 @@
-module github.com/mayocream/twitter
+module github.com/mayocream/bocchi
 
 go 1.24.0
 

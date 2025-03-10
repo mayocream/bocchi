@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package twitter.v1alpha;
+package bocchi.v1alpha;
 
-option go_package = "github.com/mayocream/twitter/pkg/connectrpc/twitter/v1alpha;twitter";
+option go_package = "github.com/mayocream/bocchi/pkg/connectrpc/bocchi/v1alpha;bocchi";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";

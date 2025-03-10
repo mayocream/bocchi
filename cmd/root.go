@@ -8,8 +8,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "twitter",
-	Short: "CLI for Twitter",
+	Use:   "bocchi",
+	Short: "CLI for bocchi",
 }
 
 func init() {
