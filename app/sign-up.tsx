@@ -11,17 +11,14 @@ export default function SignUp() {
       />
       <Image
         source={require('../assets/images/logo.png')}
-        width={100}
-        height={100}
+        width={140}
+        height={140}
       />
       <Form gap={10} width={300}>
-        <Input id='email' placeholder='Email' keyboardType='email-address' />
-        <Input id='password' placeholder='Password' secureTextEntry />
-        <Input
-          id='confirmPassword'
-          placeholder='Confirm Password'
-          secureTextEntry
-        />
+        <Input placeholder='ユーザー名' />
+        <Input placeholder='メールアドレス' keyboardType='email-address' />
+        <Input placeholder='パスワード' secureTextEntry />
+        <Input placeholder='パスワードの確認' secureTextEntry />
         <Form.Trigger asChild>
           <Button>新規登録</Button>
         </Form.Trigger>

@@ -11,16 +11,15 @@ export default function SignIn() {
       />
       <Image
         source={require('../assets/images/logo.png')}
-        width={100}
-        height={100}
+        width={140}
+        height={140}
       />
       <Form gap={10} width={300}>
         <Input
-          id='email'
           placeholder='メールまたはユーザー名'
           keyboardType='email-address'
         />
-        <Input id='password' placeholder='パスワード' secureTextEntry />
+        <Input placeholder='パスワード' secureTextEntry />
         <Form.Trigger asChild>
           <Button>ログイン</Button>
         </Form.Trigger>
