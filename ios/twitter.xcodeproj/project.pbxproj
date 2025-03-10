@@ -302,8 +302,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "rocks.mayo.twitter";
-				PRODUCT_NAME = "Twitter";
+				PRODUCT_BUNDLE_IDENTIFIER = "social.bocchi";
+				PRODUCT_NAME = "Bocchi";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -329,8 +329,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "rocks.mayo.twitter";
-				PRODUCT_NAME = "Twitter";
+				PRODUCT_BUNDLE_IDENTIFIER = "social.bocchi";
+				PRODUCT_NAME = "Bocchi";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				TARGETED_DEVICE_FAMILY = "1,2";

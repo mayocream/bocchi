@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'rocks.mayo.twitter'
+    namespace 'social.bocchi'
     defaultConfig {
-        applicationId 'rocks.mayo.twitter'
+        applicationId 'social.bocchi'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

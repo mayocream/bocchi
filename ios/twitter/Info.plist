@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Twitter</string>
+    <string>Bocchi</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,8 +27,8 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>twitter</string>
-          <string>rocks.mayo.twitter</string>
+          <string>bocchi</string>
+          <string>social.bocchi</string>
         </array>
       </dict>
     </array>

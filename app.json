@@ -1,23 +1,23 @@
 {
   "expo": {
-    "name": "Twitter",
-    "slug": "twitter",
+    "name": "Bocchi",
+    "slug": "bocchi",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "twitter",
+    "scheme": "bocchi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "rocks.mayo.twitter"
+      "bundleIdentifier": "social.bocchi"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "rocks.mayo.twitter"
+      "package": "social.bocchi"
     },
     "web": {
       "bundler": "metro",

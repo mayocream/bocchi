@@ -1,4 +1,4 @@
-package rocks.mayo.twitter
+package social.bocchi
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

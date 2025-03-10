@@ -1,4 +1,6 @@
-# Revival of the Twitter
+# Bocchi
+
+The social network.
 
 ## Development
 
