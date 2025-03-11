@@ -24,12 +24,18 @@ To start the database, run the following command:
 docker-compose up -d
 ```
 
-### Configuration
+### Grpc Server
 
-Create a `.env` file in the root of the project with the following content:
+To start the gRPC server, run the following command:
 
 ```bash
-POSTGRES_URL=postgresql://postgres:postgres@localhost:5432/postgres
-JWT_SECRET=put_your_secret_here
-SERVER_ADDR=:8080
+cargo run server
+```
+
+#### Connectivity
+
+To check the connectivity of the gRPC server, run the following command:
+
+```bash
+grpcurl -import-path ./proto -proto bocchi.proto -plaintext localhost:3000 bocchi.Health/Check
 ```
