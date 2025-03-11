@@ -2,8 +2,6 @@
 
 The social network wriiten in Rust and React Native.
 
-![Bocchi](./assets/images/bocchi.png)
-
 ## Development
 
 ### Prerequisites
