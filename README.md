@@ -1,6 +1,6 @@
 # Bocchi
 
-The social network wriiten in Rust and React Native.
+The social network written in Rust and React Native.
 
 ## Development
 
