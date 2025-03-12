@@ -1,4 +1,4 @@
-use tonic::{Request, Response};
+use tonic::{Request, Response, Status};
 
 use crate::bocchi::health_server::Health;
 
@@ -7,7 +7,7 @@ pub struct HealthSerivce {}
 
 #[tonic::async_trait]
 impl Health for HealthSerivce {
-    async fn check(&self, _request: Request<()>) -> Result<Response<()>, tonic::Status> {
+    async fn check(&self, _request: Request<()>) -> Result<Response<()>, Status> {
         Ok(Response::new(()))
     }
 }
