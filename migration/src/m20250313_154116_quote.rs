@@ -11,13 +11,18 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Like::Table)
+                    .table(Quote::Table)
                     .if_not_exists()
-                    .col(pk_auto(Like::Id))
-                    .col(integer(Like::PostId))
-                    .col(integer(Like::UserId))
+                    .col(pk_auto(Quote::Id))
+                    .col(integer(Quote::PostId))
+                    .col(integer(Quote::UserId))
+                    .col(text(Quote::Content))
                     .col(
-                        timestamp_with_time_zone(Like::CreatedAt)
+                        timestamp_with_time_zone(Quote::CreatedAt)
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        timestamp_with_time_zone(Quote::UpdatedAt)
                             .default(Expr::current_timestamp()),
                     )
                     .to_owned(),
@@ -27,8 +32,8 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_like_post_id")
-                    .from(Like::Table, Like::PostId)
+                    .name("fk_quote_post_id")
+                    .from(Quote::Table, Quote::PostId)
                     .to(Post::Table, Post::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
@@ -38,8 +43,8 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_like_user_id")
-                    .from(Like::Table, Like::UserId)
+                    .name("fk_quote_user_id")
+                    .from(Quote::Table, Quote::UserId)
                     .to(User::Table, User::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
@@ -49,16 +54,18 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Like::Table).to_owned())
+            .drop_table(Table::drop().table(Quote::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-enum Like {
+enum Quote {
     Table,
     Id,
     PostId,
     UserId,
+    Content,
     CreatedAt,
+    UpdatedAt,
 }

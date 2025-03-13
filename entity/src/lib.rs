@@ -2,6 +2,11 @@
 
 pub mod prelude;
 
+pub mod block;
 pub mod like;
+pub mod media;
+pub mod mute;
 pub mod post;
+pub mod quote;
+pub mod repost;
 pub mod user;

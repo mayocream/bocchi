@@ -11,13 +11,15 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Like::Table)
+                    .table(Media::Table)
                     .if_not_exists()
-                    .col(pk_auto(Like::Id))
-                    .col(integer(Like::PostId))
-                    .col(integer(Like::UserId))
+                    .col(pk_auto(Media::Id))
+                    .col(integer(Media::UserId))
+                    .col(integer(Media::PostId))
+                    .col(string(Media::Alt))
+                    .col(text(Media::DataUrl))
                     .col(
-                        timestamp_with_time_zone(Like::CreatedAt)
+                        timestamp_with_time_zone(Media::CreatedAt)
                             .default(Expr::current_timestamp()),
                     )
                     .to_owned(),
@@ -27,9 +29,9 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_like_post_id")
-                    .from(Like::Table, Like::PostId)
-                    .to(Post::Table, Post::Id)
+                    .name("fk_media_user_id")
+                    .from(Media::Table, Media::UserId)
+                    .to(User::Table, User::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
             )
@@ -38,9 +40,9 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_like_user_id")
-                    .from(Like::Table, Like::UserId)
-                    .to(User::Table, User::Id)
+                    .name("fk_media_post_id")
+                    .from(Media::Table, Media::PostId)
+                    .to(Post::Table, Post::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
             )
@@ -49,16 +51,18 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Like::Table).to_owned())
+            .drop_table(Table::drop().table(Media::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-enum Like {
+enum Media {
     Table,
     Id,
-    PostId,
     UserId,
+    PostId,
+    Alt,
+    DataUrl,
     CreatedAt,
 }

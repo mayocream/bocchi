@@ -26,8 +26,14 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(has_many = "super::like::Entity")]
     Like,
+    #[sea_orm(has_many = "super::media::Entity")]
+    Media,
     #[sea_orm(has_many = "super::post::Entity")]
     Post,
+    #[sea_orm(has_many = "super::quote::Entity")]
+    Quote,
+    #[sea_orm(has_many = "super::repost::Entity")]
+    Repost,
 }
 
 impl Related<super::like::Entity> for Entity {
@@ -36,9 +42,27 @@ impl Related<super::like::Entity> for Entity {
     }
 }
 
+impl Related<super::media::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Media.def()
+    }
+}
+
 impl Related<super::post::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Post.def()
+    }
+}
+
+impl Related<super::quote::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Quote.def()
+    }
+}
+
+impl Related<super::repost::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Repost.def()
     }
 }
 

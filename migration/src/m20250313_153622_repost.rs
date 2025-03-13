@@ -11,13 +11,13 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Like::Table)
+                    .table(Repost::Table)
                     .if_not_exists()
-                    .col(pk_auto(Like::Id))
-                    .col(integer(Like::PostId))
-                    .col(integer(Like::UserId))
+                    .col(pk_auto(Repost::Id))
+                    .col(integer(Repost::PostId))
+                    .col(integer(Repost::UserId))
                     .col(
-                        timestamp_with_time_zone(Like::CreatedAt)
+                        timestamp_with_time_zone(Repost::CreatedAt)
                             .default(Expr::current_timestamp()),
                     )
                     .to_owned(),
@@ -27,8 +27,8 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_like_post_id")
-                    .from(Like::Table, Like::PostId)
+                    .name("fk_repost_post_id")
+                    .from(Repost::Table, Repost::PostId)
                     .to(Post::Table, Post::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
@@ -38,8 +38,8 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_like_user_id")
-                    .from(Like::Table, Like::UserId)
+                    .name("fk_repost_user_id")
+                    .from(Repost::Table, Repost::UserId)
                     .to(User::Table, User::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
@@ -49,13 +49,13 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Like::Table).to_owned())
+            .drop_table(Table::drop().table(Repost::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-enum Like {
+enum Repost {
     Table,
     Id,
     PostId,

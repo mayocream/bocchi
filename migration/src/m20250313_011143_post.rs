@@ -14,10 +14,8 @@ impl MigrationTrait for Migration {
                     .table(Post::Table)
                     .if_not_exists()
                     .col(pk_auto(Post::Id))
-                    .col(integer_null(Post::RepostId))
-                    .col(integer_null(Post::ReplyId))
-                    .col(string_null(Post::Content))
-                    .col(integer(Post::OwnerId))
+                    .col(text(Post::Content))
+                    .col(integer(Post::UserId))
                     .col(
                         timestamp_with_time_zone(Post::CreatedAt)
                             .default(Expr::current_timestamp()),
@@ -33,31 +31,9 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_post_owner_id")
-                    .from(Post::Table, Post::OwnerId)
+                    .name("fk_post_user_id")
+                    .from(Post::Table, Post::UserId)
                     .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_post_repost_id")
-                    .from(Post::Table, Post::RepostId)
-                    .to(Post::Table, Post::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_post_reply_id")
-                    .from(Post::Table, Post::ReplyId)
-                    .to(Post::Table, Post::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
             )
@@ -75,10 +51,8 @@ impl MigrationTrait for Migration {
 pub enum Post {
     Table,
     Id,
-    RepostId,
-    ReplyId,
     Content,
-    OwnerId,
+    UserId,
     CreatedAt,
     UpdatedAt,
 }

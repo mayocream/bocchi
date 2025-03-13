@@ -3,25 +3,25 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "like")]
+#[sea_orm(table_name = "mute")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub post_id: i32,
     pub user_id: i32,
+    pub muted_user_id: i32,
     pub created_at: DateTimeWithTimeZone,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::post::Entity",
-        from = "Column::PostId",
-        to = "super::post::Column::Id",
+        belongs_to = "super::user::Entity",
+        from = "Column::MutedUserId",
+        to = "super::user::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    Post,
+    User2,
     #[sea_orm(
         belongs_to = "super::user::Entity",
         from = "Column::UserId",
@@ -29,19 +29,7 @@ pub enum Relation {
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    User,
-}
-
-impl Related<super::post::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Post.def()
-    }
-}
-
-impl Related<super::user::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::User.def()
-    }
+    User1,
 }
 
 impl ActiveModelBehavior for ActiveModel {}

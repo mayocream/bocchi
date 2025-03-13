@@ -1,6 +1,6 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
-use crate::{m20250312_234447_user::User, m20250313_011143_post::Post};
+use crate::m20250312_234447_user::User;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -11,13 +11,13 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Like::Table)
+                    .table(Mute::Table)
                     .if_not_exists()
-                    .col(pk_auto(Like::Id))
-                    .col(integer(Like::PostId))
-                    .col(integer(Like::UserId))
+                    .col(pk_auto(Mute::Id))
+                    .col(integer(Mute::UserId))
+                    .col(integer(Mute::MutedUserId))
                     .col(
-                        timestamp_with_time_zone(Like::CreatedAt)
+                        timestamp_with_time_zone(Mute::CreatedAt)
                             .default(Expr::current_timestamp()),
                     )
                     .to_owned(),
@@ -27,9 +27,9 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_like_post_id")
-                    .from(Like::Table, Like::PostId)
-                    .to(Post::Table, Post::Id)
+                    .name("fk_mute_user_id")
+                    .from(Mute::Table, Mute::UserId)
+                    .to(User::Table, User::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
             )
@@ -38,8 +38,8 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fk_like_user_id")
-                    .from(Like::Table, Like::UserId)
+                    .name("fk_mute_muted_user_id")
+                    .from(Mute::Table, Mute::MutedUserId)
                     .to(User::Table, User::Id)
                     .on_delete(ForeignKeyAction::Cascade)
                     .to_owned(),
@@ -49,16 +49,16 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Like::Table).to_owned())
+            .drop_table(Table::drop().table(Mute::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-enum Like {
+enum Mute {
     Table,
     Id,
-    PostId,
     UserId,
+    MutedUserId,
     CreatedAt,
 }

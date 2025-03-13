@@ -3,27 +3,28 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "post")]
+#[sea_orm(table_name = "quote")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
+    pub post_id: i32,
+    pub user_id: i32,
     #[sea_orm(column_type = "Text")]
     pub content: String,
-    pub user_id: i32,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::like::Entity")]
-    Like,
-    #[sea_orm(has_many = "super::media::Entity")]
-    Media,
-    #[sea_orm(has_many = "super::quote::Entity")]
-    Quote,
-    #[sea_orm(has_many = "super::repost::Entity")]
-    Repost,
+    #[sea_orm(
+        belongs_to = "super::post::Entity",
+        from = "Column::PostId",
+        to = "super::post::Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    Post,
     #[sea_orm(
         belongs_to = "super::user::Entity",
         from = "Column::UserId",
@@ -34,27 +35,9 @@ pub enum Relation {
     User,
 }
 
-impl Related<super::like::Entity> for Entity {
+impl Related<super::post::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Like.def()
-    }
-}
-
-impl Related<super::media::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Media.def()
-    }
-}
-
-impl Related<super::quote::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Quote.def()
-    }
-}
-
-impl Related<super::repost::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Repost.def()
+        Relation::Post.def()
     }
 }
 
