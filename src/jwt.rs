@@ -7,7 +7,7 @@ pub struct Jwt {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Claims {
+struct Claims {
     aud: String, // Optional. Audience
     exp: usize, // Required (validate_exp defaults to true in validation). Expiration time (as UTC timestamp)
     iat: usize, // Optional. Issued at (as UTC timestamp)
@@ -22,7 +22,7 @@ impl Jwt {
     }
 
     #[tracing::instrument]
-    pub fn encode(&self, claims: Claims) -> Result<String, jsonwebtoken::errors::Error> {
+    fn encode(&self, claims: Claims) -> Result<String, jsonwebtoken::errors::Error> {
         encode(
             &Header::default(),
             &claims,
@@ -31,12 +31,34 @@ impl Jwt {
     }
 
     #[tracing::instrument]
-    pub fn decode(&self, token: &str) -> Result<Claims, jsonwebtoken::errors::Error> {
+    fn decode(&self, token: &str) -> Result<Claims, jsonwebtoken::errors::Error> {
         decode::<Claims>(
             token,
             &DecodingKey::from_secret(self.secret.as_ref()),
             &Validation::default(),
         )
         .map(|data| data.claims)
+    }
+
+    #[tracing::instrument]
+    pub fn generate_token(&self, user_id: usize) -> Result<String, jsonwebtoken::errors::Error> {
+        self.encode(Claims {
+            aud: "bocchi".to_string(),
+            exp: (chrono::Utc::now() + chrono::Duration::days(365)).timestamp() as usize,
+            iat: chrono::Utc::now().timestamp() as usize,
+            iss: "bocchi".to_string(),
+            nbf: chrono::Utc::now().timestamp() as usize,
+            sub: user_id.to_string(),
+        })
+    }
+
+    #[tracing::instrument]
+    pub fn verify_token(&self, token: &str) -> Result<usize, jsonwebtoken::errors::Error> {
+        self.decode(token).and_then(|claims| {
+            claims
+                .sub
+                .parse::<usize>()
+                .map_err(|_| jsonwebtoken::errors::ErrorKind::InvalidToken.into())
+        })
     }
 }

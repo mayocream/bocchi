@@ -65,8 +65,12 @@ impl Authentication for AuthenticationSerivce {
             .verify_password(request.password.as_bytes(), &password_hash)
             .map_err(|e| Status::invalid_argument(e.to_string()))?;
 
+        let token = self
+            .jwt
+            .generate_token(user.id as usize)
+            .map_err(|_| Status::internal("Failed to generate token"))?;
         Ok(Response::new(LoginResponse {
-            access_token: "access_token".to_string(),
+            access_token: token,
         }))
     }
 
