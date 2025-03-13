@@ -37,6 +37,12 @@ Copy the `.env.example` file to `.env`:
 cp .env.example .env
 ```
 
+Finally, run the following command to create the tables:
+
+```bash
+make migrate
+```
+
 ### Grpc Server
 
 To start the gRPC server, run the following command:

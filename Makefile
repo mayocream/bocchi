@@ -7,6 +7,8 @@ migrate:
 reset:
 	sea migrate reset
 
+regenerate: reset migrate generate
+
 ruin: down up
 
 down:

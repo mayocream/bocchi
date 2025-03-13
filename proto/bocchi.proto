@@ -7,3 +7,26 @@ package bocchi;
 service Health {
   rpc Check(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
+
+message LoginRequest {
+ oneof handle {
+    string username = 1;
+    string email = 2;
+  }
+  string password = 3;
+}
+
+message LoginResponse {
+  string access_token = 1;
+}
+
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+service Authentication {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Register(RegisterRequest) returns (google.protobuf.Empty);
+}

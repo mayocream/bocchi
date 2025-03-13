@@ -21,6 +21,13 @@ chrono = "0.4.40"
 dotenvy = "0.15.7"
 entity = { path = "entity" }
 migration = { path = "migration" }
+reqwest = { version = "0.12", features = ["json"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+jsonwebtoken = "9"
+serde = { version = "1.0", features = ["derive"] }
+argon2 = "0.5.3"
+validator = { version = "0.19", features = ["derive"] }
 
 [build-dependencies]
 tonic-build = "*"

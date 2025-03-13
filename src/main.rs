@@ -1,4 +1,10 @@
-use bocchi::{bocchi::health_server::HealthServer, health::HealthSerivce};
+use bocchi::{
+    auth::AuthenticationSerivce,
+    bocchi::{authentication_server::AuthenticationServer, health_server::HealthServer},
+    health::HealthSerivce,
+    jwt::Jwt,
+    mailgun::Mailgun,
+};
 use clap::{Parser, Subcommand};
 use migration::{Migrator, MigratorTrait};
 use sea_orm::Database;
@@ -20,26 +26,48 @@ enum Commands {
 
         #[arg(long, env, help = "database connection string")]
         database_url: String,
+
+        #[arg(long, env, help = "mailgun api key")]
+        mailgun_api_key: String,
+
+        #[arg(long, env, help = "domain")]
+        domain: String,
+
+        #[arg(long, env, help = "JWT secret")]
+        jwt_secret: String,
     },
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenvy::dotenv()?;
+    tracing_subscriber::fmt::init();
+
     let cli = Cli::parse();
     match &cli.command {
         Some(Commands::Server {
             address,
             database_url,
+            mailgun_api_key,
+            domain,
+            jwt_secret,
         }) => {
             let db = Database::connect(database_url).await?;
             Migrator::up(&db, None).await?;
 
             println!("Starting server on {}", address);
             let addr = address.parse()?;
+
+            // initialize utils
+            let jwt = Jwt::new(jwt_secret.to_string());
+            let mailgun = Mailgun::new(mailgun_api_key, domain);
+
+            // initialize services
             let health = HealthSerivce::default();
+            let auth = AuthenticationSerivce::new(db, mailgun, jwt);
             Server::builder()
                 .add_service(HealthServer::new(health))
+                .add_service(AuthenticationServer::new(auth))
                 .serve(addr)
                 .await?;
         }
