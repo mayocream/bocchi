@@ -7,7 +7,9 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub content: String,
+    pub repost_id: Option<i32>,
+    pub reply_id: Option<i32>,
+    pub content: Option<String>,
     pub owner_id: i32,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
@@ -15,6 +17,22 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(
+        belongs_to = "Entity",
+        from = "Column::ReplyId",
+        to = "Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    SelfRef2,
+    #[sea_orm(
+        belongs_to = "Entity",
+        from = "Column::RepostId",
+        to = "Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    SelfRef1,
     #[sea_orm(
         belongs_to = "super::user::Entity",
         from = "Column::OwnerId",
