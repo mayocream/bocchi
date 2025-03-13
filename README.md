@@ -11,6 +11,7 @@ The social network written in Rust and React Native.
 - Pnpm
 - Docker
 - Make
+- Protoc
 
 #### WSL
 
@@ -18,10 +19,22 @@ Please refer to [Running a local Expo development environment in Windows Subsyst
 
 ### Database
 
-To start the database, run the following command:
+First, install `sea-orm-cli`:
+
+```bash
+cargo install sea-orm-cli
+```
+
+Then, run the following command to create the database:
 
 ```bash
 docker-compose up -d
+```
+
+Copy the `.env.example` file to `.env`:
+
+```bash
+cp .env.example .env
 ```
 
 ### Grpc Server
