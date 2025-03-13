@@ -3,41 +3,27 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "post")]
+#[sea_orm(table_name = "like")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub repost_id: Option<i32>,
-    pub reply_id: Option<i32>,
-    pub content: Option<String>,
-    pub owner_id: i32,
-    pub created_at: DateTimeWithTimeZone,
-    pub updated_at: DateTimeWithTimeZone,
+    pub post_id: i32,
+    pub user_id: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::like::Entity")]
-    Like,
     #[sea_orm(
-        belongs_to = "Entity",
-        from = "Column::ReplyId",
-        to = "Column::Id",
+        belongs_to = "super::post::Entity",
+        from = "Column::PostId",
+        to = "super::post::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    SelfRef2,
-    #[sea_orm(
-        belongs_to = "Entity",
-        from = "Column::RepostId",
-        to = "Column::Id",
-        on_update = "NoAction",
-        on_delete = "Cascade"
-    )]
-    SelfRef1,
+    Post,
     #[sea_orm(
         belongs_to = "super::user::Entity",
-        from = "Column::OwnerId",
+        from = "Column::UserId",
         to = "super::user::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
@@ -45,9 +31,9 @@ pub enum Relation {
     User,
 }
 
-impl Related<super::like::Entity> for Entity {
+impl Related<super::post::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Like.def()
+        Relation::Post.def()
     }
 }
 
