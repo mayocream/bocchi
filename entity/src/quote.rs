@@ -21,7 +21,7 @@ pub enum Relation {
         belongs_to = "super::post::Entity",
         from = "Column::PostId",
         to = "super::post::Column::Id",
-        on_update = "NoAction",
+        on_update = "Cascade",
         on_delete = "Cascade"
     )]
     Post,
@@ -29,7 +29,7 @@ pub enum Relation {
         belongs_to = "super::user::Entity",
         from = "Column::UserId",
         to = "super::user::Column::Id",
-        on_update = "NoAction",
+        on_update = "Cascade",
         on_delete = "Cascade"
     )]
     User,

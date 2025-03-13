@@ -22,21 +22,20 @@ impl MigrationTrait for Migration {
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-repost_post_id")
                             .from(Repost::Table, Repost::PostId)
                             .to(Post::Table, Post::Id)
-                            .on_delete(ForeignKeyAction::Cascade),
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-repost_user_id")
                             .from(Repost::Table, Repost::UserId)
                             .to(User::Table, User::Id)
-                            .on_delete(ForeignKeyAction::Cascade),
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .index(
                         Index::create()
-                            .name("idx-repost_post_id_user_id")
                             .table(Repost::Table)
                             .col(Repost::PostId)
                             .col(Repost::UserId)

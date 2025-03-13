@@ -22,21 +22,20 @@ impl MigrationTrait for Migration {
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-mute_user_id")
                             .from(Mute::Table, Mute::UserId)
                             .to(User::Table, User::Id)
-                            .on_delete(ForeignKeyAction::Cascade),
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-mute_muted_user_id")
                             .from(Mute::Table, Mute::MutedUserId)
                             .to(User::Table, User::Id)
-                            .on_delete(ForeignKeyAction::Cascade),
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .index(
                         Index::create()
-                            .name("idx-mute_user_id_muted_user_id")
                             .table(Mute::Table)
                             .col(Mute::UserId)
                             .col(Mute::MutedUserId)

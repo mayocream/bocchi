@@ -22,21 +22,20 @@ impl MigrationTrait for Migration {
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-block_user_id")
                             .from(Block::Table, Block::UserId)
                             .to(User::Table, User::Id)
-                            .on_delete(ForeignKeyAction::Cascade),
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-block_blocked_user_id")
                             .from(Block::Table, Block::BlockedUserId)
                             .to(User::Table, User::Id)
-                            .on_delete(ForeignKeyAction::Cascade),
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .index(
                         Index::create()
-                            .name("idx-block_user_id_blocked_user_id")
                             .table(Block::Table)
                             .col(Block::UserId)
                             .col(Block::BlockedUserId)

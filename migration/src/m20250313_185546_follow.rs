@@ -22,19 +22,20 @@ impl MigrationTrait for Migration {
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-follow_user_id")
                             .from(Follow::Table, Follow::UserId)
-                            .to(User::Table, User::Id),
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-follow_followed_user_id")
                             .from(Follow::Table, Follow::FollowedUserId)
-                            .to(User::Table, User::Id),
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .index(
                         Index::create()
-                            .name("idx-follow_user_id_followed_user_id")
                             .table(Follow::Table)
                             .col(Follow::UserId)
                             .col(Follow::FollowedUserId)
