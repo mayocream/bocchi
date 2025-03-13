@@ -3,6 +3,7 @@
 pub mod prelude;
 
 pub mod block;
+pub mod follow;
 pub mod like;
 pub mod media;
 pub mod mute;

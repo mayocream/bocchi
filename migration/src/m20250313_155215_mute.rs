@@ -20,28 +20,28 @@ impl MigrationTrait for Migration {
                         timestamp_with_time_zone(Mute::CreatedAt)
                             .default(Expr::current_timestamp()),
                     )
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_mute_user_id")
-                    .from(Mute::Table, Mute::UserId)
-                    .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_mute_muted_user_id")
-                    .from(Mute::Table, Mute::MutedUserId)
-                    .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-mute_user_id")
+                            .from(Mute::Table, Mute::UserId)
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-mute_muted_user_id")
+                            .from(Mute::Table, Mute::MutedUserId)
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .index(
+                        Index::create()
+                            .name("idx-mute_user_id_muted_user_id")
+                            .table(Mute::Table)
+                            .col(Mute::UserId)
+                            .col(Mute::MutedUserId)
+                            .unique(),
+                    )
                     .to_owned(),
             )
             .await

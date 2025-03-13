@@ -20,28 +20,28 @@ impl MigrationTrait for Migration {
                         timestamp_with_time_zone(Like::CreatedAt)
                             .default(Expr::current_timestamp()),
                     )
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_like_post_id")
-                    .from(Like::Table, Like::PostId)
-                    .to(Post::Table, Post::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_like_user_id")
-                    .from(Like::Table, Like::UserId)
-                    .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-like_post_id")
+                            .from(Like::Table, Like::PostId)
+                            .to(Post::Table, Post::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-like_user_id")
+                            .from(Like::Table, Like::UserId)
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .index(
+                        Index::create()
+                            .name("idx-like_post_id_user_id")
+                            .table(Like::Table)
+                            .col(Like::PostId)
+                            .col(Like::UserId)
+                            .unique(),
+                    )
                     .to_owned(),
             )
             .await

@@ -20,28 +20,28 @@ impl MigrationTrait for Migration {
                         timestamp_with_time_zone(Repost::CreatedAt)
                             .default(Expr::current_timestamp()),
                     )
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_repost_post_id")
-                    .from(Repost::Table, Repost::PostId)
-                    .to(Post::Table, Post::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_repost_user_id")
-                    .from(Repost::Table, Repost::UserId)
-                    .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-repost_post_id")
+                            .from(Repost::Table, Repost::PostId)
+                            .to(Post::Table, Post::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-repost_user_id")
+                            .from(Repost::Table, Repost::UserId)
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .index(
+                        Index::create()
+                            .name("idx-repost_post_id_user_id")
+                            .table(Repost::Table)
+                            .col(Repost::PostId)
+                            .col(Repost::UserId)
+                            .unique(),
+                    )
                     .to_owned(),
             )
             .await

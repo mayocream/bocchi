@@ -8,6 +8,7 @@ mod m20250313_154116_quote;
 mod m20250313_154535_media;
 mod m20250313_155204_block;
 mod m20250313_155215_mute;
+mod m20250313_185546_follow;
 
 pub struct Migrator;
 
@@ -23,6 +24,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20250313_154535_media::Migration),
             Box::new(m20250313_155204_block::Migration),
             Box::new(m20250313_155215_mute::Migration),
+            Box::new(m20250313_185546_follow::Migration),
         ]
     }
 }

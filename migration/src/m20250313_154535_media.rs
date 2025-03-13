@@ -22,28 +22,20 @@ impl MigrationTrait for Migration {
                         timestamp_with_time_zone(Media::CreatedAt)
                             .default(Expr::current_timestamp()),
                     )
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_media_user_id")
-                    .from(Media::Table, Media::UserId)
-                    .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_media_post_id")
-                    .from(Media::Table, Media::PostId)
-                    .to(Post::Table, Post::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-media_user_id")
+                            .from(Media::Table, Media::UserId)
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-media_post_id")
+                            .from(Media::Table, Media::PostId)
+                            .to(Post::Table, Post::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await

@@ -24,17 +24,13 @@ impl MigrationTrait for Migration {
                         timestamp_with_time_zone(Post::UpdatedAt)
                             .default(Expr::current_timestamp()),
                     )
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_post_user_id")
-                    .from(Post::Table, Post::UserId)
-                    .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-post_user_id")
+                            .from(Post::Table, Post::UserId)
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await

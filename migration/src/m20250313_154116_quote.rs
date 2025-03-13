@@ -25,28 +25,20 @@ impl MigrationTrait for Migration {
                         timestamp_with_time_zone(Quote::UpdatedAt)
                             .default(Expr::current_timestamp()),
                     )
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_quote_post_id")
-                    .from(Quote::Table, Quote::PostId)
-                    .to(Post::Table, Post::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name("fk_quote_user_id")
-                    .from(Quote::Table, Quote::UserId)
-                    .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-quote_post_id")
+                            .from(Quote::Table, Quote::PostId)
+                            .to(Post::Table, Post::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-quote_user_id")
+                            .from(Quote::Table, Quote::UserId)
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await

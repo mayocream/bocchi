@@ -11,35 +11,33 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Block::Table)
+                    .table(Follow::Table)
                     .if_not_exists()
-                    .col(pk_auto(Block::Id))
-                    .col(integer(Block::UserId))
-                    .col(integer(Block::BlockedUserId))
+                    .col(pk_auto(Follow::Id))
+                    .col(integer(Follow::UserId))
+                    .col(integer(Follow::FollowedUserId))
                     .col(
-                        timestamp_with_time_zone(Block::CreatedAt)
+                        timestamp_with_time_zone(Follow::CreatedAt)
                             .default(Expr::current_timestamp()),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-block_user_id")
-                            .from(Block::Table, Block::UserId)
-                            .to(User::Table, User::Id)
-                            .on_delete(ForeignKeyAction::Cascade),
+                            .name("fk-follow_user_id")
+                            .from(Follow::Table, Follow::UserId)
+                            .to(User::Table, User::Id),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk-block_blocked_user_id")
-                            .from(Block::Table, Block::BlockedUserId)
-                            .to(User::Table, User::Id)
-                            .on_delete(ForeignKeyAction::Cascade),
+                            .name("fk-follow_followed_user_id")
+                            .from(Follow::Table, Follow::FollowedUserId)
+                            .to(User::Table, User::Id),
                     )
                     .index(
                         Index::create()
-                            .name("idx-block_user_id_blocked_user_id")
-                            .table(Block::Table)
-                            .col(Block::UserId)
-                            .col(Block::BlockedUserId)
+                            .name("idx-follow_user_id_followed_user_id")
+                            .table(Follow::Table)
+                            .col(Follow::UserId)
+                            .col(Follow::FollowedUserId)
                             .unique(),
                     )
                     .to_owned(),
@@ -49,16 +47,16 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Block::Table).to_owned())
+            .drop_table(Table::drop().table(Follow::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-enum Block {
+enum Follow {
     Table,
     Id,
     UserId,
-    BlockedUserId,
+    FollowedUserId,
     CreatedAt,
 }
