@@ -15,7 +15,7 @@ impl Mailgun {
     }
 
     #[tracing::instrument]
-    pub async fn send_email(
+    async fn send_email(
         &self,
         from: &str,
         to: &str,
@@ -48,5 +48,23 @@ impl Mailgun {
         info!("Sent email to {}", to);
 
         Ok(())
+    }
+
+    #[tracing::instrument]
+    pub async fn send_verification_email(
+        &self,
+        to: &str,
+        verification_code: &str,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        self.send_email(
+            format!("noreply@{}", self.domain).as_str(),
+            to,
+            "[Bocchi Social] Verify your email address",
+            &format!(
+                "Please verify your email address by entering the following code: {}",
+                verification_code
+            ),
+        )
+        .await
     }
 }

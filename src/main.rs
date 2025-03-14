@@ -4,6 +4,7 @@ use bocchi::{
     health::HealthSerivce,
     jwt::Jwt,
     mailgun::Mailgun,
+    util::verifier::Verifier,
 };
 use clap::{Parser, Subcommand};
 use migration::{Migrator, MigratorTrait};
@@ -35,6 +36,9 @@ enum Commands {
 
         #[arg(long, env, help = "JWT secret")]
         jwt_secret: String,
+
+        #[arg(long, env, help = "Verification key, 256-bit hex string")]
+        verification_key: String,
     },
 }
 
@@ -51,6 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             mailgun_api_key,
             domain,
             jwt_secret,
+            verification_key,
         }) => {
             let db = Database::connect(database_url).await?;
             Migrator::up(&db, None).await?;
@@ -61,10 +66,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             // initialize utils
             let jwt = Jwt::new(jwt_secret.to_string());
             let mailgun = Mailgun::new(mailgun_api_key, domain);
+            let verification_key = hex::decode(verification_key)?;
+            let verification_key: [u8; 32] = verification_key
+                .try_into()
+                .map_err(|_| "Invalid key length")?;
+            let verifier = Verifier::new(verification_key);
 
             // initialize services
             let health = HealthSerivce::default();
-            let auth = AuthenticationSerivce::new(db, mailgun, jwt);
+            let auth = AuthenticationSerivce::new(db, mailgun, jwt, verifier);
             Server::builder()
                 .add_service(HealthServer::new(health))
                 .add_service(AuthenticationServer::new(auth))

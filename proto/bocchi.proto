@@ -26,7 +26,13 @@ message RegisterRequest {
   string password = 3;
 }
 
+message VerifyEmailRequest {
+  uint32 code = 1;
+}
+
 service Authentication {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Register(RegisterRequest) returns (google.protobuf.Empty);
+  rpc SendVerificationEmail(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc VerifyEmail(VerifyEmailRequest) returns (google.protobuf.Empty);
 }

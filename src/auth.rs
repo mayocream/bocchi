@@ -10,28 +10,36 @@ use validator::Validate;
 
 use crate::{
     bocchi::{
-        LoginRequest, LoginResponse, RegisterRequest, authentication_server::Authentication,
-        login_request::Handle,
+        LoginRequest, LoginResponse, RegisterRequest, VerifyEmailRequest,
+        authentication_server::Authentication, login_request::Handle,
     },
     jwt::Jwt,
     mailgun::Mailgun,
+    util::{username::validate_username, verifier::Verifier},
 };
 
+#[derive(Debug)]
 pub struct AuthenticationSerivce {
     db: DatabaseConnection,
     mailgun: Mailgun,
     jwt: Jwt,
+    verifier: Verifier,
 }
 
 impl AuthenticationSerivce {
-    pub fn new(db: DatabaseConnection, mailgun: Mailgun, jwt: Jwt) -> Self {
-        Self { db, mailgun, jwt }
+    pub fn new(db: DatabaseConnection, mailgun: Mailgun, jwt: Jwt, verifier: Verifier) -> Self {
+        Self {
+            db,
+            mailgun,
+            jwt,
+            verifier,
+        }
     }
 }
 
 #[derive(Debug, Validate, Deserialize)]
 struct RegisterRequestValidator<'a> {
-    #[validate(length(min = 3, max = 20))]
+    #[validate(length(min = 3, max = 20), custom(function = "validate_username"))]
     username: &'a str,
     #[validate(email)]
     email: &'a str,
@@ -41,6 +49,7 @@ struct RegisterRequestValidator<'a> {
 
 #[tonic::async_trait]
 impl Authentication for AuthenticationSerivce {
+    #[tracing::instrument]
     async fn login(
         &self,
         request: Request<LoginRequest>,
@@ -74,6 +83,7 @@ impl Authentication for AuthenticationSerivce {
         }))
     }
 
+    #[tracing::instrument]
     async fn register(&self, request: Request<RegisterRequest>) -> Result<Response<()>, Status> {
         let request = request.into_inner();
         let validator = RegisterRequestValidator {
@@ -100,6 +110,79 @@ impl Authentication for AuthenticationSerivce {
             .exec(&self.db)
             .await
             .map_err(|_| Status::internal("Failed to insert user into database"))?;
+
+        Ok(Response::new(()))
+    }
+
+    #[tracing::instrument]
+    async fn send_verification_email(&self, request: Request<()>) -> Result<Response<()>, Status> {
+        let token = request
+            .metadata()
+            .get("authorization")
+            .ok_or_else(|| Status::unauthenticated("Authorization header is missing"))?
+            .to_str()
+            .map_err(|_| Status::unauthenticated("Invalid authorization header"))?;
+        let user_id = self
+            .jwt
+            .verify_token(token)
+            .map_err(|_| Status::unauthenticated("Invalid token"))?;
+        let user = user::Entity::find()
+            .filter(user::Column::Id.eq(user_id as i32))
+            .one(&self.db)
+            .await
+            .map_err(|_| Status::internal("Failed to query user"))?
+            .ok_or_else(|| Status::not_found("User not found"))?;
+
+        let verification_token = self.verifier.generate(user.id.to_string().as_str());
+
+        self.mailgun
+            .send_verification_email(user.email.as_str(), verification_token.to_string().as_str())
+            .await
+            .map_err(|_| Status::internal("Failed to send verification email"))?;
+
+        Ok(Response::new(()))
+    }
+
+    #[tracing::instrument]
+    async fn verify_email(
+        &self,
+        request: Request<VerifyEmailRequest>,
+    ) -> Result<Response<()>, Status> {
+        let token = request
+            .metadata()
+            .get("authorization")
+            .ok_or_else(|| Status::unauthenticated("Authorization header is missing"))?
+            .to_str()
+            .map_err(|_| Status::unauthenticated("Invalid authorization header"))?;
+        let user_id = self
+            .jwt
+            .verify_token(token)
+            .map_err(|_| Status::unauthenticated("Invalid token"))?;
+        let user = user::Entity::find()
+            .filter(user::Column::Id.eq(user_id as i32))
+            .one(&self.db)
+            .await
+            .map_err(|_| Status::internal("Failed to query user"))?
+            .ok_or_else(|| Status::not_found("User not found"))?;
+
+        let request = request.into_inner();
+        if !self
+            .verifier
+            .verify(user.id.to_string().as_str(), request.code)
+        {
+            return Err(Status::invalid_argument("Invalid verification token"));
+        }
+
+        let user = user::ActiveModel {
+            email_verified: Set(true),
+            ..Default::default()
+        };
+
+        user::Entity::update(user)
+            .filter(user::Column::Id.eq(user_id as i32))
+            .exec(&self.db)
+            .await
+            .map_err(|_| Status::internal("Failed to update user"))?;
 
         Ok(Response::new(()))
     }
