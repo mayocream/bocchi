@@ -31,6 +31,8 @@ validator = { version = "0.19", features = ["derive"] }
 regex = "1.11.1"
 blake3 = "1.6.1"
 hex = "0.4.3"
+tonic-web = "0.12.3"
+tower-http = { version = "*", features = ["full"] }
 
 [build-dependencies]
 tonic-build = "*"
