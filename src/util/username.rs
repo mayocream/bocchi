@@ -21,3 +21,44 @@ pub fn validate_username(username: &str) -> Result<(), ValidationError> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_validate_username() {
+        assert!(validate_username("ferris").is_ok());
+        assert!(validate_username("ferris42").is_ok());
+        assert!(validate_username("ferris_42").is_ok());
+        assert!(validate_username("ferris-42").is_err());
+        assert!(validate_username("ferris!").is_err());
+        assert!(validate_username("ferris@").is_err());
+        assert!(validate_username("ferris#").is_err());
+        assert!(validate_username("ferris$").is_err());
+        assert!(validate_username("ferris%").is_err());
+        assert!(validate_username("ferris^").is_err());
+        assert!(validate_username("ferris&").is_err());
+        assert!(validate_username("ferris*").is_err());
+        assert!(validate_username("ferris(").is_err());
+        assert!(validate_username("ferris)").is_err());
+        assert!(validate_username("ferris+").is_err());
+        assert!(validate_username("ferris=").is_err());
+        assert!(validate_username("ferris{").is_err());
+        assert!(validate_username("ferris}").is_err());
+        assert!(validate_username("ferris[").is_err());
+        assert!(validate_username("ferris]").is_err());
+        assert!(validate_username("ferris|").is_err());
+        assert!(validate_username("ferris\\").is_err());
+        assert!(validate_username("ferris:").is_err());
+        assert!(validate_username("ferris;").is_err());
+        assert!(validate_username("ferris\"").is_err());
+        assert!(validate_username("ferris'").is_err());
+        assert!(validate_username("ferris<").is_err());
+        assert!(validate_username("ferris>").is_err());
+        assert!(validate_username("ferris?").is_err());
+        assert!(validate_username("ferris/").is_err());
+        assert!(validate_username("ferris`").is_err());
+        assert!(validate_username("ferris~").is_err());
+    }
+}

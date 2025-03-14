@@ -32,10 +32,12 @@ impl Jwt {
 
     #[tracing::instrument]
     fn decode(&self, token: &str) -> Result<Claims, jsonwebtoken::errors::Error> {
+        let mut validation = Validation::new(jsonwebtoken::Algorithm::HS256);
+        validation.set_audience(&["https://bocchi.social"]);
         decode::<Claims>(
             token,
             &DecodingKey::from_secret(self.secret.as_ref()),
-            &Validation::default(),
+            &validation,
         )
         .map(|data| data.claims)
     }
@@ -43,10 +45,10 @@ impl Jwt {
     #[tracing::instrument]
     pub fn generate_token(&self, user_id: usize) -> Result<String, jsonwebtoken::errors::Error> {
         self.encode(Claims {
-            aud: "bocchi".to_string(),
+            aud: "https://bocchi.social".to_string(),
             exp: (chrono::Utc::now() + chrono::Duration::days(365)).timestamp() as usize,
             iat: chrono::Utc::now().timestamp() as usize,
-            iss: "bocchi".to_string(),
+            iss: "ferris".to_string(),
             nbf: chrono::Utc::now().timestamp() as usize,
             sub: user_id.to_string(),
         })
@@ -60,5 +62,18 @@ impl Jwt {
                 .parse::<usize>()
                 .map_err(|_| jsonwebtoken::errors::ErrorKind::InvalidToken.into())
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_jwt() {
+        let jwt = Jwt::new("secret".to_string());
+        let token = jwt.generate_token(1).expect("Failed to generate token");
+        let user_id = jwt.verify_token(&token).expect("Failed to verify token");
+        assert_eq!(user_id, 1);
     }
 }
