@@ -11,7 +11,7 @@ use migration::{Migrator, MigratorTrait};
 use sea_orm::Database;
 use tonic::transport::Server;
 use tonic_web::GrpcWebLayer;
-use tower_http::cors::CorsLayer;
+use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 #[derive(Parser)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -24,7 +24,12 @@ struct Cli {
 enum Commands {
     #[command(about = "Start the bocchi server")]
     Server {
-        #[arg(long, env, help = "address to listen on", default_value = "127.0.0.1:3000")]
+        #[arg(
+            long,
+            env,
+            help = "address to listen on",
+            default_value = "0.0.0.0:3000"
+        )]
         address: String,
 
         #[arg(long, env, help = "database connection string")]
@@ -79,7 +84,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let auth = AuthenticationSerivce::new(db, mailgun, jwt, verifier);
             Server::builder()
                 .accept_http1(true)
-                .layer(CorsLayer::very_permissive())
+                .layer(TraceLayer::new_for_http())
+                .layer(TraceLayer::new_for_grpc())
+                .layer(CorsLayer::permissive())
                 .layer(GrpcWebLayer::new())
                 .add_service(HealthServer::new(health))
                 .add_service(AuthenticationServer::new(auth))

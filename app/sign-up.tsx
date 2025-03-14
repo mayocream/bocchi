@@ -1,7 +1,53 @@
 import { Link, Stack } from 'expo-router'
 import { View, Image, Form, Input, Button, Separator } from 'tamagui'
+import { z } from 'zod'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ErrorMessage } from '@/components/input'
+import { Alert } from 'react-native'
+import { RegisterRequest } from '@/lib/bocchi_pb'
+import { AuthenticationService } from '@/lib/api'
+
+const schema = z.object({
+  username: z.string().min(3).max(20),
+  email: z.string().email(),
+  password: z.string().min(8).max(255),
+  passwordConfirmation: z.string().min(8).max(255),
+})
+
+type FormData = z.infer<typeof schema>
 
 export default function SignUp() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      username: '',
+      email: '',
+      password: '',
+      passwordConfirmation: '',
+    },
+  })
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    if (data.password !== data.passwordConfirmation) {
+      return Alert.alert('パスワードが一致しません')
+    }
+
+    try {
+      const request = new RegisterRequest()
+      request.setUsername(data.username)
+      request.setEmail(data.email)
+      request.setPassword(data.password)
+
+      await AuthenticationService.register(request)
+    } catch (error) {
+      Alert.alert('エラーが発生しました')
+    }
+  }
+
   return (
     <View flex={1} justifyContent='center' alignItems='center'>
       <Stack.Screen
@@ -15,15 +61,66 @@ export default function SignUp() {
         height={140}
       />
       <Form gap={10} width={300}>
-        <Input placeholder='ユーザー名' />
-        <Input placeholder='メールアドレス' keyboardType='email-address' />
-        <Input placeholder='パスワード' secureTextEntry />
-        <Input placeholder='パスワードの確認' secureTextEntry />
+        <Controller
+          control={control}
+          render={({ field: { onChange, ...props } }) => (
+            <Input
+              onChangeText={onChange}
+              placeholder='ユーザー名'
+              {...props}
+            />
+          )}
+          name='username'
+        />
+        <ErrorMessage name='username' errors={errors} />
+
+        <Controller
+          control={control}
+          render={({ field: { onChange, ...props } }) => (
+            <Input
+              onChangeText={onChange}
+              placeholder='メールアドレス'
+              keyboardType='email-address'
+              {...props}
+            />
+          )}
+          name='email'
+        />
+        <ErrorMessage name='email' errors={errors} />
+
+        <Controller
+          control={control}
+          render={({ field: { onChange, ...props } }) => (
+            <Input
+              onChangeText={onChange}
+              placeholder='パスワード'
+              secureTextEntry
+              {...props}
+            />
+          )}
+          name='password'
+        />
+        <ErrorMessage name='password' errors={errors} />
+
+        <Controller
+          control={control}
+          render={({ field: { onChange, ...props } }) => (
+            <Input
+              onChangeText={onChange}
+              placeholder='パスワードの確認'
+              secureTextEntry
+              {...props}
+            />
+          )}
+          name='passwordConfirmation'
+        />
+        <ErrorMessage name='passwordConfirmation' errors={errors} />
+
         <Form.Trigger asChild>
-          <Button>新規登録</Button>
+          <Button onPress={handleSubmit(onSubmit)}>新規登録</Button>
         </Form.Trigger>
 
-        <Separator />
+        <Separator marginVertical='$2' />
 
         <Link href='/sign-in' replace asChild>
           <Button variant='outlined'>ログイン</Button>
