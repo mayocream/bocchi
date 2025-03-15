@@ -8,12 +8,17 @@ import { Alert } from 'react-native'
 import { RegisterRequest } from '@/lib/bocchi_pb'
 import { AuthenticationService } from '@/lib/api'
 
-const schema = z.object({
-  username: z.string().min(3).max(20),
-  email: z.string().email(),
-  password: z.string().min(8).max(255),
-  passwordConfirmation: z.string().min(8).max(255),
-})
+const schema = z
+  .object({
+    username: z.string().min(3).max(20),
+    email: z.string().email(),
+    password: z.string().min(8).max(255),
+    passwordConfirmation: z.string().min(8).max(255),
+  })
+  .refine((data) => data.password === data.passwordConfirmation, {
+    path: ['passwordConfirmation'],
+    message: 'パスワードが一致しません',
+  })
 
 type FormData = z.infer<typeof schema>
 
@@ -32,10 +37,6 @@ export default function SignUp() {
     },
   })
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    if (data.password !== data.passwordConfirmation) {
-      return Alert.alert('パスワードが一致しません')
-    }
-
     try {
       const request = new RegisterRequest()
       request.setUsername(data.username)
