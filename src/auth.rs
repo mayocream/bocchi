@@ -3,9 +3,10 @@ use argon2::{
     password_hash::{PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
 };
 use entity::user;
-use sea_orm::{ActiveValue::Set, DatabaseConnection, EntityTrait, QueryFilter, entity::*};
+use sea_orm::{ActiveValue::Set, EntityTrait, QueryFilter, entity::*};
 use serde::Deserialize;
 use tonic::{Request, Response, Status};
+use tracing::error;
 use validator::Validate;
 
 use crate::{
@@ -13,27 +14,18 @@ use crate::{
         LoginRequest, LoginResponse, RegisterRequest, VerifyEmailRequest,
         authentication_server::Authentication, login_request::Handle,
     },
-    jwt::Jwt,
-    mailgun::Mailgun,
-    util::{username::validate_username, verifier::Verifier},
+    state::SharedAppState,
+    util::username::validate_username,
 };
 
 #[derive(Debug)]
 pub struct AuthenticationSerivce {
-    db: DatabaseConnection,
-    mailgun: Mailgun,
-    jwt: Jwt,
-    verifier: Verifier,
+    state: SharedAppState,
 }
 
 impl AuthenticationSerivce {
-    pub fn new(db: DatabaseConnection, mailgun: Mailgun, jwt: Jwt, verifier: Verifier) -> Self {
-        Self {
-            db,
-            mailgun,
-            jwt,
-            verifier,
-        }
+    pub fn new(state: SharedAppState) -> Self {
+        Self { state }
     }
 }
 
@@ -63,7 +55,7 @@ impl Authentication for AuthenticationSerivce {
                 Handle::Username(username) => user::Column::Username.eq(username),
                 Handle::Email(email) => user::Column::Email.eq(email),
             })
-            .one(&self.db)
+            .one(&self.state.db)
             .await
             .map_err(|_| Status::internal("Failed to query user"))?
             .ok_or_else(|| Status::not_found("User not found"))?;
@@ -75,6 +67,7 @@ impl Authentication for AuthenticationSerivce {
             .map_err(|e| Status::invalid_argument(e.to_string()))?;
 
         let token = self
+            .state
             .jwt
             .generate_token(user.id as usize)
             .map_err(|_| Status::internal("Failed to generate token"))?;
@@ -107,9 +100,16 @@ impl Authentication for AuthenticationSerivce {
             ..Default::default()
         };
         user::Entity::insert(data)
-            .exec(&self.db)
+            .exec(&self.state.db)
             .await
-            .map_err(|_| Status::internal("Failed to insert user into database"))?;
+            .map_err(|e| {
+                if e.sql_err().is_some() {
+                    Status::already_exists("User already exists")
+                } else {
+                    error!("Failed to insert user: {:?}", e);
+                    Status::internal("Failed to insert user")
+                }
+            })?;
 
         Ok(Response::new(()))
     }
@@ -123,20 +123,30 @@ impl Authentication for AuthenticationSerivce {
             .to_str()
             .map_err(|_| Status::unauthenticated("Invalid authorization header"))?;
         let user_id = self
+            .state
             .jwt
             .verify_token(token)
             .map_err(|_| Status::unauthenticated("Invalid token"))?;
         let user = user::Entity::find()
             .filter(user::Column::Id.eq(user_id as i32))
-            .one(&self.db)
+            .one(&self.state.db)
             .await
             .map_err(|_| Status::internal("Failed to query user"))?
             .ok_or_else(|| Status::not_found("User not found"))?;
 
-        let verification_token = self.verifier.generate(user.id.to_string().as_str());
+        let verification_token = self.state.verifier.generate(user.id.to_string().as_str());
 
-        self.mailgun
-            .send_verification_email(user.email.as_str(), verification_token.to_string().as_str())
+        self.state
+            .mail
+            .send_email(
+                user.email.as_str(),
+                "[Bocchi Social] Please verify your email address",
+                format!(
+                    "Please verify your email address by enter the following code: {}",
+                    verification_token
+                )
+                .as_str(),
+            )
             .await
             .map_err(|_| Status::internal("Failed to send verification email"))?;
 
@@ -155,32 +165,31 @@ impl Authentication for AuthenticationSerivce {
             .to_str()
             .map_err(|_| Status::unauthenticated("Invalid authorization header"))?;
         let user_id = self
+            .state
             .jwt
             .verify_token(token)
             .map_err(|_| Status::unauthenticated("Invalid token"))?;
         let user = user::Entity::find()
             .filter(user::Column::Id.eq(user_id as i32))
-            .one(&self.db)
+            .one(&self.state.db)
             .await
             .map_err(|_| Status::internal("Failed to query user"))?
             .ok_or_else(|| Status::not_found("User not found"))?;
 
         let request = request.into_inner();
         if !self
+            .state
             .verifier
             .verify(user.id.to_string().as_str(), request.code)
         {
             return Err(Status::invalid_argument("Invalid verification token"));
         }
 
-        let user = user::ActiveModel {
-            email_verified: Set(true),
-            ..Default::default()
-        };
+        let mut user = user.into_active_model();
+        user.email_verified = Set(true);
 
         user::Entity::update(user)
-            .filter(user::Column::Id.eq(user_id as i32))
-            .exec(&self.db)
+            .exec(&self.state.db)
             .await
             .map_err(|_| Status::internal("Failed to update user"))?;
 

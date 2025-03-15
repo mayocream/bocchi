@@ -1,9 +1,12 @@
+use std::sync::Arc;
+
 use bocchi::{
     auth::AuthenticationSerivce,
     bocchi::{authentication_server::AuthenticationServer, health_server::HealthServer},
     health::HealthSerivce,
     jwt::Jwt,
-    mailgun::Mailgun,
+    mail::Mailgun,
+    state::AppState,
     util::verifier::Verifier,
 };
 use clap::{Parser, Subcommand};
@@ -72,16 +75,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             // initialize utils
             let jwt = Jwt::new(jwt_secret.to_string());
-            let mailgun = Mailgun::new(mailgun_api_key, domain);
+            let mail = Mailgun::new(mailgun_api_key.to_owned(), domain.to_owned());
             let verification_key = hex::decode(verification_key)?;
             let verification_key: [u8; 32] = verification_key
                 .try_into()
                 .map_err(|_| "Invalid key length")?;
             let verifier = Verifier::new(verification_key);
 
+            // initialize state
+            let state = Arc::new(AppState {
+                db,
+                mail: bocchi::mail::EmailProvider::Mailgun(mail),
+                jwt,
+                verifier,
+            });
+
             // initialize services
             let health = HealthSerivce::default();
-            let auth = AuthenticationSerivce::new(db, mailgun, jwt, verifier);
+            let auth = AuthenticationSerivce::new(state.clone());
             Server::builder()
                 .accept_http1(true)
                 .layer(TraceLayer::new_for_http())

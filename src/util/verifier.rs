@@ -1,7 +1,7 @@
 use blake3::Hasher;
 use chrono::Utc;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Verifier {
     key: [u8; 32],
 }

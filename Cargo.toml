@@ -36,3 +36,11 @@ tower-http = { version = "*", features = ["full"] }
 
 [build-dependencies]
 tonic-build = "*"
+
+[dev-dependencies]
+sea-orm = { version = "1", features = [
+    "sqlx-sqlite",
+    "runtime-tokio-native-tls",
+    "macros",
+    "with-chrono",
+] }
