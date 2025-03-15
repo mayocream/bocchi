@@ -19,11 +19,11 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub struct AuthenticationSerivce {
+pub struct AuthenticationService {
     state: SharedAppState,
 }
 
-impl AuthenticationSerivce {
+impl AuthenticationService {
     pub fn new(state: SharedAppState) -> Self {
         Self { state }
     }
@@ -40,7 +40,7 @@ struct RegisterRequestValidator<'a> {
 }
 
 #[tonic::async_trait]
-impl Authentication for AuthenticationSerivce {
+impl Authentication for AuthenticationService {
     #[tracing::instrument]
     async fn login(
         &self,

@@ -1,4 +1,4 @@
-use bocchi::auth::AuthenticationSerivce;
+use bocchi::auth::AuthenticationService;
 use bocchi::bocchi::authentication_server::Authentication;
 use bocchi::bocchi::login_request::Handle;
 use bocchi::bocchi::{LoginRequest, RegisterRequest, VerifyEmailRequest};
@@ -12,7 +12,7 @@ mod common;
 #[tokio::test]
 async fn test_register_unique() {
     let state = setup().await;
-    let service = AuthenticationSerivce::new(state);
+    let service = AuthenticationService::new(state);
     let request = Request::new(RegisterRequest {
         username: "test1".to_string(),
         email: "test1@example.com".to_string(),
@@ -50,7 +50,7 @@ async fn test_register_unique() {
 #[tokio::test]
 async fn test_register_validation_mail() {
     let state = setup().await;
-    let service = AuthenticationSerivce::new(state);
+    let service = AuthenticationService::new(state);
     let request = Request::new(RegisterRequest {
         username: "test".to_string(),
         email: "invalid".to_string(),
@@ -67,7 +67,7 @@ async fn test_register_validation_mail() {
 #[tokio::test]
 async fn test_register_validation_username() {
     let state = setup().await;
-    let service = AuthenticationSerivce::new(state);
+    let service = AuthenticationService::new(state);
     let request = Request::new(RegisterRequest {
         username: "t".to_string(),
         email: "invalid".to_string(),
@@ -84,7 +84,7 @@ async fn test_register_validation_username() {
 #[tokio::test]
 async fn test_login() {
     let state = setup().await;
-    let service = AuthenticationSerivce::new(state);
+    let service = AuthenticationService::new(state);
     let request = Request::new(RegisterRequest {
         username: "test".to_string(),
         email: "test@example.com".to_string(),
@@ -123,7 +123,7 @@ async fn test_login() {
 #[tokio::test]
 async fn test_login_validation() {
     let state = setup().await;
-    let service = AuthenticationSerivce::new(state);
+    let service = AuthenticationService::new(state);
     let request = Request::new(LoginRequest {
         handle: None,
         password: "password".to_string(),
@@ -139,7 +139,7 @@ async fn test_login_validation() {
 #[tokio::test]
 async fn test_login_not_found() {
     let state = setup().await;
-    let service = AuthenticationSerivce::new(state);
+    let service = AuthenticationService::new(state);
     let request = Request::new(LoginRequest {
         handle: Some(Handle::Username("test".to_string())),
         password: "password".to_string(),
@@ -155,7 +155,7 @@ async fn test_login_not_found() {
 #[tokio::test]
 async fn test_send_verification_email() {
     let state = setup().await;
-    let service = AuthenticationSerivce::new(state);
+    let service = AuthenticationService::new(state);
     let request = Request::new(RegisterRequest {
         username: "test".to_string(),
         email: "test@example.com".to_string(),
@@ -194,7 +194,7 @@ async fn test_send_verification_email() {
 #[tokio::test]
 async fn test_verify_email() {
     let state = setup().await;
-    let service = AuthenticationSerivce::new(state.clone());
+    let service = AuthenticationService::new(state.clone());
     let request = Request::new(RegisterRequest {
         username: "test".to_string(),
         email: "test@example.com".to_string(),

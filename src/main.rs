@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use bocchi::{
-    auth::AuthenticationSerivce,
+    auth::AuthenticationService,
     bocchi::{authentication_server::AuthenticationServer, health_server::HealthServer},
     health::HealthSerivce,
     jwt::Jwt,
@@ -92,7 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             // initialize services
             let health = HealthSerivce::default();
-            let auth = AuthenticationSerivce::new(state.clone());
+            let auth = AuthenticationService::new(state.clone());
             Server::builder()
                 .accept_http1(true)
                 .layer(TraceLayer::new_for_http())
