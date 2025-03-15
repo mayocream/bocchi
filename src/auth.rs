@@ -15,7 +15,7 @@ use crate::{
         authentication_server::Authentication, login_request::Handle,
     },
     state::SharedAppState,
-    util::username::validate_username,
+    util::{request::extract_user_id_from_request, username::validate_username},
 };
 
 #[derive(Debug)]
@@ -116,17 +116,7 @@ impl Authentication for AuthenticationService {
 
     #[tracing::instrument]
     async fn send_verification_email(&self, request: Request<()>) -> Result<Response<()>, Status> {
-        let token = request
-            .metadata()
-            .get("authorization")
-            .ok_or_else(|| Status::unauthenticated("Authorization header is missing"))?
-            .to_str()
-            .map_err(|_| Status::unauthenticated("Invalid authorization header"))?;
-        let user_id = self
-            .state
-            .jwt
-            .verify_token(token)
-            .map_err(|_| Status::unauthenticated("Invalid token"))?;
+        let user_id = extract_user_id_from_request(&self.state.jwt, &request)?;
         let user = user::Entity::find()
             .filter(user::Column::Id.eq(user_id as i32))
             .one(&self.state.db)
@@ -158,17 +148,7 @@ impl Authentication for AuthenticationService {
         &self,
         request: Request<VerifyEmailRequest>,
     ) -> Result<Response<()>, Status> {
-        let token = request
-            .metadata()
-            .get("authorization")
-            .ok_or_else(|| Status::unauthenticated("Authorization header is missing"))?
-            .to_str()
-            .map_err(|_| Status::unauthenticated("Invalid authorization header"))?;
-        let user_id = self
-            .state
-            .jwt
-            .verify_token(token)
-            .map_err(|_| Status::unauthenticated("Invalid token"))?;
+        let user_id = extract_user_id_from_request(&self.state.jwt, &request)?;
         let user = user::Entity::find()
             .filter(user::Column::Id.eq(user_id as i32))
             .one(&self.state.db)
