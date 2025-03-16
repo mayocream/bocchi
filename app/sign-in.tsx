@@ -1,15 +1,16 @@
 import { ErrorMessage } from '@/components/input'
-import { AuthenticationService } from '@/lib/api'
-import { LoginRequest } from '@/lib/bocchi_pb'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, Stack } from 'expo-router'
+import { Link, router, Stack } from 'expo-router'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { View, Image, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
+import { getAuth, signInWithEmailAndPassword } from '@firebase/auth'
+import { Alert } from 'react-native'
+import { auth } from '@/lib/auth'
 
 const schema = z.object({
-  handle: z.union([z.string().email(), z.string().min(3).max(20)]),
-  password: z.string().min(8).max(255),
+  email: z.string().email(),
+  password: z.string(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -22,25 +23,17 @@ export default function SignIn() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      handle: '',
+      email: '',
       password: '',
     },
   })
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    let request = new LoginRequest()
-    if (data.handle.includes('@')) {
-      request.setEmail(data.handle)
-    } else {
-      request.setUsername(data.handle)
-    }
-    request.setPassword(data.password)
-
     try {
-      const response = await AuthenticationService.login(request)
-      console.log(response.getAccessToken())
-    } catch (error) {
-      console.error(error)
+      await signInWithEmailAndPassword(auth, data.email, data.password)
+      router.replace('/')
+    } catch (e) {
+      Alert.alert('エラー', String(e))
     }
   }
 
@@ -61,15 +54,15 @@ export default function SignIn() {
           control={control}
           render={({ field: { onChange, ...props } }) => (
             <Input
-              placeholder='メールまたはユーザー名'
+              placeholder='メールアドレス'
               keyboardType='email-address'
               onChangeText={onChange}
               {...props}
             />
           )}
-          name='handle'
+          name='email'
         />
-        <ErrorMessage errors={errors} name='handle' />
+        <ErrorMessage errors={errors} name='email' />
 
         <Controller
           control={control}

@@ -1,16 +1,15 @@
-import { Link, Stack } from 'expo-router'
+import { Link, router, Stack } from 'expo-router'
 import { View, Image, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorMessage } from '@/components/input'
+import { createUserWithEmailAndPassword } from '@firebase/auth'
+import { auth } from '@/lib/auth'
 import { Alert } from 'react-native'
-import { RegisterRequest } from '@/lib/bocchi_pb'
-import { AuthenticationService } from '@/lib/api'
 
 const schema = z
   .object({
-    username: z.string().min(3).max(20),
     email: z.string().email(),
     password: z.string().min(8).max(255),
     passwordConfirmation: z.string().min(8).max(255),
@@ -30,7 +29,6 @@ export default function SignUp() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      username: '',
       email: '',
       password: '',
       passwordConfirmation: '',
@@ -38,14 +36,10 @@ export default function SignUp() {
   })
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const request = new RegisterRequest()
-      request.setUsername(data.username)
-      request.setEmail(data.email)
-      request.setPassword(data.password)
-
-      await AuthenticationService.register(request)
-    } catch (error) {
-      Alert.alert('エラーが発生しました')
+      await createUserWithEmailAndPassword(auth, data.email, data.password)
+      router.replace('/')
+    } catch (e) {
+      Alert.alert('エラー', String(e))
     }
   }
 
@@ -62,19 +56,6 @@ export default function SignUp() {
         height={140}
       />
       <Form gap={10} width={300}>
-        <Controller
-          control={control}
-          render={({ field: { onChange, ...props } }) => (
-            <Input
-              onChangeText={onChange}
-              placeholder='ユーザー名'
-              {...props}
-            />
-          )}
-          name='username'
-        />
-        <ErrorMessage name='username' errors={errors} />
-
         <Controller
           control={control}
           render={({ field: { onChange, ...props } }) => (
