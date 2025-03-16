@@ -4,7 +4,7 @@ import { Link, router, Stack } from 'expo-router'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { View, Image, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
-import { getAuth, signInWithEmailAndPassword } from '@firebase/auth'
+import { signInWithEmailAndPassword } from '@firebase/auth'
 import { Alert } from 'react-native'
 import { auth } from '@/lib/auth'
 
