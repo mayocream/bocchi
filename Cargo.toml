@@ -3,6 +3,11 @@ name = "bocchi"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "bocchi"
+test = false
+doc = false
+
 [workspace]
 members = [".", "entity", "migration"]
 
