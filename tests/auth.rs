@@ -233,7 +233,7 @@ async fn test_verify_email() {
     assert_eq!(response.code(), tonic::Code::InvalidArgument);
 
     // calculate the code
-    let code = state.hasher.generate(1.to_string().as_str());
+    let code = state.hasher.generate_time_based_verification_code(1.to_string().as_str());
     let mut request = Request::new(VerifyEmailRequest { code });
     request
         .metadata_mut()

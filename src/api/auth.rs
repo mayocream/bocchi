@@ -124,7 +124,7 @@ impl Authentication for AuthenticationService {
             .map_err(|_| Status::internal("Failed to query user"))?
             .ok_or_else(|| Status::not_found("User not found"))?;
 
-        let verification_token = self.state.hasher.generate(user.id.to_string().as_str());
+        let verification_token = self.state.hasher.generate_time_based_verification_code(user.id.to_string().as_str());
 
         self.state
             .mail
@@ -160,7 +160,7 @@ impl Authentication for AuthenticationService {
         if !self
             .state
             .hasher
-            .verify(user.id.to_string().as_str(), request.code)
+            .check_verification_code(user.id.to_string().as_str(), request.code)
         {
             return Err(Status::invalid_argument("Invalid verification token"));
         }

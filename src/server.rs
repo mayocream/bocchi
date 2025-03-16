@@ -14,6 +14,7 @@ use crate::{
     hasher::Hasher,
     mail,
     state::AppState,
+    storage::s3::S3,
     token::Token,
 };
 
@@ -27,10 +28,11 @@ pub async fn serve(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         .expect("failed to run migrations");
 
     let state = Arc::new(AppState {
+        config: config.clone(),
         db,
         mail: mail::EmailProvider::Mailgun(mail::Mailgun::new(
             config.mailgun_api_key.clone(),
-            config.domain.clone(),
+            config.mailgun_domain.clone(),
         )),
         token: Token::new(config.jwt_secret.clone()),
         hasher: Hasher::new(
@@ -38,6 +40,7 @@ pub async fn serve(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
                 .try_into()
                 .expect("hasher key must be 32 bytes"),
         ),
+        s3: S3::new(&config).await,
     });
 
     info!("Bocchi server listening on {}", addr);

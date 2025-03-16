@@ -11,7 +11,7 @@ impl Hasher {
         Self { key }
     }
 
-    pub fn generate(&self, data: &str) -> u32 {
+    pub fn generate_time_based_verification_code(&self, data: &str) -> u32 {
         let time_chunk = Utc::now().timestamp() / 600;
         self.generate_with_time(data, time_chunk)
     }
@@ -26,7 +26,7 @@ impl Hasher {
         hash % 1_000_000
     }
 
-    pub fn verify(&self, data: &str, code: u32) -> bool {
+    pub fn check_verification_code(&self, data: &str, code: u32) -> bool {
         let current_time = Utc::now().timestamp() / 600;
         let current_code = self.generate_with_time(data, current_time);
         let prev_code = self.generate_with_time(data, current_time - 1);
@@ -45,7 +45,7 @@ mod tests {
         let v = Hasher::new(key);
 
         let data = "test";
-        let code = v.generate(data);
-        assert!(v.verify(data, code));
+        let code = v.generate_time_based_verification_code(data);
+        assert!(v.check_verification_code(data, code));
     }
 }
