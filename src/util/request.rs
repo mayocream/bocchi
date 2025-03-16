@@ -1,8 +1,8 @@
 use tonic::{Request, Status};
 
-use crate::jwt::Jwt;
+use crate::token::Token;
 
-pub fn extract_user_id_from_request<T>(jwt: &Jwt, request: &Request<T>) -> Result<usize, Status> {
+pub fn extract_user_id_from_request<T>(t: &Token, request: &Request<T>) -> Result<usize, Status> {
     let metadata = request.metadata();
     let token = metadata
         .get("authorization")
@@ -12,7 +12,7 @@ pub fn extract_user_id_from_request<T>(jwt: &Jwt, request: &Request<T>) -> Resul
         .trim_start_matches("Bearer ")
         .to_string();
 
-    let user_id = jwt
+    let user_id = t
         .verify_token(&token)
         .map_err(|_| Status::unauthenticated("Failed to decode token"))?;
 

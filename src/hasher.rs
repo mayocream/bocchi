@@ -1,12 +1,12 @@
-use blake3::Hasher;
+use blake3::Hasher as Blake3Hasher;
 use chrono::Utc;
 
 #[derive(Debug, Clone)]
-pub struct Verifier {
+pub struct Hasher {
     key: [u8; 32],
 }
 
-impl Verifier {
+impl Hasher {
     pub fn new(key: [u8; 32]) -> Self {
         Self { key }
     }
@@ -19,7 +19,7 @@ impl Verifier {
     fn generate_with_time(&self, data: &str, time_chunk: i64) -> u32 {
         let data = format!("{}:{}", data, time_chunk);
 
-        let mut hasher = Hasher::new_keyed(&self.key);
+        let mut hasher = Blake3Hasher::new_keyed(&self.key);
         let hash = hasher.update(data.as_bytes()).finalize();
         let hash = hash.as_bytes();
         let hash = u32::from_be_bytes([hash[0], hash[1], hash[2], hash[3]]);
@@ -42,7 +42,7 @@ mod tests {
     #[test]
     fn test_verification() {
         let key = [0; 32];
-        let v = Verifier::new(key);
+        let v = Hasher::new(key);
 
         let data = "test";
         let code = v.generate(data);

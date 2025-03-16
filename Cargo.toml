@@ -33,6 +33,8 @@ blake3 = "1.6.1"
 hex = "0.4.3"
 tonic-web = "0.12.3"
 tower-http = { version = "*", features = ["full"] }
+aws-config = { version = "1", features = ["behavior-version-latest"] }
+aws-sdk-s3 = { version = "1", features = ["behavior-version-latest"] }
 
 [build-dependencies]
 tonic-build = "*"

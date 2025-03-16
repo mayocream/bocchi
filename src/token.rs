@@ -2,7 +2,7 @@ use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode}
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone)]
-pub struct Jwt {
+pub struct Token {
     secret: String,
 }
 
@@ -16,7 +16,7 @@ struct Claims {
     sub: String, // Optional. Subject (whom token refers to)
 }
 
-impl Jwt {
+impl Token {
     pub fn new(secret: String) -> Self {
         Self { secret }
     }
@@ -71,9 +71,9 @@ mod tests {
 
     #[test]
     fn test_jwt() {
-        let jwt = Jwt::new("secret".to_string());
-        let token = jwt.generate_token(1).expect("Failed to generate token");
-        let user_id = jwt.verify_token(&token).expect("Failed to verify token");
+        let t = Token::new("secret".to_string());
+        let token = t.generate_token(1).expect("Failed to generate token");
+        let user_id = t.verify_token(&token).expect("Failed to verify token");
         assert_eq!(user_id, 1);
     }
 }

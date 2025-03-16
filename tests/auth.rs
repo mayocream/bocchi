@@ -1,4 +1,4 @@
-use bocchi::auth::AuthenticationService;
+use bocchi::api::auth::AuthenticationService;
 use bocchi::bocchi::authentication_server::Authentication;
 use bocchi::bocchi::login_request::Handle;
 use bocchi::bocchi::{LoginRequest, RegisterRequest, VerifyEmailRequest};
@@ -233,7 +233,7 @@ async fn test_verify_email() {
     assert_eq!(response.code(), tonic::Code::InvalidArgument);
 
     // calculate the code
-    let code = state.verifier.generate(1.to_string().as_str());
+    let code = state.hasher.generate(1.to_string().as_str());
     let mut request = Request::new(VerifyEmailRequest { code });
     request
         .metadata_mut()

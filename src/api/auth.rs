@@ -68,7 +68,7 @@ impl Authentication for AuthenticationService {
 
         let token = self
             .state
-            .jwt
+            .token
             .generate_token(user.id as usize)
             .map_err(|_| Status::internal("Failed to generate token"))?;
         Ok(Response::new(LoginResponse {
@@ -116,7 +116,7 @@ impl Authentication for AuthenticationService {
 
     #[tracing::instrument]
     async fn send_verification_email(&self, request: Request<()>) -> Result<Response<()>, Status> {
-        let user_id = extract_user_id_from_request(&self.state.jwt, &request)?;
+        let user_id = extract_user_id_from_request(&self.state.token, &request)?;
         let user = user::Entity::find()
             .filter(user::Column::Id.eq(user_id as i32))
             .one(&self.state.db)
@@ -124,7 +124,7 @@ impl Authentication for AuthenticationService {
             .map_err(|_| Status::internal("Failed to query user"))?
             .ok_or_else(|| Status::not_found("User not found"))?;
 
-        let verification_token = self.state.verifier.generate(user.id.to_string().as_str());
+        let verification_token = self.state.hasher.generate(user.id.to_string().as_str());
 
         self.state
             .mail
@@ -148,7 +148,7 @@ impl Authentication for AuthenticationService {
         &self,
         request: Request<VerifyEmailRequest>,
     ) -> Result<Response<()>, Status> {
-        let user_id = extract_user_id_from_request(&self.state.jwt, &request)?;
+        let user_id = extract_user_id_from_request(&self.state.token, &request)?;
         let user = user::Entity::find()
             .filter(user::Column::Id.eq(user_id as i32))
             .one(&self.state.db)
@@ -159,7 +159,7 @@ impl Authentication for AuthenticationService {
         let request = request.into_inner();
         if !self
             .state
-            .verifier
+            .hasher
             .verify(user.id.to_string().as_str(), request.code)
         {
             return Err(Status::invalid_argument("Invalid verification token"));

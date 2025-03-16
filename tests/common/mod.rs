@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use bocchi::{jwt::Jwt, state::AppState, util::verifier::Verifier};
+use bocchi::{hasher::Hasher, state::AppState, token::Token};
 use migration::{Migrator, MigratorTrait};
 use sea_orm::Database;
 
@@ -15,7 +15,7 @@ pub async fn setup() -> Arc<AppState> {
     Arc::new(AppState {
         db,
         mail: bocchi::mail::EmailProvider::Noop,
-        jwt: Jwt::new("secret".into()),
-        verifier: Verifier::new([0; 32]),
+        token: Token::new("secret".into()),
+        hasher: Hasher::new([0; 32]),
     })
 }
