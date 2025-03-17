@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorMessage } from '@/components/input'
 import { createUserWithEmailAndPassword } from '@firebase/auth'
 import { auth } from '@/lib/auth'
-import { Alert } from 'react-native'
+import { Pressable } from 'react-native'
 
 const schema = z
   .object({
@@ -25,6 +25,7 @@ export default function SignUp() {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -39,7 +40,10 @@ export default function SignUp() {
       await createUserWithEmailAndPassword(auth, data.email, data.password)
       router.replace('/')
     } catch (e) {
-      Alert.alert('エラー', String(e))
+      setError('email', {
+        type: 'manual',
+        message: 'メールアドレスが既に登録されています',
+      })
     }
   }
 
@@ -105,7 +109,9 @@ export default function SignUp() {
         <Separator marginVertical='$2' />
 
         <Link href='/sign-in' replace asChild>
-          <Button variant='outlined'>ログイン</Button>
+          <Pressable>
+            <Button variant='outlined'>ログイン</Button>
+          </Pressable>
         </Link>
       </Form>
     </View>

@@ -3,10 +3,6 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      // https://github.com/firebase/firebase-js-sdk/issues/7584#issuecomment-1692195713
-      "@firebase/auth": [
-        "./node_modules/@firebase/auth/dist/index.rn.d.ts"
-      ],
       "@/*": [
         "./*"
       ]

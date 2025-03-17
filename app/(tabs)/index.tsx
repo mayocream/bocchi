@@ -1,17 +1,17 @@
 import { Image, ScrollView, Separator, View, XStack, YStack } from 'tamagui'
-import { Menus } from '@/components/menu'
 import { Tweet } from '@/components/tweet'
 import { Redirect } from 'expo-router'
 import { auth } from '@/lib/auth'
+import { useAuthContext } from '@/lib/context'
 
 export default function Index() {
-  if (!auth.currentUser) {
+  const { currentUser } = useAuthContext()
+  if (!currentUser) {
     return <Redirect href='/sign-in' />
   }
 
   return (
     <XStack fullscreen>
-      <Menus />
       <ScrollView>
         {Array(30)
           .fill(0)

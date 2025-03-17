@@ -5,7 +5,7 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { View, Image, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
 import { signInWithEmailAndPassword } from '@firebase/auth'
-import { Alert } from 'react-native'
+import { Pressable } from 'react-native'
 import { auth } from '@/lib/auth'
 
 const schema = z.object({
@@ -19,6 +19,7 @@ export default function SignIn() {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -33,7 +34,10 @@ export default function SignIn() {
       await signInWithEmailAndPassword(auth, data.email, data.password)
       router.replace('/')
     } catch (e) {
-      Alert.alert('エラー', String(e))
+      setError('email', {
+        type: 'manual',
+        message: 'メールアドレスまたはパスワードが違います',
+      })
     }
   }
 
@@ -85,7 +89,9 @@ export default function SignIn() {
         <Separator />
 
         <Link href='/sign-up' replace asChild>
-          <Button variant='outlined'>新規登録</Button>
+          <Pressable>
+            <Button variant='outlined'>新規登録</Button>
+          </Pressable>
         </Link>
       </Form>
     </View>

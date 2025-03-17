@@ -1,10 +1,8 @@
 import { XStack, YStack, Text } from 'tamagui'
-import { Menus } from '@/components/menu'
 
 export default function Settings() {
   return (
     <XStack fullscreen>
-      <Menus />
       <YStack
         flex={1}
         padding='$4'
