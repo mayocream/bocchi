@@ -5,7 +5,6 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { View, Image, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
 import { signInWithEmailAndPassword } from '@firebase/auth'
-import { Pressable } from 'react-native'
 import { auth } from '@/lib/auth'
 
 const schema = z.object({
@@ -20,7 +19,7 @@ export default function SignIn() {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -83,15 +82,16 @@ export default function SignIn() {
         <ErrorMessage errors={errors} name='password' />
 
         <Form.Trigger asChild>
-          <Button onPress={handleSubmit(onSubmit)}>ログイン</Button>
+          <Button onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
+            ログイン
+          </Button>
         </Form.Trigger>
 
         <Separator />
 
         <Link href='/sign-up' replace asChild>
-          <Pressable>
-            <Button variant='outlined'>新規登録</Button>
-          </Pressable>
+          {/* Known issue: Text is underscored on web */}
+          <Button variant='outlined'>新規登録</Button>
         </Link>
       </Form>
     </View>

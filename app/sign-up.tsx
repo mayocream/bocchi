@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorMessage } from '@/components/input'
 import { createUserWithEmailAndPassword } from '@firebase/auth'
 import { auth } from '@/lib/auth'
-import { Pressable } from 'react-native'
 
 const schema = z
   .object({
@@ -26,7 +25,7 @@ export default function SignUp() {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -103,15 +102,15 @@ export default function SignUp() {
         <ErrorMessage name='passwordConfirmation' errors={errors} />
 
         <Form.Trigger asChild>
-          <Button onPress={handleSubmit(onSubmit)}>新規登録</Button>
+          <Button onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
+            新規登録
+          </Button>
         </Form.Trigger>
 
         <Separator marginVertical='$2' />
 
         <Link href='/sign-in' replace asChild>
-          <Pressable>
-            <Button variant='outlined'>ログイン</Button>
-          </Pressable>
+          <Button variant='outlined'>ログイン</Button>
         </Link>
       </Form>
     </View>
