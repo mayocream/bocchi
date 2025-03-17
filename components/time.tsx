@@ -9,7 +9,7 @@ const formatDistance = (date: Date): string => {
   const oneDay = 24 * 60 * 60 * 1000
 
   if (diff < oneDay) {
-    return formatDistanceToNow(date, { locale: ja })
+    return formatDistanceToNow(date, { locale: ja }).replace('約', '')
   } else {
     return format(date, 'PPP', { locale: ja })
   }

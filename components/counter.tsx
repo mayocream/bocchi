@@ -1,6 +1,6 @@
-import { VisuallyHidden, Text } from 'tamagui'
+import { VisuallyHidden, Text, TextProps } from 'tamagui'
 
-export const Counter = ({ count }: { count: number }) => {
+export const Counter = ({ count, ...props }: { count: number } & TextProps) => {
   const formatCount = (count: number) => {
     if (count >= 1000) {
       return `${(count / 1000).toFixed(0)}k`
@@ -16,5 +16,9 @@ export const Counter = ({ count }: { count: number }) => {
     )
   }
 
-  return <Text userSelect='none'>{formatCount(count)}</Text>
+  return (
+    <Text userSelect='none' {...props}>
+      {formatCount(count)}
+    </Text>
+  )
 }

@@ -3,7 +3,6 @@ import { Heart, MessageCircle, Repeat, Share } from '@tamagui/lucide-icons'
 import { Time } from './time'
 import { useState } from 'react'
 import { Counter } from './counter'
-import { Like } from './like'
 
 type TweetProps = {
   id: number
@@ -30,33 +29,38 @@ export const Tweet = ({ tweet }: { tweet: TweetProps }) => {
       padding='$4'
       backgroundColor='$background'
       maxWidth={600}
-      gap={10}
+      gap='$3'
       alignItems='flex-start'
+      borderBottomWidth='$0.25'
+      borderBottomColor='#E6E6E6'
     >
-      <Avatar marginTop={4} circular size='$3'>
+      <Avatar marginTop='$1.5' circular size='$5'>
         <Avatar.Image src={tweet.user.avatar_url} />
         <Avatar.Fallback />
       </Avatar>
       <YStack flex={1}>
-        <XStack gap={4} alignItems='center'>
-          <Text fontWeight={600}>{tweet.user.name}</Text>
-          <Text fontSize={14}>@{tweet.user.username}</Text>
+        <XStack gap='$1.5' alignItems='center'>
+          <Text fontWeight='bold'>{tweet.user.name}</Text>
+          <Text>@{tweet.user.username}</Text>
           <Text>·</Text>
           <Time date={tweet.created_at} />
         </XStack>
-        <Text>{tweet.content}</Text>
-        <XStack marginTop={10} justifyContent='space-between' userSelect='none'>
-          <XStack alignItems='center' gap={2}>
-            <MessageCircle size={18} />
+        <Text fontSize='$5'>{tweet.content}</Text>
+        <XStack marginTop='$2' justifyContent='space-between' userSelect='none'>
+          <XStack alignItems='center' gap='$1'>
+            <MessageCircle size='$1' />
             <Counter count={tweet.replies} />
           </XStack>
-          <XStack alignItems='center' gap={2}>
-            <Repeat size={18} />
+          <XStack alignItems='center' gap='$1'>
+            <Repeat size='$1' />
             <Counter count={tweet.retweets} />
           </XStack>
-          <Like liked={liked} count={tweet.likes} />
+          <XStack alignItems='center' gap='$1'>
+            <Heart size='$1' />
+            <Counter count={tweet.likes} />
+          </XStack>
           <XStack alignItems='center'>
-            <Share size={18} />
+            <Share size='$1' />
           </XStack>
         </XStack>
       </YStack>
