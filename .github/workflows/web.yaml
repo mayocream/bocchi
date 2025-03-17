@@ -1,4 +1,4 @@
-name: React Native Web
+name: Web
 
 on:
   push:
