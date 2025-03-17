@@ -28,6 +28,7 @@ export default function Settings() {
       width='100%'
       alignSelf='center'
       backgroundColor='$background'
+      fullscreen
     >
       {/* Main Settings */}
       <YStack gap='$4'>
