@@ -7,6 +7,7 @@ use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use crate::{
     api::{AppState, user::UserApi},
     config::Config,
+    interceptors::auth::AuthInterceptor,
     proto::bocchi::user_service_server::UserServiceServer,
 };
 
@@ -22,7 +23,10 @@ pub async fn serve(config: Config) -> Result<(), Box<dyn std::error::Error>> {
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::permissive())
         .layer(GrpcWebLayer::new())
-        .add_service(UserServiceServer::new(UserApi::new(state.clone())))
+        .add_service(UserServiceServer::with_interceptor(
+            UserApi::new(state.clone()),
+            AuthInterceptor::default(),
+        ))
         .serve(config.listen_addr.parse()?)
         .await?;
 

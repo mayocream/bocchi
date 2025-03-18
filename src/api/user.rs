@@ -1,7 +1,7 @@
 use crate::{
     proto::bocchi::{User, user_service_server::UserService},
     repositories::user,
-    traits::datetime::TimestampConversion,
+    traits::{auth::Auth, datetime::TimestampConversion},
 };
 
 use super::SharedAppState;
@@ -49,8 +49,12 @@ impl UserService for UserApi {
         &self,
         request: tonic::Request<crate::proto::bocchi::CreateUserRequest>,
     ) -> Result<tonic::Response<crate::proto::bocchi::User>, tonic::Status> {
+        let uid = request.get_uid()?;
         // This api is called when user logged in with Firebase Auth and the user is not found in the database
         let request = request.into_inner();
+        if uid != request.uid {
+            return Err(tonic::Status::unauthenticated("Unauthorized"));
+        }
         let user = sqlx::query!(
             "INSERT INTO users (uid, username, email, email_verified, name, bio, avatar_url, cover_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
             request.uid,
@@ -84,14 +88,16 @@ impl UserService for UserApi {
         &self,
         request: tonic::Request<crate::proto::bocchi::UpdateUserRequest>,
     ) -> Result<tonic::Response<crate::proto::bocchi::User>, tonic::Status> {
+        let uid = request.get_uid()?;
+        // This api is called when user logged in with Firebase Auth and the user is not found in the database
         let request = request.into_inner();
         let user = sqlx::query!(
-            "UPDATE users SET name = $1, bio = $2, avatar_url = $3, cover_url = $4 WHERE id = $5 RETURNING *",
+            "UPDATE users SET name = $1, bio = $2, avatar_url = $3, cover_url = $4 WHERE uid = $5 RETURNING *",
             request.name,
             request.bio,
             request.avatar_url,
             request.cover_url,
-            request.id,
+            uid,
         ).fetch_one(&self.state.db).await.map_err(|_| tonic::Status::internal("Failed to update user"))?;
 
         let response = User {
@@ -115,8 +121,8 @@ impl UserService for UserApi {
         &self,
         request: tonic::Request<crate::proto::bocchi::DeleteUserRequest>,
     ) -> Result<tonic::Response<()>, tonic::Status> {
-        let request = request.into_inner();
-        sqlx::query!("DELETE FROM users WHERE id = $1", request.id)
+        let uid = request.get_uid()?;
+        sqlx::query!("DELETE FROM users WHERE uid = $1", uid)
             .fetch_one(&self.state.db)
             .await
             .map_err(|_| tonic::Status::internal("Failed to delete user"))?;
