@@ -32,6 +32,8 @@
     "expo-system-ui": "~4.0.8",
     "expo-web-browser": "~14.0.2",
     "firebase": "^11.4.0",
+    "google-protobuf": "^3.21.4",
+    "grpc-web": "^1.5.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "^7.54.2",
@@ -49,6 +51,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
+    "@types/google-protobuf": "^3.15.12",
     "@types/react": "~18.3.18",
     "typescript": "^5.8.2"
   },
