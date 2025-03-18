@@ -20,8 +20,8 @@ import * as ImagePicker from 'expo-image-picker'
 import { cloud, getImageUrl } from '@/lib/storage'
 import { ref, uploadBytes } from 'firebase/storage'
 import { useAuthContext } from '@/lib/context'
-import { getProfile, Profile, profileRef } from '@/lib/db'
-import { setDoc } from 'firebase/firestore'
+import { db, getProfile, Profile, profileRef } from '@/lib/db'
+import { collection, doc, setDoc } from 'firebase/firestore'
 
 const ProfileEdit = ({
   profile,
@@ -42,6 +42,7 @@ const ProfileEdit = ({
   const [banner, setBanner] = useState<string | null>(banner_url || null)
   const [name, setName] = useState(profile?.name || '')
   const [bio, setBio] = useState(profile?.bio || '')
+  const [username, setUsername] = useState(profile?.username || '')
 
   const pickImage = async (type: 'avatar' | 'banner') => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -77,10 +78,21 @@ const ProfileEdit = ({
         await uploadBytes(bannerRef, blob)
       }
 
+      if (username !== profile?.username) {
+        console.log('Updating username', { username })
+        await setDoc(doc(collection(db, 'usernames'), username), {
+          uid: currentUser.uid,
+        })
+      }
+
       console.log('Updating profile', { name, bio })
-      await setDoc(profileRef(currentUser.uid), { name, bio }, { merge: true })
+      await setDoc(
+        profileRef(currentUser.uid),
+        { name, bio, username },
+        { merge: true }
+      )
     } catch (error) {
-      console.error('Failed to upload image', error)
+      console.error('Failed to save profile:', error)
     } finally {
       close()
     }
@@ -128,13 +140,24 @@ const ProfileEdit = ({
           left='$4'
           borderWidth='$0.5'
           borderColor='white'
+          backgroundColor='#A0D7FF'
           circular
         >
           <Avatar.Image src={avatar ?? undefined} />
           <Avatar.Fallback backgroundColor='#A0D7FF' />
         </Avatar>
       </Pressable>
+
       <YStack padding='$4' gap='$4' marginTop='$10'>
+        <XStack gap='$4' alignItems='center'>
+          <Text width={80}>ユーザー名</Text>
+          <Input
+            flex={1}
+            placeholder='アルファベットと数字のみ'
+            value={username}
+            onChangeText={setUsername}
+          />
+        </XStack>
         <XStack gap='$4' alignItems='center'>
           <Text width={80}>名前</Text>
           <Input
@@ -167,20 +190,27 @@ export default function ProfilePage() {
   const [avatar, setAvatar] = useState<string | null>(null)
   const [banner, setBanner] = useState<string | null>(null)
 
-  const fetchData = async () => {
+  const loadAvatar = async () => {
+    if (currentUser) {
+      const avatarUrl = await getImageUrl(`images/${currentUser.uid}/avatar`)
+      setAvatar(avatarUrl)
+    }
+  }
+
+  const loadBanner = async () => {
+    if (currentUser) {
+      const bannerUrl = await getImageUrl(`images/${currentUser.uid}/banner`)
+      setBanner(bannerUrl)
+    }
+  }
+
+  const loadProfile = async () => {
     if (currentUser) {
       setIsLoading(true)
       try {
         // Fetch profile data
         const profile = await getProfile(currentUser.uid)
         setProfileData(profile)
-
-        // Fetch images
-        const avatarUrl = await getImageUrl(`images/${currentUser.uid}/avatar`)
-        setAvatar(avatarUrl)
-
-        const bannerUrl = await getImageUrl(`images/${currentUser.uid}/banner`)
-        setBanner(bannerUrl)
       } catch (error) {
         console.error('Error fetching profile data:', error)
       } finally {
@@ -190,7 +220,9 @@ export default function ProfilePage() {
   }
 
   useEffect(() => {
-    fetchData()
+    loadProfile()
+    loadAvatar()
+    loadBanner()
   }, [currentUser])
 
   if (!currentUser) return null
@@ -254,7 +286,7 @@ export default function ProfilePage() {
                 {profileData?.name}
               </Text>
               <Text fontSize='$3' color='#71767B'>
-                {profileData?.username}
+                @{profileData?.username}
               </Text>
 
               <Text fontSize='$3' marginTop='$2'>
@@ -317,7 +349,9 @@ export default function ProfilePage() {
               close={() => {
                 setOpen(false)
                 // Reload profile data after editing
-                fetchData()
+                loadProfile()
+                loadAvatar()
+                loadBanner()
               }}
             />
           </Sheet.Frame>

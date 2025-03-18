@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorMessage } from '@/components/input'
 import { createUserWithEmailAndPassword } from '@firebase/auth'
 import { auth } from '@/lib/auth'
+import { collection, doc, setDoc } from 'firebase/firestore'
+import { db } from '@/lib/db'
 
 const schema = z
   .object({
@@ -36,7 +38,22 @@ export default function SignUp() {
   })
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      await createUserWithEmailAndPassword(auth, data.email, data.password)
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      )
+      // allocate username
+      await setDoc(doc(collection(db, 'usernames'), userCredential.user.uid), {
+        uid: userCredential.user.uid,
+      })
+      // set initial user data
+      await setDoc(doc(collection(db, 'users'), userCredential.user.uid), {
+        name: userCredential.user.uid,
+        username: userCredential.user.uid,
+        bio: '',
+      })
+
       router.replace('/')
     } catch (e) {
       setError('email', {
