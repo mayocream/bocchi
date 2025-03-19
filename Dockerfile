@@ -1,5 +1,6 @@
 FROM rust:1.85 AS builder
 WORKDIR /usr/src/bocchi
+RUN apt-get update && apt-get install -y protobuf-compiler
 ENV SQLX_OFFLINE=true
 COPY . .
 RUN cargo install --path .
