@@ -8,179 +8,15 @@ import {
   Button,
   Avatar,
   Sheet,
-  Input,
-  TextArea,
   Stack,
   Spinner,
 } from 'tamagui'
 import { Counter } from '@/components/counter'
 import { useState, useEffect } from 'react'
-import { Pressable } from 'react-native'
-import * as ImagePicker from 'expo-image-picker'
-import { cloud, getImageUrl } from '@/lib/storage'
-import { ref, uploadBytes } from 'firebase/storage'
+import { getImageUrl } from '@/lib/storage'
 import { useAuthContext } from '@/lib/context'
-import { db, getProfile, Profile, profileRef } from '@/lib/db'
-import { collection, doc, setDoc } from 'firebase/firestore'
-
-const ProfileEdit = ({
-  profile,
-  avatar_url,
-  banner_url,
-  close,
-}: {
-  profile: Profile | null
-  close: () => void
-  avatar_url: string | null
-  banner_url: string | null
-}) => {
-  const { currentUser } = useAuthContext()
-
-  if (!currentUser) return null
-
-  const [avatar, setAvatar] = useState<string | null>(avatar_url || null)
-  const [banner, setBanner] = useState<string | null>(banner_url || null)
-  const [name, setName] = useState(profile?.name || '')
-  const [bio, setBio] = useState(profile?.bio || '')
-  const [username, setUsername] = useState(profile?.username || '')
-
-  const pickImage = async (type: 'avatar' | 'banner') => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
-      allowsEditing: true,
-      aspect: type === 'avatar' ? [1, 1] : [16, 9],
-      quality: 1,
-    })
-
-    if (result.canceled) {
-      return
-    }
-
-    if (type === 'avatar') {
-      setAvatar(result.assets[0].uri)
-    } else {
-      setBanner(result.assets[0].uri)
-    }
-  }
-
-  const onSave = async () => {
-    try {
-      if (avatar) {
-        console.log('Uploading avatar', avatar)
-        const avatarRef = ref(cloud, `images/${currentUser.uid}/avatar`)
-        const blob = await fetch(avatar).then((res) => res.blob())
-        await uploadBytes(avatarRef, blob)
-      }
-      if (banner) {
-        console.log('Uploading banner', banner)
-        const bannerRef = ref(cloud, `images/${currentUser.uid}/banner`)
-        const blob = await fetch(banner).then((res) => res.blob())
-        await uploadBytes(bannerRef, blob)
-      }
-
-      if (username !== profile?.username) {
-        console.log('Updating username', { username })
-        await setDoc(doc(collection(db, 'usernames'), username), {
-          uid: currentUser.uid,
-        })
-      }
-
-      console.log('Updating profile', { name, bio })
-      await setDoc(
-        profileRef(currentUser.uid),
-        { name, bio, username },
-        { merge: true }
-      )
-    } catch (error) {
-      console.error('Failed to save profile:', error)
-    } finally {
-      close()
-    }
-  }
-
-  return (
-    <>
-      <XStack
-        padding='$4'
-        height='$6'
-        alignItems='center'
-        paddingHorizontal='$4'
-        borderBottomWidth={1}
-        borderBottomColor='#EFEFEF'
-      >
-        <Stack position='absolute' left='$4'>
-          <Button onPress={close} chromeless>
-            <Text color='#000'>キャンセル</Text>
-          </Button>
-        </Stack>
-
-        <Text flex={1} textAlign='center' fontSize='$4' fontWeight='bold'>
-          編集
-        </Text>
-
-        <Stack position='absolute' right='$4'>
-          <Button onPress={onSave} chromeless>
-            <Text color='#1D9BF0'>保存</Text>
-          </Button>
-        </Stack>
-      </XStack>
-      <Pressable onPress={() => pickImage('banner')}>
-        <Image
-          source={{ uri: banner ?? undefined }}
-          width='100%'
-          height='$15'
-          backgroundColor='#E6E6E6'
-        />
-      </Pressable>
-      <Pressable onPress={() => pickImage('avatar')}>
-        <Avatar
-          size='$10'
-          position='absolute'
-          top='$-10'
-          left='$4'
-          borderWidth='$0.5'
-          borderColor='white'
-          backgroundColor='#A0D7FF'
-          circular
-        >
-          <Avatar.Image src={avatar ?? undefined} />
-          <Avatar.Fallback backgroundColor='#A0D7FF' />
-        </Avatar>
-      </Pressable>
-
-      <YStack padding='$4' gap='$4' marginTop='$10'>
-        <XStack gap='$4' alignItems='center'>
-          <Text width={80}>ユーザー名</Text>
-          <Input
-            flex={1}
-            placeholder='アルファベットと数字のみ'
-            value={username}
-            onChangeText={setUsername}
-          />
-        </XStack>
-        <XStack gap='$4' alignItems='center'>
-          <Text width={80}>名前</Text>
-          <Input
-            flex={1}
-            placeholder='吾輩は猫である'
-            value={name}
-            onChangeText={setName}
-          />
-        </XStack>
-        <XStack gap='$4' alignItems='center'>
-          <Text width={80}>自己紹介</Text>
-          <TextArea
-            minHeight={90}
-            flex={1}
-            placeholder='自己紹介'
-            value={bio}
-            onChangeText={setBio}
-          />
-        </XStack>
-      </YStack>
-    </>
-  )
-}
+import { getProfile, Profile } from '@/lib/db'
+import { ProfileEdit } from '@/components/profile-edit'
 
 export default function ProfilePage() {
   const { currentUser } = useAuthContext()
@@ -339,12 +175,12 @@ export default function ProfilePage() {
           snapPoints={[95]}
           dismissOnSnapToBottom
         >
-          <Sheet.Overlay animation='lazy' opacity={0.7} />
+          <Sheet.Overlay opacity={0.7} />
           <Sheet.Handle />
           <Sheet.Frame>
             <ProfileEdit
-              avatar_url={avatar}
-              banner_url={banner}
+              avatarUrl={avatar}
+              bannerUrl={banner}
               profile={profileData}
               close={() => {
                 setOpen(false)
