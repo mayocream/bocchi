@@ -8,7 +8,7 @@ The Bocchi project uses Firebase Auth for authentication, because it provides a 
 
 The project uses a microservices architecture, with each service responsible for a specific part of the application. This allows us to scale each part of the application independently, and to use the best tool for the job in each case.
 
-Next.js is used for the API layer, as it allows us to deloy serverless functions easily, it works closely with the edge network, agressively caches data, and reduces the cost of running the application.
+Next.js is used for the API layer, as it allows us to deloy serverless functions easily, it works closely with the edge network, aggressively caches data, and reduces the cost of running the application.
 
 Rust is used for heavy tasks, such as post tagging, ML model inference, and background processing. This allows us to take advantage of Rust's performance and safety guarantees.
 
