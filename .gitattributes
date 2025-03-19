@@ -1,6 +1,3 @@
-lib/bocchi_pb.js linguist-generated
-lib/bocchi_pb.d.ts linguist-generated
-lib/BocchiServiceClientPb.ts linguist-generated
-android/* linguist-generated
-ios/* linguist-generated
+android/** linguist-generated
+ios/** linguist-generated
 .sqlx/* linguist-generated
