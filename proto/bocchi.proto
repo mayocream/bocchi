@@ -28,7 +28,7 @@ message LoginRequest {
 
 // User Profile
 message GetProfileRequest {
-    string user_id = 1;
+    int32 id = 1;
 }
 
 message GetProfileResponse {
@@ -50,8 +50,8 @@ message UpdateProfileRequest {
 service User {
     rpc Register(RegisterRequest) returns (AccessToken) {}
     rpc Login(LoginRequest) returns (AccessToken) {}
-    // rpc GetProfile(GetProfileRequest) returns (GetProfileResponse) {}
-    // rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty) {}
+    rpc GetProfile(GetProfileRequest) returns (GetProfileResponse) {}
+    rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty) {}
 }
 
 message UploadImageRequest {
@@ -64,4 +64,28 @@ message UploadImageResponse {
 
 service Media {
     rpc UploadImage(UploadImageRequest) returns (UploadImageResponse) {}
+}
+
+message CreatePostRequest {
+    string content = 1;
+}
+
+message CreatePostResponse {
+    int32 id = 1;
+}
+
+message GetPostRequest {
+    int32 id = 1;
+}
+
+message GetPostResponse {
+    int32 id = 1;
+    string username = 2;
+    string content = 3;
+    google.protobuf.Timestamp created_at = 4;
+}
+
+service Post {
+    rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {}
+    rpc GetPost(GetPostRequest) returns (GetPostResponse) {}
 }
