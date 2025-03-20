@@ -8,6 +8,7 @@ members = [".", "migrations"]
 
 [dependencies]
 argon2 = "0.5.3"
+chrono = "0.4.40"
 clap = { version = "4.5.32", features = ["derive", "env"] }
 dotenvy = "0.15.7"
 jsonwebtoken = "9.3.1"
