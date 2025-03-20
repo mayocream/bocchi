@@ -13,11 +13,11 @@ pub struct Model {
     pub email: String,
     pub email_verified: bool,
     pub password_hash: String,
-    pub name: String,
-    #[sea_orm(column_type = "Text")]
-    pub bio: String,
-    pub avatar_url: String,
-    pub cover_url: String,
+    pub name: Option<String>,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub bio: Option<String>,
+    pub avatar_url: Option<String>,
+    pub cover_url: Option<String>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

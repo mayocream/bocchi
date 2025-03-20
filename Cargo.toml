@@ -22,6 +22,14 @@ sea-orm = { version = "1.1.0", features = [
 serde = { version = "1.0.219", features = ["derive"] }
 tokio = { version = "1.44.1", features = ["full"] }
 tonic = "0.12.3"
+migrations = { path = "migrations" }
 
 [build-dependencies]
 tonic-build = "0.12.3"
+
+[dev-dependencies]
+sea-orm = { version = "1.1.0", features = [
+    "sqlx-sqlite",
+    "runtime-tokio-native-tls",
+    "macros",
+] }

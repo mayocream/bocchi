@@ -16,10 +16,10 @@ impl MigrationTrait for Migration {
                     .col(string_uniq(User::Email))
                     .col(boolean(User::EmailVerified).default(false))
                     .col(string(User::PasswordHash))
-                    .col(string(User::Name))
-                    .col(text(User::Bio))
-                    .col(string(User::AvatarUrl))
-                    .col(string(User::CoverUrl))
+                    .col(string_null(User::Name))
+                    .col(text_null(User::Bio))
+                    .col(string_null(User::AvatarUrl))
+                    .col(string_null(User::CoverUrl))
                     .col(
                         timestamp_with_time_zone(User::CreatedAt)
                             .default(Expr::current_timestamp()),

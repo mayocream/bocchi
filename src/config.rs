@@ -1,6 +1,6 @@
 use clap::Parser;
 
-#[derive(Debug, Parser, Clone)]
+#[derive(Debug, Parser, Clone, Default)]
 pub struct Config {
     #[arg(long, env, help = "The URL of the database")]
     pub database_url: String,
