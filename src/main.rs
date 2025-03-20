@@ -1,4 +1,4 @@
-use bocchi::config::Config;
+use bocchi::{config::Config, server};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -13,13 +13,14 @@ enum Commands {
     Serve(Config),
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     _ = dotenvy::dotenv();
 
     let cli = Cli::parse();
     match cli.command {
         Some(Commands::Serve(config)) => {
-            println!("{:?}", config);
+            server::serve(config).await?;
         }
         None => {}
     }
