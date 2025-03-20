@@ -243,6 +243,8 @@ dependencies = [
 name = "bocchi"
 version = "0.1.0"
 dependencies = [
+ "clap",
+ "dotenvy",
  "sea-orm",
 ]
 
