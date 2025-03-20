@@ -23,13 +23,13 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.DOCKER_HUB_PAT }}
 
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ github.repository }}
           tags: latest
 
       - name: Build and push
@@ -60,6 +60,6 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: bocchi
-          image: ghcr.io/${{ github.repository }}:latest
+          image: ${{ github.repository }}:latest
           region: asia-northeast1
           flags: --allow-unauthenticated --port=3000
