@@ -38,3 +38,28 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy to Cloud Run
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: bocchi
+          image: ghcr.io/${{ github.repository }}:latest
+          region: asia-northeast1
+          flags: --allow-unauthenticated --port=3000
