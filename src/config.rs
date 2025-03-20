@@ -1,6 +1,6 @@
 use clap::Parser;
 
-#[derive(Debug, Parser)]
+#[derive(Debug, Parser, Clone)]
 pub struct Config {
     #[arg(long, env, help = "The URL of the database")]
     pub database_url: String,
@@ -13,4 +13,7 @@ pub struct Config {
         default_value = "0.0.0.0:3000"
     )]
     pub listen_address: String,
+
+    #[arg(long, env, help = "The secret key for signing JWT tokens")]
+    pub jwt_secret: String,
 }

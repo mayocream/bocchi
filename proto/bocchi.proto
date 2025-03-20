@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package bocchi;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// Create new user
+message RegisterRequest {
+    string email = 1;
+    string username = 2;
+    string password = 3;
+}
+
+// User credentials
+message AccessToken {
+    string token = 1;
+}
+
+// User login
+message LoginRequest {
+    oneof handle {
+        string email = 1;
+        string username = 2;
+    }
+    string password = 3;
+}
+
+// User Profile
+message GetProfileRequest {
+    string user_id = 1;
+}
+
+message GetProfileResponse {
+    int32 id = 1;
+    string username = 2;
+    string name = 3;
+    string bio = 4;
+    string avatar_url = 5;
+    string cover_url = 6;
+}
+
+message UpdateProfileRequest {
+    string name = 1;
+    string bio = 2;
+    string avatar_url = 3;
+    string cover_url = 4;
+}
+
+service User {
+    rpc Register(RegisterRequest) returns (AccessToken) {}
+    rpc Login(LoginRequest) returns (AccessToken) {}
+    // rpc GetProfile(GetProfileRequest) returns (GetProfileResponse) {}
+    // rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty) {}
+}
+
+message UploadImageRequest {
+    bytes image = 1;
+}
+
+message UploadImageResponse {
+    string url = 1;
+}
+
+service Media {
+    rpc UploadImage(UploadImageRequest) returns (UploadImageResponse) {}
+}
