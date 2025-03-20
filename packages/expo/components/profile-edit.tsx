@@ -12,11 +12,6 @@ import {
 import { useState } from 'react'
 import { Pressable } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { cloud } from '@/lib/storage'
-import { ref, uploadBytes } from 'firebase/storage'
-import { useAuthContext } from '@/lib/context'
-import { db, Profile, profileRef } from '@/lib/db'
-import { collection, deleteDoc, doc, setDoc } from 'firebase/firestore'
 
 export const ProfileEdit = ({
   profile,
@@ -24,15 +19,11 @@ export const ProfileEdit = ({
   bannerUrl,
   close,
 }: {
-  profile: Profile | null
+  profile: any | null
   close: () => void
   avatarUrl: string | null
   bannerUrl: string | null
 }) => {
-  const { currentUser } = useAuthContext()
-
-  if (!currentUser) return null
-
   const [avatar, setAvatar] = useState<string | null>(avatarUrl || null)
   const [banner, setBanner] = useState<string | null>(bannerUrl || null)
   const [name, setName] = useState(profile?.name || '')
@@ -60,33 +51,7 @@ export const ProfileEdit = ({
 
   const onSave = async () => {
     try {
-      if (avatar) {
-        console.log('Uploading avatar', avatar)
-        const avatarRef = ref(cloud, `images/${currentUser.uid}/avatar`)
-        const blob = await fetch(avatar).then((res) => res.blob())
-        await uploadBytes(avatarRef, blob)
-      }
-      if (banner) {
-        console.log('Uploading banner', banner)
-        const bannerRef = ref(cloud, `images/${currentUser.uid}/banner`)
-        const blob = await fetch(banner).then((res) => res.blob())
-        await uploadBytes(bannerRef, blob)
-      }
-
-      if (username !== profile?.username) {
-        console.log('Updating username', { username })
-        await deleteDoc(doc(collection(db, 'usernames'), profile?.username))
-        await setDoc(doc(collection(db, 'usernames'), username), {
-          uid: currentUser.uid,
-        })
-      }
-
-      console.log('Updating profile', { name, bio })
-      await setDoc(
-        profileRef(currentUser.uid),
-        { name, bio, username },
-        { merge: true }
-      )
+   
     } catch (error) {
       console.error('Failed to save profile:', error)
     } finally {

@@ -13,55 +13,20 @@ import {
 } from 'tamagui'
 import { Counter } from '@/components/counter'
 import { useState, useEffect } from 'react'
-import { getImageUrl } from '@/lib/storage'
-import { useAuthContext } from '@/lib/context'
-import { getProfile, Profile } from '@/lib/db'
 import { ProfileEdit } from '@/components/profile-edit'
 
 export default function ProfilePage() {
-  const { currentUser } = useAuthContext()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [profileData, setProfileData] = useState<Profile | null>(null)
+  const [profileData, setProfileData] = useState<any | null>(null)
   const [avatar, setAvatar] = useState<string | null>(null)
   const [banner, setBanner] = useState<string | null>(null)
 
-  const loadAvatar = async () => {
-    if (currentUser) {
-      const avatarUrl = await getImageUrl(`images/${currentUser.uid}/avatar`)
-      setAvatar(avatarUrl)
-    }
-  }
+  const loadAvatar = async () => {}
 
-  const loadBanner = async () => {
-    if (currentUser) {
-      const bannerUrl = await getImageUrl(`images/${currentUser.uid}/banner`)
-      setBanner(bannerUrl)
-    }
-  }
+  const loadBanner = async () => {}
 
-  const loadProfile = async () => {
-    if (currentUser) {
-      setIsLoading(true)
-      try {
-        // Fetch profile data
-        const profile = await getProfile(currentUser.uid)
-        setProfileData(profile)
-      } catch (error) {
-        console.error('Error fetching profile data:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-  }
-
-  useEffect(() => {
-    loadProfile()
-    loadAvatar()
-    loadBanner()
-  }, [currentUser])
-
-  if (!currentUser) return null
+  const loadProfile = async () => {}
 
   // Show loading state while data is being fetched
   if (isLoading) {

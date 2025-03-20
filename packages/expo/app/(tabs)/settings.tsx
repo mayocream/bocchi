@@ -16,10 +16,11 @@ import {
   LogOut,
   ChevronRight,
 } from '@tamagui/lucide-icons'
-import { auth } from '@/lib/auth'
 import { router } from 'expo-router'
+import { useAuthStore } from '@/lib/state'
 
 export default function Settings() {
+  const authStore = useAuthStore()
   return (
     <YStack
       padding='$4'
@@ -38,7 +39,7 @@ export default function Settings() {
           icon={LogOut}
           theme='red'
           onPress={() => {
-            auth.signOut()
+            authStore.clearAccessToken()
             router.replace('/sign-in')
           }}
         >

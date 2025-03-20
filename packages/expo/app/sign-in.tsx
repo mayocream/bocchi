@@ -1,14 +1,15 @@
 import { ErrorMessage } from '@/components/input'
+import { userService } from '@/lib/api'
+import { LoginRequest } from '@/lib/bocchi_pb'
+import { useAuthStore } from '@/lib/state'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, router, Stack } from 'expo-router'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { View, Image, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
-import { signInWithEmailAndPassword } from '@firebase/auth'
-import { auth } from '@/lib/auth'
 
 const schema = z.object({
-  email: z.string().email(),
+  handle: z.union([z.string().email(), z.string().min(3)]),
   password: z.string(),
 })
 
@@ -23,17 +24,28 @@ export default function SignIn() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: '',
+      handle: '',
       password: '',
     },
   })
+  const authStore = useAuthStore()
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password)
+      let request = new LoginRequest()
+      if (data.handle.includes('@')) {
+        request.setEmail(data.handle)
+      } else {
+        request.setUsername(data.handle)
+      }
+      request.setPassword(data.password)
+      const response = await userService.login(request)
+      authStore.setAccessToken(response.getToken())
+
       router.replace('/')
     } catch (e) {
-      setError('email', {
+      console.error('Failed to login:', e)
+      setError('handle', {
         type: 'manual',
         message: 'メールアドレスまたはパスワードが違います',
       })
@@ -57,15 +69,15 @@ export default function SignIn() {
           control={control}
           render={({ field: { onChange, ...props } }) => (
             <Input
-              placeholder='メールアドレス'
+              placeholder='ユーザー名またはメールアドレス'
               keyboardType='email-address'
               onChangeText={onChange}
               {...props}
             />
           )}
-          name='email'
+          name='handle'
         />
-        <ErrorMessage errors={errors} name='email' />
+        <ErrorMessage errors={errors} name='handle' />
 
         <Controller
           control={control}

@@ -4,16 +4,26 @@ import { z } from 'zod'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorMessage } from '@/components/input'
-import { createUserWithEmailAndPassword } from '@firebase/auth'
-import { auth } from '@/lib/auth'
-import { collection, doc, setDoc } from 'firebase/firestore'
-import { db } from '@/lib/db'
+import { userService } from '@/lib/api'
+import { RegisterRequest } from '@/lib/bocchi_pb'
+import { useAuthStore } from '@/lib/state'
 
 const schema = z
   .object({
-    email: z.string().email(),
-    password: z.string().min(8).max(255),
-    passwordConfirmation: z.string().min(8).max(255),
+    username: z
+      .string()
+      .min(3, 'ユーザー名は3文字以上で入力してください')
+      .max(20, 'ユーザー名は20文字以下で入力してください')
+      .regex(
+        /^[a-zA-Z0-9_]+$/,
+        'ユーザー名は半角英数字とアンダースコアのみ使用できます'
+      ),
+    email: z.string().email('正しいメールアドレスを入力してください'),
+    password: z
+      .string()
+      .min(8, 'パスワードは8文字以上で入力してください')
+      .max(255, 'パスワードは255文字以下で入力してください'),
+    passwordConfirmation: z.string(),
   })
   .refine((data) => data.password === data.passwordConfirmation, {
     path: ['passwordConfirmation'],
@@ -31,34 +41,30 @@ export default function SignUp() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
+      username: '',
       email: '',
       password: '',
       passwordConfirmation: '',
     },
   })
+
+  const authStore = useAuthStore()
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      )
-      // allocate username
-      await setDoc(doc(collection(db, 'usernames'), userCredential.user.uid), {
-        uid: userCredential.user.uid,
-      })
-      // set initial user data
-      await setDoc(doc(collection(db, 'users'), userCredential.user.uid), {
-        name: userCredential.user.uid,
-        username: userCredential.user.uid,
-        bio: '',
-      })
+      const request = new RegisterRequest()
+      request.setUsername(data.username)
+      request.setEmail(data.email)
+      request.setPassword(data.password)
+      const response = await userService.register(request)
+      authStore.setAccessToken(response.getToken())
 
       router.replace('/')
     } catch (e) {
-      setError('email', {
+      console.error('Failed to register:', e)
+      setError('username', {
         type: 'manual',
-        message: 'メールアドレスが既に登録されています',
+        message: 'ユーザー名が既に使用されています',
       })
     }
   }
@@ -76,6 +82,19 @@ export default function SignUp() {
         height={140}
       />
       <Form gap={10} width={300}>
+        <Controller
+          control={control}
+          render={({ field: { onChange, ...props } }) => (
+            <Input
+              onChangeText={onChange}
+              placeholder='ユーザー名'
+              {...props}
+            />
+          )}
+          name='username'
+        />
+        <ErrorMessage name='username' errors={errors} />
+
         <Controller
           control={control}
           render={({ field: { onChange, ...props } }) => (
