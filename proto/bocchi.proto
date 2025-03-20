@@ -5,7 +5,9 @@ package bocchi;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-// Create new user
+// User registration
+// all fields are required
+// email and username must be unique
 message RegisterRequest {
     string email = 1;
     string username = 2;
@@ -13,11 +15,13 @@ message RegisterRequest {
 }
 
 // User credentials
+// encoded in JWT
 message AccessToken {
     string token = 1;
 }
 
 // User login
+// either email or username can be used
 message LoginRequest {
     oneof handle {
         string email = 1;
@@ -26,11 +30,13 @@ message LoginRequest {
     string password = 3;
 }
 
-// User Profile
+// Get a user's profile
+// requires user's id
 message GetProfileRequest {
     int32 id = 1;
 }
 
+// Represents a user's profile
 message GetProfileResponse {
     int32 id = 1;
     string username = 2;
@@ -40,6 +46,9 @@ message GetProfileResponse {
     string cover_url = 6;
 }
 
+// Update a user's profile
+// all fields are required but can be empty string
+// avatar_url and cover_url must be valid URLs
 message UpdateProfileRequest {
     string name = 1;
     string bio = 2;
@@ -47,11 +56,74 @@ message UpdateProfileRequest {
     string cover_url = 4;
 }
 
+// Follow a user
+message FollowRequest {
+    int32 user_id = 1;
+}
+
+// Unfollow a user
+message UnfollowRequest {
+    int32 user_id = 1;
+}
+
+// Get a user's followers
+message GetFollowersRequest {
+    int32 user_id = 1;
+    int32 cursor = 2;
+}
+
+// List of followers and next cursor
+message GetFollowersResponse {
+    repeated int32 followers = 1;
+    int32 next_cursor = 2;
+}
+
+// Get a user's following
+message GetFollowingRequest {
+    int32 user_id = 1;
+    int32 cursor = 2;
+}
+
+// List of following and next cursor
+message GetFollowingResponse {
+    repeated int32 following = 1;
+    int32 next_cursor = 2;
+}
+
+// Search for users
+message SearchUserRequest {
+    string query = 1;
+}
+
+// List of users and next cursor
+message SearchUserResponse {
+    repeated int32 users = 1;
+    int32 next_cursor = 2;
+}
+
+// User related operations
 service User {
-    rpc Register(RegisterRequest) returns (AccessToken) {}
-    rpc Login(LoginRequest) returns (AccessToken) {}
-    rpc GetProfile(GetProfileRequest) returns (GetProfileResponse) {}
-    rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty) {}
+    // Create a new user
+    rpc Register(RegisterRequest) returns (AccessToken);
+    // Login a user
+    rpc Login(LoginRequest) returns (AccessToken);
+    // Get a user's profile
+    rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+    // Update a user's profile
+    rpc UpdateProfile(UpdateProfileRequest) returns (google.protobuf.Empty);
+
+    // Follow a user
+    rpc Follow(FollowRequest) returns (google.protobuf.Empty);
+    // Unfollow a user
+    rpc Unfollow(UnfollowRequest) returns (google.protobuf.Empty);
+
+    // Get a user's followers
+    rpc GetFollowers(GetFollowersRequest) returns (GetFollowersResponse);
+    // Get a user's following
+    rpc GetFollowing(GetFollowingRequest) returns (GetFollowingResponse);
+
+    // Search for users
+    rpc Search(SearchUserRequest) returns (SearchUserResponse);
 }
 
 message UploadImageRequest {
@@ -63,7 +135,7 @@ message UploadImageResponse {
 }
 
 service Media {
-    rpc UploadImage(UploadImageRequest) returns (UploadImageResponse) {}
+    rpc UploadImage(UploadImageRequest) returns (UploadImageResponse);
 }
 
 message CreatePostRequest {
@@ -86,6 +158,6 @@ message GetPostResponse {
 }
 
 service Post {
-    rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {}
-    rpc GetPost(GetPostRequest) returns (GetPostResponse) {}
+    rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+    rpc GetPost(GetPostRequest) returns (GetPostResponse);
 }
