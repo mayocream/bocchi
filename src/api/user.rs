@@ -4,7 +4,7 @@ use argon2::{
 };
 use sea_orm::{ActiveValue::Set, ColumnTrait, EntityTrait, QueryFilter};
 
-use crate::entities::{self, user};
+use crate::{entities::user, jwt::Claims};
 
 use super::{
     SharedAppState,
@@ -41,7 +41,7 @@ impl User for UserService {
             password_hash: Set(password_hash.to_string()),
             ..Default::default()
         };
-        user::Entity::insert(user)
+        let user = user::Entity::insert(user)
             .exec(&self.state.database)
             .await
             .map_err(|e| {
@@ -53,7 +53,14 @@ impl User for UserService {
             })?;
 
         let response = bocchi::AccessToken {
-            token: "TODO".to_string(),
+            token: self
+                .state
+                .jwt
+                .encode(Claims {
+                    user_id: user.last_insert_id,
+                    exp: (chrono::Utc::now() + chrono::Duration::days(365)).timestamp() as usize,
+                })
+                .map_err(|_| tonic::Status::internal("Failed to encode token"))?,
         };
 
         Ok(tonic::Response::new(response))
@@ -83,7 +90,14 @@ impl User for UserService {
             .map_err(|_| tonic::Status::unauthenticated("Invalid password"))?;
 
         let response = bocchi::AccessToken {
-            token: "TODO".to_string(),
+            token: self
+                .state
+                .jwt
+                .encode(Claims {
+                    user_id: user.id,
+                    exp: (chrono::Utc::now() + chrono::Duration::days(365)).timestamp() as usize,
+                })
+                .map_err(|_| tonic::Status::internal("Failed to encode token"))?,
         };
 
         Ok(tonic::Response::new(response))

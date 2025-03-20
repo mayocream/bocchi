@@ -1,14 +1,15 @@
 use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone)]
 pub struct Jwt {
     secret: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    user_id: i32,
-    exp: usize,
+    pub user_id: i32,
+    pub exp: usize,
 }
 
 impl Jwt {
