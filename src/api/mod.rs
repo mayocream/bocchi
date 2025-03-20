@@ -4,19 +4,19 @@ use sea_orm::DatabaseConnection;
 
 use crate::jwt::Jwt;
 
-mod bocchi {
+pub mod bocchi {
     tonic::include_proto!("bocchi");
 }
 
-mod user;
+pub mod user;
 
 #[derive(Debug, Clone)]
 pub struct AppState {
-    database: DatabaseConnection,
-    jwt: Jwt,
+    pub database: DatabaseConnection,
+    pub jwt: Jwt,
 }
 
-type SharedAppState = Arc<AppState>;
+pub type SharedAppState = Arc<AppState>;
 
 trait Auth<T> {
     fn extract_user_id(&self, request: &tonic::Request<T>) -> Result<i32, tonic::Status>;

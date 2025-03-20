@@ -23,6 +23,8 @@ serde = { version = "1.0.219", features = ["derive"] }
 tokio = { version = "1.44.1", features = ["full"] }
 tonic = "0.12.3"
 migrations = { path = "migrations" }
+tower-http = { version = "0.6.2", features = ["full"] }
+tonic-web = "0.12.3"
 
 [build-dependencies]
 tonic-build = "0.12.3"
