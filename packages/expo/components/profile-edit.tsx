@@ -28,7 +28,6 @@ export const ProfileEdit = ({
   const [banner, setBanner] = useState<string | null>(profile?.coverUrl || null)
   const [name, setName] = useState(profile?.name || '')
   const [bio, setBio] = useState(profile?.bio || '')
-  const [username, setUsername] = useState(profile?.username || '')
 
   const pickImage = async (type: 'avatar' | 'banner') => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -123,15 +122,6 @@ export const ProfileEdit = ({
       </Pressable>
 
       <YStack padding='$4' gap='$4' marginTop='$10'>
-        <XStack gap='$4' alignItems='center'>
-          <Text width={80}>ユーザー名</Text>
-          <Input
-            flex={1}
-            placeholder='アルファベットと数字のみ'
-            value={username}
-            onChangeText={setUsername}
-          />
-        </XStack>
         <XStack gap='$4' alignItems='center'>
           <Text width={80}>名前</Text>
           <Input
