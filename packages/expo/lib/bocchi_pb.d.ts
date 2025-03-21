@@ -236,9 +236,6 @@ export class GetFollowersResponse extends jspb.Message {
   clearFollowersList(): GetFollowersResponse;
   addFollowers(value: number, index?: number): GetFollowersResponse;
 
-  getNextCursor(): number;
-  setNextCursor(value: number): GetFollowersResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetFollowersResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetFollowersResponse): GetFollowersResponse.AsObject;
@@ -250,7 +247,6 @@ export class GetFollowersResponse extends jspb.Message {
 export namespace GetFollowersResponse {
   export type AsObject = {
     followersList: Array<number>,
-    nextCursor: number,
   }
 }
 
@@ -282,9 +278,6 @@ export class GetFollowingResponse extends jspb.Message {
   clearFollowingList(): GetFollowingResponse;
   addFollowing(value: number, index?: number): GetFollowingResponse;
 
-  getNextCursor(): number;
-  setNextCursor(value: number): GetFollowingResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetFollowingResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetFollowingResponse): GetFollowingResponse.AsObject;
@@ -296,13 +289,15 @@ export class GetFollowingResponse extends jspb.Message {
 export namespace GetFollowingResponse {
   export type AsObject = {
     followingList: Array<number>,
-    nextCursor: number,
   }
 }
 
 export class SearchUserRequest extends jspb.Message {
   getQuery(): string;
   setQuery(value: string): SearchUserRequest;
+
+  getCursor(): number;
+  setCursor(value: number): SearchUserRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SearchUserRequest.AsObject;
@@ -315,6 +310,7 @@ export class SearchUserRequest extends jspb.Message {
 export namespace SearchUserRequest {
   export type AsObject = {
     query: string,
+    cursor: number,
   }
 }
 
@@ -323,9 +319,6 @@ export class SearchUserResponse extends jspb.Message {
   setUsersList(value: Array<number>): SearchUserResponse;
   clearUsersList(): SearchUserResponse;
   addUsers(value: number, index?: number): SearchUserResponse;
-
-  getNextCursor(): number;
-  setNextCursor(value: number): SearchUserResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SearchUserResponse.AsObject;
@@ -338,7 +331,6 @@ export class SearchUserResponse extends jspb.Message {
 export namespace SearchUserResponse {
   export type AsObject = {
     usersList: Array<number>,
-    nextCursor: number,
   }
 }
 

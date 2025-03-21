@@ -2127,8 +2127,7 @@ proto.bocchi.GetFollowersResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.bocchi.GetFollowersResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-followersList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f,
-nextCursor: jspb.Message.getFieldWithDefault(msg, 2, 0)
+followersList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -2171,10 +2170,6 @@ proto.bocchi.GetFollowersResponse.deserializeBinaryFromReader = function(msg, re
         msg.addFollowers(values[i]);
       }
       break;
-    case 2:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setNextCursor(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -2208,13 +2203,6 @@ proto.bocchi.GetFollowersResponse.serializeBinaryToWriter = function(message, wr
   if (f.length > 0) {
     writer.writePackedInt32(
       1,
-      f
-    );
-  }
-  f = message.getNextCursor();
-  if (f !== 0) {
-    writer.writeInt32(
-      2,
       f
     );
   }
@@ -2255,24 +2243,6 @@ proto.bocchi.GetFollowersResponse.prototype.addFollowers = function(value, opt_i
  */
 proto.bocchi.GetFollowersResponse.prototype.clearFollowersList = function() {
   return this.setFollowersList([]);
-};
-
-
-/**
- * optional int32 next_cursor = 2;
- * @return {number}
- */
-proto.bocchi.GetFollowersResponse.prototype.getNextCursor = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.bocchi.GetFollowersResponse} returns this
- */
-proto.bocchi.GetFollowersResponse.prototype.setNextCursor = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -2475,8 +2445,7 @@ proto.bocchi.GetFollowingResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.bocchi.GetFollowingResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-followingList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f,
-nextCursor: jspb.Message.getFieldWithDefault(msg, 2, 0)
+followingList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -2519,10 +2488,6 @@ proto.bocchi.GetFollowingResponse.deserializeBinaryFromReader = function(msg, re
         msg.addFollowing(values[i]);
       }
       break;
-    case 2:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setNextCursor(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -2556,13 +2521,6 @@ proto.bocchi.GetFollowingResponse.serializeBinaryToWriter = function(message, wr
   if (f.length > 0) {
     writer.writePackedInt32(
       1,
-      f
-    );
-  }
-  f = message.getNextCursor();
-  if (f !== 0) {
-    writer.writeInt32(
-      2,
       f
     );
   }
@@ -2606,24 +2564,6 @@ proto.bocchi.GetFollowingResponse.prototype.clearFollowingList = function() {
 };
 
 
-/**
- * optional int32 next_cursor = 2;
- * @return {number}
- */
-proto.bocchi.GetFollowingResponse.prototype.getNextCursor = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.bocchi.GetFollowingResponse} returns this
- */
-proto.bocchi.GetFollowingResponse.prototype.setNextCursor = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
 
 
 
@@ -2656,7 +2596,8 @@ proto.bocchi.SearchUserRequest.prototype.toObject = function(opt_includeInstance
  */
 proto.bocchi.SearchUserRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-query: jspb.Message.getFieldWithDefault(msg, 1, "")
+query: jspb.Message.getFieldWithDefault(msg, 1, ""),
+cursor: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -2697,6 +2638,10 @@ proto.bocchi.SearchUserRequest.deserializeBinaryFromReader = function(msg, reade
       var value = /** @type {string} */ (reader.readString());
       msg.setQuery(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setCursor(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2733,6 +2678,13 @@ proto.bocchi.SearchUserRequest.serializeBinaryToWriter = function(message, write
       f
     );
   }
+  f = message.getCursor();
+  if (f !== 0) {
+    writer.writeInt32(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -2751,6 +2703,24 @@ proto.bocchi.SearchUserRequest.prototype.getQuery = function() {
  */
 proto.bocchi.SearchUserRequest.prototype.setQuery = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional int32 cursor = 2;
+ * @return {number}
+ */
+proto.bocchi.SearchUserRequest.prototype.getCursor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.bocchi.SearchUserRequest} returns this
+ */
+proto.bocchi.SearchUserRequest.prototype.setCursor = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -2793,8 +2763,7 @@ proto.bocchi.SearchUserResponse.prototype.toObject = function(opt_includeInstanc
  */
 proto.bocchi.SearchUserResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-usersList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f,
-nextCursor: jspb.Message.getFieldWithDefault(msg, 2, 0)
+usersList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -2837,10 +2806,6 @@ proto.bocchi.SearchUserResponse.deserializeBinaryFromReader = function(msg, read
         msg.addUsers(values[i]);
       }
       break;
-    case 2:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setNextCursor(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -2874,13 +2839,6 @@ proto.bocchi.SearchUserResponse.serializeBinaryToWriter = function(message, writ
   if (f.length > 0) {
     writer.writePackedInt32(
       1,
-      f
-    );
-  }
-  f = message.getNextCursor();
-  if (f !== 0) {
-    writer.writeInt32(
-      2,
       f
     );
   }
@@ -2921,24 +2879,6 @@ proto.bocchi.SearchUserResponse.prototype.addUsers = function(value, opt_index) 
  */
 proto.bocchi.SearchUserResponse.prototype.clearUsersList = function() {
   return this.setUsersList([]);
-};
-
-
-/**
- * optional int32 next_cursor = 2;
- * @return {number}
- */
-proto.bocchi.SearchUserResponse.prototype.getNextCursor = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.bocchi.SearchUserResponse} returns this
- */
-proto.bocchi.SearchUserResponse.prototype.setNextCursor = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 

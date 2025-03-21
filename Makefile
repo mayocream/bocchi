@@ -10,4 +10,4 @@ generate: generate-entities grpc-web
 grpc-web:
 	protoc -I=./proto bocchi.proto \
 		--js_out=import_style=commonjs:./packages/expo/lib \
-		--grpc-web_out=import_style=typescript,mode=grpcwebtext:./packages/expo/lib
+		--grpc-web_out=import_style=typescript,mode=grpcweb:./packages/expo/lib
