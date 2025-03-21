@@ -2,18 +2,21 @@ use std::sync::Arc;
 
 use sea_orm::DatabaseConnection;
 
-use crate::jwt::Jwt;
+use crate::{config::Config, jwt::Jwt, storage::s3::S3};
 
 pub mod bocchi {
     tonic::include_proto!("bocchi");
 }
 
+pub mod media;
 pub mod user;
 
 #[derive(Debug, Clone)]
 pub struct AppState {
+    pub config: Config,
     pub database: DatabaseConnection,
     pub jwt: Jwt,
+    pub s3: S3,
 }
 
 pub type SharedAppState = Arc<AppState>;

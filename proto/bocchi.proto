@@ -124,15 +124,20 @@ service User {
     rpc Search(SearchUserRequest) returns (SearchUserResponse);
 }
 
+// Must be a valid image
+// Requires authentication
 message UploadImageRequest {
     bytes image = 1;
 }
 
+// Returns a full URL to the uploaded image
 message UploadImageResponse {
     string url = 1;
 }
 
+// Media related operations
 service Media {
+    // Upload an image
     rpc UploadImage(UploadImageRequest) returns (UploadImageResponse);
 }
 

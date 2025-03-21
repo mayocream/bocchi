@@ -5,7 +5,7 @@ use crate::config::Config;
 
 use super::Blob;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct S3 {
     client: Client,
     bucket: String,
@@ -14,8 +14,7 @@ pub struct S3 {
 impl S3 {
     pub async fn new(config: Config) -> Result<Self, aws_sdk_s3::Error> {
         let shared_config = aws_config::load_defaults(BehaviorVersion::latest()).await;
-        #[allow(unused_mut)]
-        let mut config_builder = aws_sdk_s3::config::Builder::from(&shared_config)
+        let config_builder = aws_sdk_s3::config::Builder::from(&shared_config)
             .endpoint_url(config.s3_endpoint)
             .region(Region::new(config.s3_region))
             .credentials_provider(Credentials::new(
@@ -24,23 +23,16 @@ impl S3 {
                 None,
                 None,
                 "s3",
-            ));
-
-        #[cfg(test)]
-        {
-            config_builder = config_builder.force_path_style(true);
-        }
+            ))
+            .force_path_style(config.s3_force_path_style);
 
         let client = aws_sdk_s3::Client::from_conf(config_builder.build());
 
-        #[cfg(test)]
-        {
-            _ = client
-                .create_bucket()
-                .bucket(&config.s3_bucket)
-                .send()
-                .await;
-        }
+        _ = client
+            .create_bucket()
+            .bucket(&config.s3_bucket)
+            .send()
+            .await;
 
         Ok(Self {
             client,
@@ -91,6 +83,7 @@ mod tests {
             s3_access_key_id: "minioadmin".to_string(),
             s3_secret_access_key: "minioadmin".to_string(),
             s3_bucket: "test".to_string(),
+            s3_force_path_style: true,
             ..Default::default()
         })
         .await
@@ -107,6 +100,7 @@ mod tests {
             s3_access_key_id: "minioadmin".to_string(),
             s3_secret_access_key: "minioadmin".to_string(),
             s3_bucket: "test".to_string(),
+            s3_force_path_style: true,
             ..Default::default()
         })
         .await

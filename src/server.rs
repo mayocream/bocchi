@@ -9,12 +9,15 @@ use crate::{
     api::{AppState, bocchi::user_server::UserServer, user::UserService},
     config::Config,
     jwt::Jwt,
+    storage::s3::S3,
 };
 
 pub async fn serve(config: Config) -> Result<(), Box<dyn std::error::Error>> {
     let state = Arc::new(AppState {
+        config: config.clone(),
         database: Database::connect(&config.database_url).await?,
         jwt: Jwt::new(config.jwt_secret.clone()),
+        s3: S3::new(config.clone()).await?,
     });
 
     Server::builder()

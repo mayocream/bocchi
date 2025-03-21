@@ -10,6 +10,13 @@ impl Blob {
     pub fn new(mime: String, content: Vec<u8>) -> Self {
         Self { mime, content }
     }
+
+    pub fn from(content: Vec<u8>) -> Self {
+        Self {
+            mime: detect_mime(&content),
+            content,
+        }
+    }
 }
 
 pub fn detect_mime(content: &[u8]) -> String {

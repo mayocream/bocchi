@@ -31,4 +31,15 @@ pub struct Config {
 
     #[arg(long, env, help = "S3 Secret Key")]
     pub s3_secret_access_key: String,
+
+    #[arg(long, env, help = "The public URL of s3")]
+    pub s3_public_url: String,
+
+    #[arg(
+        long,
+        env,
+        help = "Whether to use path style URLs",
+        default_value_t = false
+    )]
+    pub s3_force_path_style: bool,
 }
