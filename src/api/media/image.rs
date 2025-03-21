@@ -17,7 +17,7 @@ pub async fn upload_image(
 
     let key = format!("images/{}/{}", user_id, hash);
 
-    match service.state.s3.put("test", blob).await {
+    match service.state.s3.put(&key, blob).await {
         Ok(_) => {
             let response = bocchi::UploadImageResponse {
                 url: format!("{}/{}", service.state.config.s3_public_url, key),

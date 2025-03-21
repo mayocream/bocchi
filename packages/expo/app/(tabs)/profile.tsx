@@ -64,7 +64,7 @@ export default function ProfilePage() {
               circular
             >
               <Avatar.Image
-                src={profile.coverUrl || undefined}
+                src={profile.avatarUrl || undefined}
                 backgroundColor='#A0D7FF'
               />
               <Avatar.Fallback backgroundColor='#A0D7FF' />

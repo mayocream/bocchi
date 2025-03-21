@@ -9,6 +9,7 @@ import {
 } from '@/lib/bocchi_pb'
 import { useAuthStore } from '@/lib/state'
 import { mediaService, useGrpcAuth, userService } from '@/lib/api'
+import { useImageUpload } from '@/lib/image'
 
 export const ProfileEdit = ({
   profile,
@@ -19,6 +20,7 @@ export const ProfileEdit = ({
 }) => {
   const authStore = useAuthStore()
   const { getAuthMetadata } = useGrpcAuth(authStore.accessToken!)
+  const { uploadImage } = useImageUpload()
 
   const [avatar, setAvatar] = useState<string | null>(
     profile?.avatarUrl || null
@@ -49,22 +51,20 @@ export const ProfileEdit = ({
 
   const onSave = async () => {
     try {
-      if (avatar !== profile?.avatarUrl) {
-        const blob = await fetch(avatar!).then((res) => res.blob())
-        const buffer = await new Response(blob).arrayBuffer()
-        const bytes = new Uint8Array(buffer)
-        const request = new UploadImageRequest()
-        request.setImage(bytes)
-
-        const response = await mediaService.uploadImage(
-          request,
-          getAuthMetadata()
-        )
-        console.log('Uploaded avatar:', response)
+      const request = new UpdateProfileRequest()
+      request.setName(name)
+      request.setBio(bio)
+      if (avatar && avatar !== profile?.avatarUrl) {
+        const url = await uploadImage(avatar!)
+        request.setAvatarUrl(url)
       }
 
-      if (banner !== profile?.coverUrl) {
+      if (banner && banner !== profile?.coverUrl) {
+        const url = await uploadImage(banner!)
+        request.setCoverUrl(url)
       }
+
+      await userService.updateProfile(request, getAuthMetadata())
     } catch (error) {
       console.error('Failed to save profile:', error)
     } finally {
