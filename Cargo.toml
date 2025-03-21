@@ -25,6 +25,9 @@ tonic = "0.12.3"
 migrations = { path = "migrations" }
 tower-http = { version = "0.6.2", features = ["full"] }
 tonic-web = "0.12.3"
+aws-config = { version = "1.1.7", features = ["behavior-version-latest"] }
+aws-sdk-s3 = "1.79.0"
+infer = "0.19.0"
 
 [build-dependencies]
 tonic-build = "0.12.3"

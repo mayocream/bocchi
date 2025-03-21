@@ -16,4 +16,19 @@ pub struct Config {
 
     #[arg(long, env, help = "The secret key for signing JWT tokens")]
     pub jwt_secret: String,
+
+    #[arg(long, env, help = "S3 Endpoint")]
+    pub s3_endpoint: String,
+
+    #[arg(long, env, help = "S3 Region", default_value = "us-east-1")]
+    pub s3_region: String,
+
+    #[arg(long, env, help = "S3 Bucket")]
+    pub s3_bucket: String,
+
+    #[arg(long, env, help = "S3 Access Key")]
+    pub s3_access_key_id: String,
+
+    #[arg(long, env, help = "S3 Secret Key")]
+    pub s3_secret_access_key: String,
 }
