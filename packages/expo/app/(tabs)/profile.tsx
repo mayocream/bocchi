@@ -9,33 +9,37 @@ import {
   Avatar,
   Sheet,
   Stack,
-  Spinner,
 } from 'tamagui'
 import { Counter } from '@/components/counter'
 import { useState, useEffect } from 'react'
 import { ProfileEdit } from '@/components/profile-edit'
+import { useAuthStore } from '@/lib/state'
+import { GetProfileRequest, GetProfileResponse } from '@/lib/bocchi_pb'
+import { userService } from '@/lib/api'
 
 export default function ProfilePage() {
+  const authStore = useAuthStore()
+
   const [open, setOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [profileData, setProfileData] = useState<any | null>(null)
-  const [avatar, setAvatar] = useState<string | null>(null)
-  const [banner, setBanner] = useState<string | null>(null)
+  const [profile, setProfile] = useState<GetProfileResponse.AsObject | null>(
+    null
+  )
 
-  const loadAvatar = async () => {}
+  const loadProfile = async () => {
+    const userId = authStore.getUserId()!
+    const request = new GetProfileRequest()
+    request.setId(userId)
+    const response = await userService.getProfile(request)
+    const profile = response.toObject()
+    setProfile(profile)
+  }
 
-  const loadBanner = async () => {}
+  useEffect(() => {
+    loadProfile()
+  }, [])
 
-  const loadProfile = async () => {}
-
-  // Show loading state while data is being fetched
-  if (isLoading) {
-    return (
-      <YStack flex={1} justifyContent='center' alignItems='center' padding='$4'>
-        <Spinner size='large' color='#1D9BF0' />
-        <Text marginTop='$4'>Loading profile...</Text>
-      </YStack>
-    )
+  if (!profile) {
+    return null
   }
 
   return (
@@ -43,7 +47,7 @@ export default function ProfilePage() {
       <ScrollView>
         <YStack>
           <Image
-            source={{ uri: banner ?? undefined }}
+            source={{ uri: profile.coverUrl || undefined }}
             width='100%'
             height='$15'
             backgroundColor='#E6E6E6'
@@ -60,7 +64,7 @@ export default function ProfilePage() {
               circular
             >
               <Avatar.Image
-                src={avatar ?? undefined}
+                src={profile.coverUrl || undefined}
                 backgroundColor='#A0D7FF'
               />
               <Avatar.Fallback backgroundColor='#A0D7FF' />
@@ -84,14 +88,14 @@ export default function ProfilePage() {
 
             <YStack gap='$1' marginTop='$2'>
               <Text fontSize='$5' fontWeight='bold'>
-                {profileData?.name}
+                {profile.name}
               </Text>
               <Text fontSize='$3' color='#71767B'>
-                @{profileData?.username}
+                @{profile.username}
               </Text>
 
               <Text fontSize='$3' marginTop='$2'>
-                {profileData?.bio}
+                {profile.bio}
               </Text>
 
               <XStack gap='$4' marginTop='$3'>
@@ -144,15 +148,11 @@ export default function ProfilePage() {
           <Sheet.Handle />
           <Sheet.Frame>
             <ProfileEdit
-              avatarUrl={avatar}
-              bannerUrl={banner}
-              profile={profileData}
+              profile={profile}
               close={() => {
                 setOpen(false)
                 // Reload profile data after editing
                 loadProfile()
-                loadAvatar()
-                loadBanner()
               }}
             />
           </Sheet.Frame>

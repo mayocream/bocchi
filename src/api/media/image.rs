@@ -26,7 +26,6 @@ pub async fn upload_image(
         }
         Err(err) => {
             tracing::error!("Failed to upload image: {:?}", err);
-            println!("Failed to upload image: {:?}", err);
             Err(tonic::Status::internal(err.to_string()))
         }
     }

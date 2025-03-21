@@ -17,6 +17,8 @@ enum Commands {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     _ = dotenvy::dotenv();
 
+    tracing_subscriber::fmt::init();
+
     let cli = Cli::parse();
     match cli.command {
         Some(Commands::Serve(config)) => {

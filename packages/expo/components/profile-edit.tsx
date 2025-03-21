@@ -1,31 +1,29 @@
-import {
-  XStack,
-  YStack,
-  Text,
-  Image,
-  Button,
-  Avatar,
-  Input,
-  TextArea,
-  Stack,
-} from 'tamagui'
+import { XStack, YStack, Text, Image, Avatar, Input, TextArea } from 'tamagui'
 import { useState } from 'react'
 import { Pressable } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
+import {
+  GetProfileResponse,
+  UpdateProfileRequest,
+  UploadImageRequest,
+} from '@/lib/bocchi_pb'
+import { useAuthStore } from '@/lib/state'
+import { mediaService, useGrpcAuth, userService } from '@/lib/api'
 
 export const ProfileEdit = ({
   profile,
-  avatarUrl,
-  bannerUrl,
   close,
 }: {
-  profile: any | null
+  profile: GetProfileResponse.AsObject | null
   close: () => void
-  avatarUrl: string | null
-  bannerUrl: string | null
 }) => {
-  const [avatar, setAvatar] = useState<string | null>(avatarUrl || null)
-  const [banner, setBanner] = useState<string | null>(bannerUrl || null)
+  const authStore = useAuthStore()
+  const { getAuthMetadata } = useGrpcAuth(authStore.accessToken!)
+
+  const [avatar, setAvatar] = useState<string | null>(
+    profile?.avatarUrl || null
+  )
+  const [banner, setBanner] = useState<string | null>(profile?.coverUrl || null)
   const [name, setName] = useState(profile?.name || '')
   const [bio, setBio] = useState(profile?.bio || '')
   const [username, setUsername] = useState(profile?.username || '')
@@ -51,7 +49,22 @@ export const ProfileEdit = ({
 
   const onSave = async () => {
     try {
-   
+      if (avatar !== profile?.avatarUrl) {
+        const blob = await fetch(avatar!).then((res) => res.blob())
+        const buffer = await new Response(blob).arrayBuffer()
+        const bytes = new Uint8Array(buffer)
+        const request = new UploadImageRequest()
+        request.setImage(bytes)
+
+        const response = await mediaService.uploadImage(
+          request,
+          getAuthMetadata()
+        )
+        console.log('Uploaded avatar:', response)
+      }
+
+      if (banner !== profile?.coverUrl) {
+      }
     } catch (error) {
       console.error('Failed to save profile:', error)
     } finally {
@@ -87,7 +100,7 @@ export const ProfileEdit = ({
       </XStack>
       <Pressable onPress={() => pickImage('banner')}>
         <Image
-          source={{ uri: banner ?? undefined }}
+          source={{ uri: banner || undefined }}
           width='100%'
           height='$15'
           backgroundColor='#E6E6E6'
@@ -104,7 +117,7 @@ export const ProfileEdit = ({
           backgroundColor='#A0D7FF'
           circular
         >
-          <Avatar.Image src={avatar ?? undefined} />
+          <Avatar.Image src={avatar || undefined} />
           <Avatar.Fallback backgroundColor='#A0D7FF' />
         </Avatar>
       </Pressable>

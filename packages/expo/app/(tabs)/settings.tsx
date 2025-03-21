@@ -22,15 +22,7 @@ import { useAuthStore } from '@/lib/state'
 export default function Settings() {
   const authStore = useAuthStore()
   return (
-    <YStack
-      padding='$4'
-      gap='$4'
-      maxWidth={500}
-      width='100%'
-      alignSelf='center'
-      backgroundColor='$background'
-      fullscreen
-    >
+    <YStack padding='$4' gap='$4' backgroundColor='$background' fullscreen>
       {/* Main Settings */}
       <YStack gap='$4'>
         {/* Logout Button */}

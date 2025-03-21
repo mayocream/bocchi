@@ -6,7 +6,7 @@ use tonic_web::GrpcWebLayer;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 use crate::{
-    api::{AppState, bocchi::user_server::UserServer, user::UserService},
+    api::{bocchi::{media_server::MediaServer, user_server::UserServer}, media::MediaService, user::UserService, AppState},
     config::Config,
     jwt::Jwt,
     storage::s3::S3,
@@ -28,6 +28,7 @@ pub async fn serve(config: Config) -> Result<(), Box<dyn std::error::Error>> {
         .layer(CorsLayer::permissive())
         .layer(GrpcWebLayer::new())
         .add_service(UserServer::new(UserService::new(state.clone())))
+        .add_service(MediaServer::new(MediaService::new(state.clone())))
         .serve(config.listen_address.parse()?)
         .await?;
 

@@ -4,6 +4,7 @@ import { storage } from './storage'
 
 export type AuthState = {
   accessToken: string | null
+  getUserId: () => number | null
   isAuthenticated: () => boolean
   setAccessToken: (accessToken: string) => void
   clearAccessToken: () => void
@@ -27,6 +28,11 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       accessToken: null,
+      getUserId: () => {
+        if (!get().accessToken) return null
+        return JSON.parse(atob(get().accessToken!.split('.')[1]))
+          .user_id as number
+      },
       isAuthenticated: () => !!get().accessToken,
       setAccessToken: (accessToken) => set({ accessToken }),
       clearAccessToken: () => set({ accessToken: null }),
