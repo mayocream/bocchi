@@ -1,4 +1,4 @@
-use sea_orm::{ActiveValue::Set, ColumnTrait, EntityTrait, QueryFilter};
+use sea_orm::{ActiveValue::Set, ColumnTrait, EntityTrait, QueryFilter, QueryOrder};
 
 use crate::{
     api::{Auth, bocchi},
@@ -61,19 +61,15 @@ pub async fn get_followers(
     let follows = follow::Entity::find()
         .filter(follow::Column::FollowedId.eq(request.user_id))
         .cursor_by(follow::Column::Id)
-        .after(request.cursor.clone())
-        .first(50)
+        .order_by_desc(follow::Column::Id)
+        .before(request.cursor)
+        .last(10)
         .all(&service.state.database)
         .await
         .map_err(|e| tonic::Status::internal(e.to_string()))?;
 
     let followers = follows.iter().map(|f| f.follower_id).collect();
-
-    let response = bocchi::GetFollowersResponse {
-        followers,
-        next_cursor: follows.last().map(|f| f.id).unwrap_or_default(),
-    };
-
+    let response = bocchi::GetFollowersResponse { followers };
     Ok(tonic::Response::new(response))
 }
 
@@ -85,16 +81,14 @@ pub async fn get_following(
     let follows = follow::Entity::find()
         .filter(follow::Column::FollowerId.eq(request.user_id))
         .cursor_by(follow::Column::Id)
-        .after(request.cursor.clone())
-        .first(50)
+        .order_by_desc(follow::Column::Id)
+        .before(request.cursor)
+        .last(10)
         .all(&service.state.database)
         .await
         .map_err(|e| tonic::Status::internal(e.to_string()))?;
 
     let following = follows.iter().map(|f| f.followed_id).collect();
-    let response = bocchi::GetFollowingResponse {
-        following,
-        next_cursor: follows.last().map(|f| f.id).unwrap_or_default(),
-    };
+    let response = bocchi::GetFollowingResponse { following };
     Ok(tonic::Response::new(response))
 }

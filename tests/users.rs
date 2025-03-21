@@ -91,3 +91,24 @@ async fn test_update_profile() {
     assert_eq!(profile.avatar_url, "avatar");
     assert_eq!(profile.cover_url, "cover");
 }
+
+#[tokio::test]
+async fn test_pagination() {
+    let state = setup().await;
+    let service = UserService::new(state.clone());
+    for i in 0..20 {
+        _ = register(
+            &state,
+            &format!("{}@test.com", i),
+            &format!("user{}", i),
+            "test",
+        )
+        .await;
+    }
+    let request = tonic::Request::new(bocchi::SearchUserRequest {
+        query: "user".to_string(),
+        cursor: 11,
+    });
+    let response = service.search(request).await.unwrap();
+    assert_eq!(response.into_inner().users.len(), 10);
+}

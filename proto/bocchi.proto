@@ -75,7 +75,6 @@ message GetFollowersRequest {
 // List of followers and next cursor
 message GetFollowersResponse {
     repeated int32 followers = 1;
-    int32 next_cursor = 2;
 }
 
 // Get a user's following
@@ -87,18 +86,17 @@ message GetFollowingRequest {
 // List of following and next cursor
 message GetFollowingResponse {
     repeated int32 following = 1;
-    int32 next_cursor = 2;
 }
 
 // Search for users
 message SearchUserRequest {
     string query = 1;
+    int32 cursor = 2;
 }
 
 // List of users and next cursor
 message SearchUserResponse {
     repeated int32 users = 1;
-    int32 next_cursor = 2;
 }
 
 // User related operations
