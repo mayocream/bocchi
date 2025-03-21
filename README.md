@@ -16,9 +16,23 @@ Please refer to [Running a local Expo development environment in Windows Subsyst
 
 ## Deployment
 
+### Docker
+
+Docker Compose is used to provision the dependencies.
+
+```bash
+docker compose up -d
+```
+
 ### PostgreSQL
 
 ```bash
 cargo install sea-orm-cli
 sea-orm-cli migrate -d migrations up
+```
+
+### gRPC Server
+
+```bash
+cargo run serve
 ```
