@@ -17,6 +17,8 @@ jobs:
       - uses: pnpm/action-setup@v4
       - name: Install dependencies
         run: pnpm install
+      - name: Set Expo environment variables
+        run: echo "EXPO_PUBLIC_API_URL=https://api.bocchi.social" >> packages/expo/.env
       - name: Expo web build
         run: cd packages/expo && npx expo export --platform web
       - name: Upload static files as artifact
