@@ -7,6 +7,7 @@ import { ErrorMessage } from '@/components/input'
 import { userService } from '@/lib/api'
 import { RegisterRequest } from '@/lib/bocchi_pb'
 import { useAuthStore } from '@/lib/state'
+import { Helmet } from 'react-helmet-async'
 
 const schema = z
   .object({
@@ -71,6 +72,9 @@ export default function SignUp() {
 
   return (
     <View flex={1} justifyContent='center' alignItems='center'>
+      <Helmet>
+        <title>新規登録</title>
+      </Helmet>
       <Stack.Screen
         options={{
           title: '新規登録',

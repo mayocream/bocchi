@@ -4,6 +4,7 @@ import { LoginRequest } from '@/lib/bocchi_pb'
 import { useAuthStore } from '@/lib/state'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, router, Stack } from 'expo-router'
+import { Helmet } from 'react-helmet-async'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { View, Image, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
@@ -54,6 +55,9 @@ export default function SignIn() {
 
   return (
     <View flex={1} justifyContent='center' alignItems='center'>
+      <Helmet>
+        <title>ログイン</title>
+      </Helmet>
       <Stack.Screen
         options={{
           title: 'ログイン',
