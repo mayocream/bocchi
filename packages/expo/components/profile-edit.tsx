@@ -2,13 +2,9 @@ import { XStack, YStack, Text, Image, Avatar, Input, TextArea } from 'tamagui'
 import { useState } from 'react'
 import { Pressable } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import {
-  GetProfileResponse,
-  UpdateProfileRequest,
-  UploadImageRequest,
-} from '@/lib/bocchi_pb'
+import { GetProfileResponse, UpdateProfileRequest } from '@/lib/bocchi_pb'
 import { useAuthStore } from '@/lib/state'
-import { mediaService, useGrpcAuth, userService } from '@/lib/api'
+import { useGrpcAuth, userService } from '@/lib/api'
 import { useImageUpload } from '@/lib/image'
 
 export const ProfileEdit = ({
@@ -53,6 +49,10 @@ export const ProfileEdit = ({
       const request = new UpdateProfileRequest()
       request.setName(name)
       request.setBio(bio)
+      request.setAvatarUrl(avatar || '')
+      request.setCoverUrl(banner || '')
+
+      // Upload images if they are changed
       if (avatar && avatar !== profile?.avatarUrl) {
         const url = await uploadImage(avatar!)
         request.setAvatarUrl(url)
@@ -127,7 +127,7 @@ export const ProfileEdit = ({
           <Input
             flex={1}
             placeholder='吾輩は猫である'
-            value={name}
+            defaultValue={name}
             onChangeText={setName}
           />
         </XStack>
@@ -137,7 +137,7 @@ export const ProfileEdit = ({
             minHeight={90}
             flex={1}
             placeholder='自己紹介'
-            value={bio}
+            defaultValue={bio}
             onChangeText={setBio}
           />
         </XStack>

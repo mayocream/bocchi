@@ -5,7 +5,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async'
 import * as NavigationBar from 'expo-navigation-bar'
 
 // only for Android
-NavigationBar.setVisibilityAsync('hidden')
+NavigationBar.setBackgroundColorAsync('#fff')
 
 const config = createTamagui(defaultConfig)
 
