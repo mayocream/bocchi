@@ -2,22 +2,15 @@ import { XStack, YStack, Text, Image, Avatar, Input, TextArea } from 'tamagui'
 import { useState } from 'react'
 import { Pressable } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { GetProfileResponse, UpdateProfileRequest } from '@/lib/bocchi_pb'
 import { useAuthStore } from '@/lib/state'
-import { useGrpcAuth, userService } from '@/lib/api'
-import { useImageUpload } from '@/lib/image'
 
 export const ProfileEdit = ({
   profile,
   close,
 }: {
-  profile: GetProfileResponse.AsObject | null
+  profile: any | null
   close: () => void
 }) => {
-  const authStore = useAuthStore()
-  const { getAuthMetadata } = useGrpcAuth(authStore.accessToken!)
-  const { uploadImage } = useImageUpload()
-
   const [avatar, setAvatar] = useState<string | null>(
     profile?.avatarUrl || null
   )
@@ -46,24 +39,7 @@ export const ProfileEdit = ({
 
   const onSave = async () => {
     try {
-      const request = new UpdateProfileRequest()
-      request.setName(name)
-      request.setBio(bio)
-      request.setAvatarUrl(avatar || '')
-      request.setCoverUrl(banner || '')
-
-      // Upload images if they are changed
-      if (avatar && avatar !== profile?.avatarUrl) {
-        const url = await uploadImage(avatar!)
-        request.setAvatarUrl(url)
-      }
-
-      if (banner && banner !== profile?.coverUrl) {
-        const url = await uploadImage(banner!)
-        request.setCoverUrl(url)
-      }
-
-      await userService.updateProfile(request, getAuthMetadata())
+      
     } catch (error) {
       console.error('Failed to save profile:', error)
     } finally {

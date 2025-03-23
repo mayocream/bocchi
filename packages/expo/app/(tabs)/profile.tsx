@@ -14,25 +14,14 @@ import { Counter } from '@/components/counter'
 import { useState, useEffect } from 'react'
 import { ProfileEdit } from '@/components/profile-edit'
 import { useAuthStore } from '@/lib/state'
-import { GetProfileRequest, GetProfileResponse } from '@/lib/bocchi_pb'
-import { userService } from '@/lib/api'
 
 export default function ProfilePage() {
   const authStore = useAuthStore()
 
   const [open, setOpen] = useState(false)
-  const [profile, setProfile] = useState<GetProfileResponse.AsObject | null>(
-    null
-  )
+  const [profile, setProfile] = useState<any | null>(null)
 
-  const loadProfile = async () => {
-    const userId = authStore.getUserId()!
-    const request = new GetProfileRequest()
-    request.setId(userId)
-    const response = await userService.getProfile(request)
-    const profile = response.toObject()
-    setProfile(profile)
-  }
+  const loadProfile = async () => {}
 
   useEffect(() => {
     loadProfile()
