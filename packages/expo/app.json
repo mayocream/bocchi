@@ -1,23 +1,23 @@
 {
   "expo": {
-    "name": "Bocchi",
-    "slug": "bocchi",
+    "name": "Eki",
+    "slug": "eki",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "bocchi",
+    "scheme": "eki",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "social.bocchi"
+      "bundleIdentifier": "ki.e"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "social.bocchi"
+      "package": "ki.e"
     },
     "web": {
       "bundler": "metro",
