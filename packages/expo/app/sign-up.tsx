@@ -4,10 +4,8 @@ import { z } from 'zod'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorMessage } from '@/components/input'
-import { userService } from '@/lib/api'
-import { RegisterRequest } from '@/lib/bocchi_pb'
-import { useAuthStore } from '@/lib/state'
 import { Helmet } from 'react-helmet-async'
+import { supabase } from '@/lib/supabase'
 
 const schema = z
   .object({
@@ -30,6 +28,20 @@ const schema = z
     path: ['passwordConfirmation'],
     message: 'パスワードが一致しません',
   })
+  .refine(
+    async (form) => {
+      const { data } = await supabase
+        .from('profiles')
+        .select()
+        .eq('username', form.username)
+
+      return data === null || data.length === 0
+    },
+    {
+      path: ['username'],
+      message: 'ユーザー名が既に使用されています',
+    }
+  )
 
 type FormData = z.infer<typeof schema>
 
@@ -49,25 +61,27 @@ export default function SignUp() {
     },
   })
 
-  const authStore = useAuthStore()
+  const onSubmit: SubmitHandler<FormData> = async (form) => {
+    const { data, error } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+      options: {
+        data: {
+          username: form.username,
+          name: '',
+        },
+      },
+    })
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    try {
-      const request = new RegisterRequest()
-      request.setUsername(data.username)
-      request.setEmail(data.email)
-      request.setPassword(data.password)
-      const response = await userService.register(request)
-      authStore.setAccessToken(response.getToken())
-
-      router.replace('/')
-    } catch (e) {
-      console.error('Failed to register:', e)
-      setError('username', {
+    if (error) {
+      setError('email', {
         type: 'manual',
-        message: 'ユーザー名が既に使用されています',
+        message: error.message,
       })
+      return
     }
+
+    console.log('sign up', data)
   }
 
   return (

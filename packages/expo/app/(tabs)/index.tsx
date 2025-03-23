@@ -1,13 +1,11 @@
 import { Image, ScrollView, Separator, View, XStack, YStack } from 'tamagui'
 import { Tweet } from '@/components/tweet'
 import { Redirect } from 'expo-router'
-import { useAuthStore } from '@/lib/state'
+import { useUserStore } from '@/lib/state'
 
 export default function Index() {
-  const authStore = useAuthStore()
-  if (!authStore.isAuthenticated()) {
-    return <Redirect href='/sign-in' />
-  }
+  const { user } = useUserStore()
+  if (!user) return <Redirect href='/sign-in' />
 
   return (
     <XStack fullscreen>

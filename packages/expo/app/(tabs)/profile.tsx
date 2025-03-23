@@ -13,11 +13,8 @@ import {
 import { Counter } from '@/components/counter'
 import { useState, useEffect } from 'react'
 import { ProfileEdit } from '@/components/profile-edit'
-import { useAuthStore } from '@/lib/state'
 
 export default function ProfilePage() {
-  const authStore = useAuthStore()
-
   const [open, setOpen] = useState(false)
   const [profile, setProfile] = useState<any | null>(null)
 

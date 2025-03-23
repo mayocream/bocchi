@@ -1,7 +1,5 @@
 import { ErrorMessage } from '@/components/input'
-import { userService } from '@/lib/api'
-import { LoginRequest } from '@/lib/bocchi_pb'
-import { useAuthStore } from '@/lib/state'
+import { supabase } from '@/lib/supabase'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, router, Stack } from 'expo-router'
 import { Helmet } from 'react-helmet-async'
@@ -10,7 +8,7 @@ import { View, Image, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
 
 const schema = z.object({
-  handle: z.union([z.string().email(), z.string().min(3)]),
+  email: z.string().email(),
   password: z.string(),
 })
 
@@ -25,32 +23,24 @@ export default function SignIn() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      handle: '',
+      email: '',
       password: '',
     },
   })
-  const authStore = useAuthStore()
+  const onSubmit: SubmitHandler<FormData> = async (form) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: form.email,
+      password: form.password,
+    })
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    try {
-      let request = new LoginRequest()
-      if (data.handle.includes('@')) {
-        request.setEmail(data.handle)
-      } else {
-        request.setUsername(data.handle)
-      }
-      request.setPassword(data.password)
-      const response = await userService.login(request)
-      authStore.setAccessToken(response.getToken())
-
-      router.replace('/')
-    } catch (e) {
-      console.error('Failed to login:', e)
-      setError('handle', {
+    if (error) {
+      return setError('email', {
         type: 'manual',
-        message: 'メールアドレスまたはパスワードが違います',
+        message: error.message,
       })
     }
+
+    router.replace('/')
   }
 
   return (
@@ -73,15 +63,15 @@ export default function SignIn() {
           control={control}
           render={({ field: { onChange, ...props } }) => (
             <Input
-              placeholder='ユーザー名またはメールアドレス'
+              placeholder='メールアドレス'
               keyboardType='email-address'
               onChangeText={onChange}
               {...props}
             />
           )}
-          name='handle'
+          name='email'
         />
-        <ErrorMessage errors={errors} name='handle' />
+        <ErrorMessage errors={errors} name='email' />
 
         <Controller
           control={control}

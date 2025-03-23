@@ -1,13 +1,11 @@
 import { create } from 'zustand'
-import { createJSONStorage, persist, StateStorage } from 'zustand/middleware'
+import { StateStorage } from 'zustand/middleware'
 import { storage } from './storage'
+import { User } from '@supabase/supabase-js'
 
-export type AuthState = {
-  accessToken: string | null
-  getUserId: () => number | null
-  isAuthenticated: () => boolean
-  setAccessToken: (accessToken: string) => void
-  clearAccessToken: () => void
+export type UserStore = {
+  user: User | null
+  setUser: (user: User | null) => void
 }
 
 // refer: https://github.com/mrousavy/react-native-mmkv/blob/main/docs/WRAPPER_ZUSTAND_PERSIST_MIDDLEWARE.md
@@ -24,22 +22,7 @@ const zustandStorage: StateStorage = {
   },
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      accessToken: null,
-      getUserId: () => {
-        if (!get().accessToken) return null
-        return JSON.parse(atob(get().accessToken!.split('.')[1]))
-          .user_id as number
-      },
-      isAuthenticated: () => !!get().accessToken,
-      setAccessToken: (accessToken) => set({ accessToken }),
-      clearAccessToken: () => set({ accessToken: null }),
-    }),
-    {
-      name: 'auth',
-      storage: createJSONStorage(() => zustandStorage),
-    }
-  )
-)
+export const useUserStore = create<UserStore>((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+}))
