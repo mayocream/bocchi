@@ -39,18 +39,65 @@ export const ProfileEdit = ({
     }
   }
 
-  const onSave = async () => {
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        name,
-        bio,
-        avatar_url: avatar,
-        banner_url: banner,
-      })
-      .eq('uid', profile?.uid)
+  const uploadImage = async (uri: string, path: string) => {
+    const { data, error } = await supabase.storage.from('static').upload(
+      path,
+      {
+        uri,
+        name: path,
+        type: 'image/jpeg',
+      } as any,
+      {
+        cacheControl: '3600',
+        upsert: true,
+        contentType: 'image/jpeg',
+      }
+    )
 
     if (error) {
+      console.error('Failed to upload image:', error)
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('static').getPublicUrl(path)
+
+    return publicUrl
+  }
+
+  const onSave = async () => {
+    try {
+      // Upload images
+      let bannerUrl = profile?.banner_url
+      let avatarUrl = profile?.avatar_url
+      if (avatar && profile?.avatar_url !== avatar) {
+        avatarUrl = await uploadImage(
+          avatar,
+          `${profile?.uid}/avatar+${Date.now()}`
+        )
+      }
+
+      if (banner && profile?.banner_url !== banner) {
+        bannerUrl = await uploadImage(
+          banner,
+          `${profile?.uid}/banner+${Date.now()}`
+        )
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          name,
+          bio,
+          avatar_url: avatarUrl,
+          banner_url: bannerUrl,
+        })
+        .eq('uid', profile?.uid)
+
+      if (error) {
+        console.error('Failed to save profile:', error)
+      }
+    } catch (error) {
       console.error('Failed to save profile:', error)
     }
 

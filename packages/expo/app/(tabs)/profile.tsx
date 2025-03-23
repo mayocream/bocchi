@@ -25,6 +25,8 @@ export default function ProfilePage() {
       console.info('Failed to load profile:', error)
     }
 
+    console.info('Loaded profile:', data)
+
     setProfile(data)
   }
 
