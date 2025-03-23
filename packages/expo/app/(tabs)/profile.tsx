@@ -13,12 +13,20 @@ import {
 import { Counter } from '@/components/counter'
 import { useState, useEffect } from 'react'
 import { ProfileEdit } from '@/components/profile-edit'
+import { supabase } from '@/lib/supabase'
 
 export default function ProfilePage() {
   const [open, setOpen] = useState(false)
   const [profile, setProfile] = useState<any | null>(null)
 
-  const loadProfile = async () => {}
+  const loadProfile = async () => {
+    const { data, error } = await supabase.from('profiles').select().single()
+    if (error) {
+      console.info('Failed to load profile:', error)
+    }
+
+    setProfile(data)
+  }
 
   useEffect(() => {
     loadProfile()
@@ -33,7 +41,7 @@ export default function ProfilePage() {
       <ScrollView>
         <YStack>
           <Image
-            source={{ uri: profile.coverUrl || undefined }}
+            source={{ uri: profile.banner_url || undefined }}
             width='100%'
             height='$15'
             backgroundColor='#E6E6E6'
@@ -50,7 +58,7 @@ export default function ProfilePage() {
               circular
             >
               <Avatar.Image
-                src={profile.avatarUrl || undefined}
+                src={profile.avatar_url || undefined}
                 backgroundColor='#A0D7FF'
               />
               <Avatar.Fallback backgroundColor='#A0D7FF' />

@@ -2,7 +2,7 @@ import { XStack, YStack, Text, Image, Avatar, Input, TextArea } from 'tamagui'
 import { useState } from 'react'
 import { Pressable } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { useAuthStore } from '@/lib/state'
+import { supabase } from '@/lib/supabase'
 
 export const ProfileEdit = ({
   profile,
@@ -12,9 +12,11 @@ export const ProfileEdit = ({
   close: () => void
 }) => {
   const [avatar, setAvatar] = useState<string | null>(
-    profile?.avatarUrl || null
+    profile?.avatar_url || null
   )
-  const [banner, setBanner] = useState<string | null>(profile?.coverUrl || null)
+  const [banner, setBanner] = useState<string | null>(
+    profile?.banner_url || null
+  )
   const [name, setName] = useState(profile?.name || '')
   const [bio, setBio] = useState(profile?.bio || '')
 
@@ -38,13 +40,21 @@ export const ProfileEdit = ({
   }
 
   const onSave = async () => {
-    try {
-      
-    } catch (error) {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        name,
+        bio,
+        avatar_url: avatar,
+        banner_url: banner,
+      })
+      .eq('uid', profile?.uid)
+
+    if (error) {
       console.error('Failed to save profile:', error)
-    } finally {
-      close()
     }
+
+    close()
   }
 
   return (
