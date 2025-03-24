@@ -1,5 +1,7 @@
+import { Platform } from 'react-native'
 const API_KEY = process.env.EXPO_PUBLIC_BANGUMI_KEY!
 const API_URL = 'https://api.bgm.tv'
+import Constants from 'expo-constants'
 
 export const bangumi = async (
   path: string,
@@ -15,7 +17,8 @@ export const bangumi = async (
     body: body ? JSON.stringify(body) : undefined,
     headers: {
       authorization: `Bearer ${API_KEY}`,
-      'User-Agent': 'Bangumi App',
+      // https://github.com/bangumi/api/blob/master/docs-raw/user%20agent.md
+      'User-Agent': `mayocream/eki/${Constants.expoConfig?.version} (${Platform.OS})`,
     },
   })
   return await res.json()

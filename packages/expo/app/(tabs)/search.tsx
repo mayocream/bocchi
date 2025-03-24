@@ -10,6 +10,7 @@ import {
   SizableText,
 } from 'tamagui'
 import { FlatList } from 'react-native'
+import { router } from 'expo-router'
 
 export default function Search() {
   const [searchText, setSearchText] = useState('')
@@ -18,8 +19,6 @@ export default function Search() {
   const [loading, setLoading] = useState(false)
 
   const search = async (query: string, resetResults = false) => {
-    if (!query || loading) return
-
     setLoading(true)
 
     const currentOffset = resetResults ? 0 : offset
@@ -52,8 +51,7 @@ export default function Search() {
     if (searchText) {
       search(searchText, true)
     } else {
-      setResult([])
-      setOffset(0)
+      search('百合', true)
     }
   }, [searchText])
 
@@ -70,11 +68,11 @@ export default function Search() {
           onChangeText={setSearchText}
         />
       </XStack>
-
       <FlatList
         data={result}
         renderItem={({ item }) => (
           <Card
+            onPress={() => router.push(`/title/${item.id}`)}
             flex={1}
             minWidth='30%'
             maxWidth='33%'
