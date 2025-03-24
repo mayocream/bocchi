@@ -5,7 +5,6 @@ import { useUserStore } from '@/lib/state'
 
 export default function Index() {
   const { user } = useUserStore()
-  if (!user) return <Redirect href='/sign-in' />
 
   return (
     <XStack fullscreen>

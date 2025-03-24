@@ -23,9 +23,8 @@ export default function ProfilePage() {
     const { data, error } = await supabase.from('profiles').select().single()
     if (error) {
       console.info('Failed to load profile:', error)
+      return
     }
-
-    console.info('Loaded profile:', data)
 
     setProfile(data)
   }
@@ -78,7 +77,7 @@ export default function ProfilePage() {
                 borderRadius='$10'
                 onPress={() => setOpen(true)}
               >
-                Edit Profile
+                編集
               </Button>
             </XStack>
 
