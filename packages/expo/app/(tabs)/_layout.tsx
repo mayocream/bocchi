@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router'
-import { Bell, Home, Settings, User } from '@tamagui/lucide-icons'
+import { Bell, Home, Search, Settings, User } from '@tamagui/lucide-icons'
 
 // Blue 50 #E3F2FD
 // 100 #BBDEFB
@@ -35,11 +35,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name='notifications'
+        name='search'
         options={{
-          title: '通知',
-          tabBarLabel: '通知',
-          tabBarIcon: ({ size, color }) => <Bell size={size} color={color} />,
+          title: '検索',
+          tabBarLabel: '検索',
+          tabBarIcon: ({ size, color }) => <Search size={size} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -48,6 +48,14 @@ export default function TabLayout() {
           title: 'プロフィール',
           tabBarLabel: 'プロフィール',
           tabBarIcon: ({ size, color }) => <User size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name='notifications'
+        options={{
+          title: '通知',
+          tabBarLabel: '通知',
+          tabBarIcon: ({ size, color }) => <Bell size={size} color={color} />,
         }}
       />
       <Tabs.Screen
