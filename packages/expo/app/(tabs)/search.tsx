@@ -1,12 +1,4 @@
 import { tmdb } from '@/lib/tmdb'
-import {
-  Search,
-  TrendingUp,
-  Calendar,
-  Home,
-  Bell,
-  Mail,
-} from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import {
   XStack,
@@ -14,18 +6,30 @@ import {
   ScrollView,
   Image,
   Input,
-  SizableText,
   Card,
-  Avatar,
-  Button,
-  Separator,
   Text,
-  View,
+  SizableText,
 } from 'tamagui'
 
 export default function TrendingAnime() {
   const [newTvShows, setNewTvShows] = useState<any>()
   const [onAirTvShows, setOnAirTvShows] = useState<any>()
+  const [searchResult, setSearchResult] = useState<any>()
+
+  const search = async (text: string) => {
+    if (text.trim().length === 0) {
+      setSearchResult(null)
+      return
+    }
+
+    setSearchResult(
+      await tmdb('/search/tv', {
+        language: 'ja',
+        query: text,
+        include_adult: 'true',
+      })
+    )
+  }
 
   const getTrending = async () => {
     setNewTvShows(
@@ -59,6 +63,7 @@ export default function TrendingAnime() {
         borderRadius='$4'
         borderColor='$borderColor'
         borderWidth={1}
+        backgroundColor='transparent'
       >
         <XStack gap='$3' marginBottom='$2'>
           <YStack flex={1}>
@@ -72,16 +77,18 @@ export default function TrendingAnime() {
           </Text>
         )}
 
-        <Card overflow='hidden' borderRadius='$3' marginBottom='$2'>
-          <Image
-            source={{
-              uri: `https://image.tmdb.org/t/p/w500${
-                data?.backdrop_path || data?.poster_path
-              }`,
-            }}
-            aspectRatio={16 / 9}
-          />
-        </Card>
+        {(data?.backdrop_path || data?.poster_path) && (
+          <Card overflow='hidden' borderRadius='$3' marginBottom='$2'>
+            <Image
+              source={{
+                uri: `https://image.tmdb.org/t/p/w500${
+                  data?.backdrop_path || data?.poster_path
+                }`,
+              }}
+              aspectRatio={16 / 9}
+            />
+          </Card>
+        )}
       </Card>
     )
   }
@@ -96,17 +103,31 @@ export default function TrendingAnime() {
           borderRadius='$10'
           paddingLeft='$3'
           borderWidth={0}
+          keyboardType='web-search'
+          onChangeText={(text) => search(text)}
         />
       </XStack>
 
       <ScrollView showsVerticalScrollIndicator={false} flex={1}>
         <YStack padding='$2'>
+          {searchResult?.results.map((item: any) => (
+            <AnimeCard key={item.id} data={item} />
+          ))}
+
+          <SizableText size='$6' padding='$2'>
+            新着アニメ
+          </SizableText>
+
           {newTvShows?.results
             .filter((item: any) => item?.backdrop_path || item?.poster_path)
             .map((item: any) => (
               <AnimeCard key={item.id} data={item} />
             ))}
-          <Separator />
+
+          <SizableText size='$6' padding='$2'>
+            放送中アニメ
+          </SizableText>
+
           {onAirTvShows?.results
             .filter((item: any) => item?.backdrop_path || item?.poster_path)
             .map((item: any) => (
