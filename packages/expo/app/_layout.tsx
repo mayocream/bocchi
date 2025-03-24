@@ -24,13 +24,13 @@ const AppContent = () => {
       setLoading(false)
       setUser(session?.user ?? null)
 
-      if (!session?.user) {
+      if (session === null || session.user === null) {
         router.replace('/sign-in')
       }
     })
 
     return subscription.unsubscribe
-  }, [])
+  }, [loading])
 
   if (loading) {
     return <Loading />

@@ -49,7 +49,6 @@ export default function TabLayout() {
           tabBarIcon: ({ size, color }) => <Search size={size} color={color} />,
         }}
       />
-
       {/* <Tabs.Screen
         name='community'
         options={{
@@ -58,13 +57,30 @@ export default function TabLayout() {
           tabBarIcon: ({ size, color }) => <Users2 size={size} color={color} />,
         }}
       /> */}
-
+      <Tabs.Screen
+        name='profile'
+        options={{
+          title: 'プロフィール',
+          tabBarLabel: 'プロフィール',
+          tabBarIcon: ({ size, color }) => <User size={size} color={color} />,
+        }}
+      />
       <Tabs.Screen
         name='notifications'
         options={{
           title: '通知',
           tabBarLabel: '通知',
           tabBarIcon: ({ size, color }) => <Bell size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name='settings'
+        options={{
+          title: '設定',
+          tabBarLabel: '設定',
+          tabBarIcon: ({ size, color }) => (
+            <Settings size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

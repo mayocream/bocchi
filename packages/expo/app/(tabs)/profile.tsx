@@ -15,16 +15,21 @@ import { useState, useEffect } from 'react'
 import { ProfileEdit } from '@/components/profile-edit'
 import { supabase } from '@/lib/supabase'
 import Loading from '@/components/loading'
+import { useUserStore } from '@/lib/state'
 
 export default function ProfilePage() {
+  const { user } = useUserStore()
   const [open, setOpen] = useState(false)
   const [profile, setProfile] = useState<any | null>(null)
 
   const loadProfile = async () => {
-    const { data, error } = await supabase.from('users').select().single()
+    const { data, error } = await supabase
+      .from('users')
+      .select()
+      .eq('uid', user?.id)
+      .single()
     if (error) {
       console.info('Failed to load profile:', error)
-      return
     }
 
     setProfile(data)

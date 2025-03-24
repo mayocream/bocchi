@@ -81,7 +81,7 @@ export default function SignUp() {
       return
     }
 
-    console.log('sign up', data)
+    router.replace('/')
   }
 
   return (
