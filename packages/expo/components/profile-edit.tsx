@@ -83,7 +83,7 @@ export const ProfileEdit = ({
     }
 
     const { error } = await supabase
-      .from('profiles')
+      .from('users')
       .update({
         name,
         bio,

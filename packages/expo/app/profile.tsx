@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<any | null>(null)
 
   const loadProfile = async () => {
-    const { data, error } = await supabase.from('profiles').select().single()
+    const { data, error } = await supabase.from('users').select().single()
     if (error) {
       console.info('Failed to load profile:', error)
       return
