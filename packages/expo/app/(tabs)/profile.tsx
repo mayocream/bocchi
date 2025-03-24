@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<any | null>(null)
 
   const loadProfile = async () => {
+    // The user should have the profile data already
     const { data, error } = await supabase
       .from('users')
       .select()
