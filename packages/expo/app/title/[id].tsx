@@ -25,8 +25,6 @@ export default function Title() {
     const response = await bangumi(`/v0/subjects/${id}`)
     setBangumiData(response)
 
-    console.log(response)
-
     const type = response?.type
     const isbn = response?.infobox?.filter((item: any) =>
       item.key.startsWith('ISBN')
@@ -34,8 +32,6 @@ export default function Title() {
     if (type === 1 && isbn) {
       const googleBooksResponse = await googleBooks(isbn)
       setGoogleBooksData(googleBooksResponse)
-
-      console.log(googleBooksResponse?.items[0])
     }
   }
 
