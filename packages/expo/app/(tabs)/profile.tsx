@@ -14,6 +14,7 @@ import { Counter } from '@/components/counter'
 import { useState, useEffect } from 'react'
 import { ProfileEdit } from '@/components/profile-edit'
 import { supabase } from '@/lib/supabase'
+import Loading from '@/components/loading'
 
 export default function ProfilePage() {
   const [open, setOpen] = useState(false)
@@ -34,7 +35,7 @@ export default function ProfilePage() {
   }, [])
 
   if (!profile) {
-    return null
+    return <Loading />
   }
 
   return (

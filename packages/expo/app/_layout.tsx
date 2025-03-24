@@ -1,4 +1,4 @@
-import { createTamagui, Spinner, TamaguiProvider, Theme, YStack } from 'tamagui'
+import { createTamagui, TamaguiProvider, Theme } from 'tamagui'
 import { defaultConfig } from '@tamagui/config/v4'
 import { router, Stack } from 'expo-router'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
@@ -6,6 +6,7 @@ import * as NavigationBar from 'expo-navigation-bar'
 import { useUserStore } from '@/lib/state'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import Loading from '@/components/loading'
 
 // only for Android
 NavigationBar.setVisibilityAsync('hidden')
@@ -32,11 +33,7 @@ const AppContent = () => {
   }, [])
 
   if (loading) {
-    return (
-      <YStack fullscreen alignContent='center' justifyContent='center'>
-        <Spinner size='large' />
-      </YStack>
-    )
+    return <Loading />
   }
 
   return (
