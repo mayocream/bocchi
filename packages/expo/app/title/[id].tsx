@@ -61,7 +61,7 @@ export default function Title() {
             {bangumiData?.name}
           </SizableText>
           <SizableText>
-            {googleBooksData?.items?.[0]?.volumeInfo?.authors?.[0]}
+            {googleBooksData?.items?.[0]?.volumeInfo?.authors?.join(', ')}
           </SizableText>
 
           <XStack gap='$2' justifyContent='space-between'>
