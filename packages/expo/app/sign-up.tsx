@@ -1,11 +1,12 @@
 import { Link, router, Stack } from 'expo-router'
-import { View, Image, Form, Input, Button, Separator } from 'tamagui'
+import { View, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorMessage } from '@/components/input'
 import { Helmet } from 'react-helmet-async'
 import { supabase } from '@/lib/supabase'
+import { Image } from 'expo-image'
 
 const schema = z
   .object({
@@ -96,8 +97,7 @@ export default function SignUp() {
       />
       <Image
         source={require('../assets/images/logo.png')}
-        width={140}
-        height={140}
+        style={{ height: 140, width: 140 }}
       />
       <Form gap={10} width={300}>
         <Controller

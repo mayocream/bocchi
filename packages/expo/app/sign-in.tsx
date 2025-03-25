@@ -4,8 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, router, Stack } from 'expo-router'
 import { Helmet } from 'react-helmet-async'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import { View, Image, Form, Input, Button, Separator } from 'tamagui'
+import { View, Form, Input, Button, Separator } from 'tamagui'
 import { z } from 'zod'
+import { Image } from 'expo-image'
 
 const schema = z.object({
   email: z.string().email(),
@@ -55,8 +56,7 @@ export default function SignIn() {
       />
       <Image
         source={require('../assets/images/logo.png')}
-        width={140}
-        height={140}
+        style={{ height: 140, width: 140 }}
       />
       <Form gap={10} width={300}>
         <Controller
