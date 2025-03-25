@@ -181,7 +181,7 @@ export default function Search() {
             borderRadius='$4'
           >
             <SizableText color={activeCategory === 'TV' ? '$color' : '$blue10'}>
-              TV番組
+              TV
             </SizableText>
           </Tabs.Tab>
           <Tabs.Tab
