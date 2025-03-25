@@ -25,7 +25,7 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     // The user should have the profile data already
     const { data, error } = await supabase
-      .from('users')
+      .from('profiles')
       .select()
       .eq('uid', user?.id)
       .single()

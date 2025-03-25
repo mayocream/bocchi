@@ -31,7 +31,7 @@ const schema = z
   .refine(
     async (form) => {
       const { data } = await supabase
-        .from('users')
+        .from('profiles')
         .select()
         .eq('username', form.username)
 
