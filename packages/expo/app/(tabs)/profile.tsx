@@ -27,7 +27,7 @@ export default function ProfilePage() {
     const { data, error } = await supabase
       .from('profiles')
       .select()
-      .eq('uid', user?.id)
+      .eq('user_id', user?.id)
       .single()
     if (error) {
       console.info('Failed to load profile:', error)

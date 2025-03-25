@@ -71,14 +71,14 @@ export const ProfileEdit = ({
     if (avatar && profile?.avatar_url !== avatar) {
       avatarUrl = await uploadImage(
         avatar,
-        `${profile?.uid}/avatar+${Date.now()}`
+        `${profile?.user_id}/avatar+${Date.now()}`
       )
     }
 
     if (banner && profile?.banner_url !== banner) {
       bannerUrl = await uploadImage(
         banner,
-        `${profile?.uid}/banner+${Date.now()}`
+        `${profile?.user_id}/banner+${Date.now()}`
       )
     }
 
@@ -90,7 +90,7 @@ export const ProfileEdit = ({
         avatar_url: avatarUrl,
         banner_url: bannerUrl,
       })
-      .eq('uid', profile?.uid)
+      .eq('user_id', profile?.user_id)
 
     if (error) {
       console.error('Failed to save profile:', error)
