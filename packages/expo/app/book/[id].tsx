@@ -1,9 +1,11 @@
+import { ImageViewer } from '@/components/image-viewer'
 import Loading from '@/components/loading'
 import { googleBooks } from '@/lib/google-books'
 import { ParkingSquare } from '@tamagui/lucide-icons'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { YStack, XStack, Separator, Image, SizableText } from 'tamagui'
+import { YStack, XStack, Separator, SizableText } from 'tamagui'
+import { Dimensions } from 'react-native'
 
 export default function Tv() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -20,6 +22,9 @@ export default function Tv() {
     return <Loading />
   }
 
+  const screenWidth = Dimensions.get('screen').width
+  const imageWidth = screenWidth * 0.45
+
   return (
     <YStack fullscreen backgroundColor='$background'>
       <Stack.Screen
@@ -29,9 +34,9 @@ export default function Tv() {
       />
 
       <XStack padding='$4' gap='$4'>
-        <Image
+        <ImageViewer
           source={{ uri: data?.volumeInfo?.imageLinks?.thumbnail }}
-          style={{ width: 160, height: (160 * 3) / 2, borderRadius: 4 }}
+          style={{ width: imageWidth, height: imageWidth * 1.5 }}
         />
         <YStack gap='$2'>
           <SizableText size='$5' fontWeight='bold' width={160}>

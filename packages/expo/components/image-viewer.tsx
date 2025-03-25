@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
-import { Image } from 'expo-image'
-import { Modal, TouchableOpacity } from 'react-native'
+import { Image, ImageStyle } from 'expo-image'
+import { Modal, StyleProp, TouchableOpacity } from 'react-native'
 
-export const ImageViewer: React.FC<{ source: any }> = ({ source }) => {
-  const [visible, setVisible] = useState(true)
+export const ImageViewer: React.FC<{
+  source: any
+  style: StyleProp<ImageStyle>
+}> = ({ source, style }) => {
+  const [visible, setVisible] = useState(false)
   return (
     <>
       <TouchableOpacity onPress={() => setVisible(true)}>
-        <Image source={source} />
+        <Image source={source} style={style} />
       </TouchableOpacity>
       <Modal visible={visible} transparent={true}>
         <TouchableOpacity

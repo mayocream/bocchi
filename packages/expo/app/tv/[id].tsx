@@ -1,7 +1,9 @@
 import { tmdb } from '@/lib/tmdb'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { YStack, XStack, Separator, Image, SizableText } from 'tamagui'
+import { YStack, XStack, Separator, SizableText } from 'tamagui'
+import { ImageViewer } from '@/components/image-viewer'
+import { Dimensions } from 'react-native'
 
 export default function Tv() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -10,6 +12,9 @@ export default function Tv() {
   useEffect(() => {
     tmdb(`/tv/${id}`, { language: 'ja-JP' }).then(setData)
   }, [id])
+
+  const screenWidth = Dimensions.get('screen').width
+  const imageWidth = screenWidth * 0.45
 
   return (
     <YStack fullscreen backgroundColor='$background'>
@@ -20,10 +25,11 @@ export default function Tv() {
       />
 
       <XStack padding='$4' gap='$4'>
-        <Image
-          source={{ uri: `https://tmdb.org/t/p/w500${data?.poster_path}` }}
-          style={{ width: 160, height: (160 * 3) / 2, borderRadius: 4 }}
+        <ImageViewer
+          source={{ uri: `https://tmdb.org/t/p/w780${data?.poster_path}` }}
+          style={{ width: imageWidth, height: imageWidth * 1.5 }}
         />
+
         <YStack gap='$2'>
           <SizableText
             size='$5'

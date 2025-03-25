@@ -130,7 +130,7 @@ export default function Search() {
           <Image
             source={posterPath}
             contentFit='cover'
-            style={{ flex: 1, maxWidth: '100%', aspectRatio: 9 / 16 }}
+            style={{ flex: 1, width: '100%', aspectRatio: 1 / 1.5 }}
             placeholder={{ blurhash }}
           />
         </Card>
