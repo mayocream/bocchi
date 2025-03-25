@@ -20,15 +20,14 @@ export default function Tv() {
   const { user } = useUserStore()
   const { id } = useLocalSearchParams<{ id: string }>()
   const [data, setData] = useState<any>(null)
+  const [review, setReview] = useState<any | null>(null)
   const [reviewStatus, setReviewStatus] = useState<REVIEW_STATUS | null>(null)
 
   useEffect(() => {
     tmdb(`/tv/${id}`, { language: 'ja-JP' }).then(setData)
   }, [id])
 
-  const updateReviewStatus = async () => {
-    if (!reviewStatus) return
-
+  const getReview = async () => {
     const { data, error } = await supabase
       .from('reviews')
       .select()
@@ -41,32 +40,21 @@ export default function Tv() {
       return
     }
 
-    if (data === null) {
-      await supabase.from('reviews').insert({
+    setReview(data)
+    setReviewStatus(data?.status)
+  }
+
+  const updateReview = async () => {
+    const reviewId = review?.id
+    const { error } = await supabase
+      .from('reviews')
+      .upsert({
+        id: reviewId,
         user_id: user?.id,
         tmdb_id: id,
         status: reviewStatus,
+        type: 'tv',
       })
-    } else {
-      await supabase
-        .from('reviews')
-        .update({ status: reviewStatus })
-        .eq('id', data.id)
-    }
-  }
-
-  useEffect(() => {
-    updateReviewStatus()
-  }, [reviewStatus])
-
-  const getReviewStatus = async () => {
-    if (!user) return
-
-    const { data, error } = await supabase
-      .from('reviews')
-      .select()
-      .eq('user_id', user.id)
-      .eq('tmdb_id', id)
       .single()
 
     if (error) {
@@ -74,11 +62,19 @@ export default function Tv() {
       return
     }
 
-    setReviewStatus(data?.status)
+    getReview()
   }
 
   useEffect(() => {
-    getReviewStatus()
+    if (reviewStatus) {
+      updateReview()
+    }
+  }, [reviewStatus])
+
+  useEffect(() => {
+    if (user) {
+      getReview()
+    }
   }, [user])
 
   const screenWidth = Dimensions.get('screen').width
