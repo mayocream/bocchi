@@ -42,7 +42,9 @@ export default function Tv() {
             {data?.number_of_episodes && (
               <YStack gap='$1'>
                 <SizableText>エピソード数</SizableText>
-                <SizableText>{data?.number_of_episodes}</SizableText>
+                <XStack gap='$1' alignItems='center' justifyContent='center'>
+                  <SizableText>{data?.number_of_episodes}</SizableText>
+                </XStack>
               </YStack>
             )}
           </XStack>

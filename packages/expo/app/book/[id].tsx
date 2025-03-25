@@ -1,5 +1,6 @@
 import Loading from '@/components/loading'
 import { googleBooks } from '@/lib/google-books'
+import { ParkingSquare } from '@tamagui/lucide-icons'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { YStack, XStack, Separator, Image, SizableText } from 'tamagui'
@@ -51,7 +52,10 @@ export default function Tv() {
             {data?.volumeInfo?.pageCount && (
               <YStack gap='$1'>
                 <SizableText>ページ数</SizableText>
-                <SizableText>{data?.volumeInfo?.pageCount}</SizableText>
+                <XStack gap='$1' alignItems='center' justifyContent='center'>
+                  <ParkingSquare size={14} />
+                  <SizableText>{data?.volumeInfo?.pageCount}</SizableText>
+                </XStack>
               </YStack>
             )}
           </XStack>
