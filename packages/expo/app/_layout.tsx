@@ -12,7 +12,20 @@ import Loading from '@/components/loading'
 NavigationBar.setVisibilityAsync('hidden')
 NavigationBar.setBackgroundColorAsync('#fff')
 
-const config = createTamagui(defaultConfig)
+const config = createTamagui({
+  ...defaultConfig,
+  fonts: {
+    ...defaultConfig.fonts,
+    body: {
+      ...defaultConfig.fonts.body,
+      fontFamily: 'NotoSansCJK',
+    },
+    heading: {
+      ...defaultConfig.fonts.heading,
+      fontFamily: 'NotoSansCJK',
+    },
+  },
+})
 
 const AppContent = () => {
   const { setUser } = useUserStore()

@@ -35,7 +35,15 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-image-picker"
+      "expo-image-picker",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/NotoSansCJK.otf"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
