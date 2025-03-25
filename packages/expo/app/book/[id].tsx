@@ -1,80 +1,61 @@
 import Loading from '@/components/loading'
-import { bangumi } from '@/lib/bangumi'
 import { googleBooks } from '@/lib/google-books'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import {
-  Text,
-  YStack,
-  XStack,
-  ScrollView,
-  H1,
-  View,
-  Separator,
-  Paragraph,
-  Image,
-  SizableText,
-} from 'tamagui'
+import { YStack, XStack, Separator, Image, SizableText } from 'tamagui'
 
-export default function Title() {
+export default function Tv() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const [bangumiData, setBangumiData] = useState<any>(null)
   const [googleBooksData, setGoogleBooksData] = useState<any>(null)
-
-  const getBangumiData = async () => {
-    const response = await bangumi(`/v0/subjects/${id}`)
-    setBangumiData(response)
-
-    const type = response?.type
-    const isbn = response?.infobox?.filter((item: any) =>
-      item.key.startsWith('ISBN')
-    )?.[0]?.value
-    if (type === 1 && isbn) {
-      const googleBooksResponse = await googleBooks(isbn)
-      setGoogleBooksData(googleBooksResponse)
-    }
-  }
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getBangumiData()
+    googleBooks(`/volumes/${id}`)
+      .then(setGoogleBooksData)
+      .then(() => setLoading(false))
   }, [id])
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <YStack fullscreen backgroundColor='$background'>
       <Stack.Screen
         options={{
-          title: bangumiData?.name,
+          title: googleBooksData?.volumeInfo?.title,
         }}
       />
 
       <XStack padding='$4' gap='$4'>
         <Image
-          source={{ uri: bangumiData?.images?.large }}
+          source={{ uri: googleBooksData?.volumeInfo?.imageLinks?.thumbnail }}
           style={{ width: 160, height: (160 * 3) / 2, borderRadius: 4 }}
         />
         <YStack gap='$2'>
           <SizableText size='$5' fontWeight='bold' width={160}>
-            {bangumiData?.name}
+            {googleBooksData?.volumeInfo?.title} (
+            {googleBooksData?.volumeInfo?.publisher})
           </SizableText>
-          <SizableText>
-            {googleBooksData?.items?.[0]?.volumeInfo?.authors?.join(', ')}
+          <SizableText width={160}>
+            {googleBooksData?.volumeInfo?.authors?.join(', ')}
           </SizableText>
 
           <XStack gap='$2' justifyContent='space-between'>
-            {googleBooksData?.items?.[0]?.volumeInfo?.publishedDate && (
+            {googleBooksData?.volumeInfo?.publishedDate && (
               <YStack gap='$1'>
                 <SizableText>発売日</SizableText>
                 <SizableText>
-                  {googleBooksData?.items?.[0]?.volumeInfo?.publishedDate}
+                  {googleBooksData?.volumeInfo?.publishedDate}
                 </SizableText>
               </YStack>
             )}
 
-            {googleBooksData?.items?.[0]?.volumeInfo?.pageCount && (
+            {googleBooksData?.volumeInfo?.pageCount && (
               <YStack gap='$1'>
                 <SizableText>ページ数</SizableText>
                 <SizableText>
-                  {googleBooksData?.items?.[0]?.volumeInfo?.pageCount}
+                  {googleBooksData?.volumeInfo?.pageCount}
                 </SizableText>
               </YStack>
             )}
