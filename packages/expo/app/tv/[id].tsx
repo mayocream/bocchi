@@ -36,7 +36,6 @@ export default function Tv() {
       .single()
 
     if (error) {
-      alert(error.message)
       return
     }
 
