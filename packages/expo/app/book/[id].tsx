@@ -63,6 +63,20 @@ export default function Tv() {
         </YStack>
       </XStack>
 
+      {googleBooksData?.volumeInfo?.description && (
+        <YStack gap='$2' padding='$4'>
+          <SizableText size='$4' fontWeight='bold'>
+            概要
+          </SizableText>
+          <SizableText>
+            {googleBooksData?.volumeInfo?.description?.replace(
+              /<[^>]*>?/gm,
+              ''
+            )}
+          </SizableText>
+        </YStack>
+      )}
+
       <Separator />
     </YStack>
   )

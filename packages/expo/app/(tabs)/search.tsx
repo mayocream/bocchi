@@ -14,6 +14,7 @@ import { router } from 'expo-router'
 import { tmdb } from '@/lib/tmdb'
 import { alert } from '@/lib/alert'
 import { googleBooks } from '@/lib/google-books'
+import { set } from 'date-fns'
 
 type Category = 'TV' | 'BOOKS'
 
@@ -34,7 +35,9 @@ export default function Search() {
         include_adult: 'true',
         language: 'ja-JP',
       })
-      setResult((prev) => [...prev, ...response.results])
+      setResult((prev) =>
+        page === 1 ? response.results : [...prev, ...response.results]
+      )
     } catch (error) {
       alert('TV番組の検索中にエラーが発生しました')
     } finally {
@@ -52,7 +55,11 @@ export default function Search() {
         startIndex: offset.toString(),
         maxResults: '20',
       })
-      setResult((prev) => [...prev, ...response.items])
+      setResult((prev) =>
+        offset === 0
+          ? response.items || []
+          : [...prev, ...(response.items || [])]
+      )
     } catch (error) {
       alert('本の検索中にエラーが発生しました')
     } finally {
@@ -67,11 +74,10 @@ export default function Search() {
     if (activeCategory === 'TV') {
       searchTvShows(searchText, 1)
     } else if (activeCategory === 'BOOKS') {
-      searchBooks(searchText, 1)
+      searchBooks(searchText, 0)
     }
   }
 
-  // Load more results when scrolling
   function handleLoadMore() {
     if (loading || !searchText.trim()) return
 
@@ -79,17 +85,24 @@ export default function Search() {
       const nextPage = Math.floor(result.length / 20) + 1
       searchTvShows(searchText, nextPage)
     } else if (activeCategory === 'BOOKS') {
-      const offset = result.length + 1
+      const offset = result.length
       searchBooks(searchText, offset)
     }
   }
 
-  // Search when category changes
   useEffect(() => {
-    handleSearch()
+    if (searchText.trim()) {
+      setResult([])
+      handleSearch()
+    }
   }, [activeCategory])
 
-  // Render item for the FlatList
+  // Load default data
+  useEffect(() => {
+    setSearchText('百合')
+    handleSearch()
+  }, [])
+
   function renderItem({ item }: { item: any }) {
     const isTvShow = 'name' in item
     const link = isTvShow ? `/tv/${item.id}` : `/book/${item.id}`
@@ -141,11 +154,7 @@ export default function Search() {
           theme='blue'
           borderRadius='$10'
           paddingLeft='$3'
-          value={searchText}
-          onChangeText={(text) => {
-            setSearchText(text)
-            handleSearch()
-          }}
+          onChangeText={setSearchText}
           onSubmitEditing={handleSearch}
         />
       </XStack>
