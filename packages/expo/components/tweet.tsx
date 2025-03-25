@@ -1,4 +1,4 @@
-import { Avatar, XStack, YStack, Text } from 'tamagui'
+import { Avatar, XStack, YStack, Text, SizableText } from 'tamagui'
 import { Heart, MessageCircle, Repeat, Share } from '@tamagui/lucide-icons'
 import { Time } from './time'
 import { useState } from 'react'
@@ -43,21 +43,21 @@ export const Tweet = ({ tweet }: { tweet: TweetProps }) => {
           <Text fontWeight='bold'>{tweet.user.name}</Text>
           <Text>@{tweet.user.username}</Text>
           <Text>·</Text>
-          <Time date={tweet.created_at} />
+          <Time date={new Date(tweet?.created_at)} />
         </XStack>
-        <Text fontSize='$5'>{tweet.content}</Text>
+        <SizableText fontSize='$5'>{tweet.content}</SizableText>
         <XStack marginTop='$2' justifyContent='space-between' userSelect='none'>
           <XStack alignItems='center' gap='$1'>
             <MessageCircle size='$1' />
-            <Counter count={tweet.replies} />
+            <Counter count={tweet?.replies || 0} />
           </XStack>
           <XStack alignItems='center' gap='$1'>
             <Repeat size='$1' />
-            <Counter count={tweet.retweets} />
+            <Counter count={tweet?.retweets || 0} />
           </XStack>
           <XStack alignItems='center' gap='$1'>
             <Heart size='$1' />
-            <Counter count={tweet.likes} />
+            <Counter count={tweet?.likes || 0} />
           </XStack>
           <XStack alignItems='center'>
             <Share size='$1' />

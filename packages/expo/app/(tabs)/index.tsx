@@ -1,8 +1,7 @@
-import { Image, ScrollView, View, XStack, YStack } from 'tamagui'
+import { ScrollView, XStack, YStack } from 'tamagui'
 import { Tweet } from '@/components/tweet'
-import { Redirect } from 'expo-router'
 import { useUserStore } from '@/lib/state'
-import { Button, Sheet, Input, Text, Avatar } from 'tamagui'
+import { Button, Sheet, Input, Avatar } from 'tamagui'
 import { useEffect, useState } from 'react'
 import { Plus, X } from '@tamagui/lucide-icons'
 import { alert } from '@/lib/alert'
@@ -14,6 +13,7 @@ export default function Index() {
   const [open, setOpen] = useState(false)
   const [tweetContent, setTweetContent] = useState('')
   const [position, setPosition] = useState(0)
+  const [tweets, setTweets] = useState<any[]>([])
 
   const getProfile = async () => {
     const { data, error } = await supabase
@@ -34,38 +34,60 @@ export default function Index() {
     getProfile()
   }, [user])
 
-  const handleCreateTweet = () => {
-    // Handle tweet creation logic here
-    console.log('Creating tweet:', tweetContent)
+  const handleCreateTweet = async () => {
+    const { error } = await supabase.from('posts').insert({
+      user_id: user?.id,
+      content: tweetContent,
+    })
+
+    if (error) {
+      alert(error.message)
+      return
+    }
+
     setTweetContent('')
     setOpen(false)
   }
 
+  const loadTweets = async () => {
+    const { data, error } = await supabase
+      .from('posts')
+      .select()
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      alert(error.message)
+      return
+    }
+
+    for (const tweet of data) {
+      const { data: user, error } = await supabase
+        .from('profiles')
+        .select()
+        .eq('user_id', tweet.user_id)
+        .single()
+
+      if (error) {
+        alert(error.message)
+        return
+      }
+
+      tweet.user = user
+    }
+
+    setTweets(data)
+  }
+
+  useEffect(() => {
+    loadTweets()
+  }, [])
+
   return (
     <XStack fullscreen>
       <ScrollView>
-        {Array(30)
-          .fill(0)
-          .map((_, i) => (
-            <Tweet
-              key={i}
-              tweet={{
-                id: 1,
-                user: {
-                  name: 'Mayo',
-                  username: 'mayo',
-                  avatar_url: 'https://github.com/mayocream.png',
-                },
-                content: 'Hello, world!',
-                created_at: new Date(Date.now() - 1000 * 60 * 60 * i),
-                likes: i,
-                liked: false,
-                retweets: 0,
-                retweeted: false,
-                replies: 0,
-              }}
-            />
-          ))}
+        {tweets.map((tweet) => (
+          <Tweet key={tweet.id} tweet={tweet} />
+        ))}
       </ScrollView>
 
       {/* Floating action button for opening the tweet modal */}
