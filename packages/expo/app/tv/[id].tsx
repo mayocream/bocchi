@@ -1,4 +1,3 @@
-import { googleBooks } from '@/lib/google-books'
 import { tmdb } from '@/lib/tmdb'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
@@ -26,7 +25,12 @@ export default function Tv() {
           style={{ width: 160, height: (160 * 3) / 2, borderRadius: 4 }}
         />
         <YStack gap='$2'>
-          <SizableText size='$5' fontWeight='bold' width={160}>
+          <SizableText
+            size='$5'
+            fontWeight='bold'
+            width={160}
+            userSelect='auto'
+          >
             {data?.name}
           </SizableText>
           <SizableText width={160}>{data?.tagline}</SizableText>
@@ -56,7 +60,7 @@ export default function Tv() {
           <SizableText size='$4' fontWeight='bold'>
             概要
           </SizableText>
-          <SizableText>{data.overview}</SizableText>
+          <SizableText userSelect='auto'>{data.overview}</SizableText>
         </YStack>
       )}
 

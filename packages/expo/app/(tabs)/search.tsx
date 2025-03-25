@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import {
   XStack,
   YStack,
-  Image,
   Input,
   Card,
   Spinner,
@@ -14,9 +13,12 @@ import { router } from 'expo-router'
 import { tmdb } from '@/lib/tmdb'
 import { alert } from '@/lib/alert'
 import { googleBooks } from '@/lib/google-books'
-import { set } from 'date-fns'
+import { Image } from 'expo-image'
 
 type Category = 'TV' | 'BOOKS'
+
+const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 export default function Search() {
   const [searchText, setSearchText] = useState('')
@@ -108,7 +110,7 @@ export default function Search() {
     const link = isTvShow ? `/tv/${item.id}` : `/book/${item.id}`
     const name = isTvShow ? item.name : item.volumeInfo.title
     const posterPath = isTvShow
-      ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+      ? `https://image.tmdb.org/t/p/w780${item.poster_path}`
       : item.volumeInfo.imageLinks?.thumbnail
 
     return (
@@ -126,11 +128,10 @@ export default function Search() {
       >
         <Card overflow='hidden' borderRadius='$3' marginBottom='$2'>
           <Image
-            source={{
-              uri: posterPath,
-            }}
-            aspectRatio={2 / 3}
-            width='100%'
+            source={posterPath}
+            contentFit='cover'
+            style={{ flex: 1, maxWidth: '100%', aspectRatio: 9 / 16 }}
+            placeholder={{ blurhash }}
           />
         </Card>
         <SizableText
