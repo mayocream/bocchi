@@ -1,5 +1,5 @@
 import React from 'react'
-import { Home, User, Bell, Search } from '@tamagui/lucide-icons'
+import { Home, User, Bell, Search, Settings } from '@tamagui/lucide-icons'
 import { Pressable } from 'react-native'
 import { XStack, YStack, Text, Input } from 'tamagui'
 import { TweetDialog } from './tweet'
@@ -84,15 +84,13 @@ export const Topbar = () => {
             borderRadius={18}
             paddingHorizontal={12}
             alignItems='center'
-            width={240}
+            width={180}
             overflow='visible'
           >
-            <Search size={16} color='#657786' />
+            <Search size={20} color='#657786' />
             <Input
               placeholder='検索'
-              flex={1}
               fontSize={14}
-              marginLeft={8}
               backgroundColor='transparent'
               borderWidth={0}
               color='#14171A'
@@ -104,6 +102,9 @@ export const Topbar = () => {
             />
           </XStack>
 
+          <Pressable onPress={() => router.push('/settings')}>
+            <Settings size={20} color='#657786' />
+          </Pressable>
           <TweetDialog />
         </XStack>
       </XStack>
