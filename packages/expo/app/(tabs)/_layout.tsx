@@ -1,12 +1,5 @@
 import { Tabs } from 'expo-router'
-import {
-  Bell,
-  Home,
-  Search,
-  Settings,
-  User,
-  Users2,
-} from '@tamagui/lucide-icons'
+import { Bell, Home, Search, Settings, User } from '@tamagui/lucide-icons'
 import { Platform } from 'react-native'
 import { Topbar } from '@/components/topbar'
 import { XStack, YStack } from 'tamagui'

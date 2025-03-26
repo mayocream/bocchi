@@ -45,7 +45,9 @@ export const Post = ({ tweet }: { tweet: TweetProps }) => {
           <Text>·</Text>
           <Time date={new Date(tweet?.created_at)} />
         </XStack>
-        <SizableText fontSize='$5'>{tweet.content}</SizableText>
+        <SizableText fontSize='$5' fontWeight={400}>
+          {tweet.content}
+        </SizableText>
         <XStack marginTop='$2' justifyContent='space-between' userSelect='none'>
           <XStack alignItems='center' gap='$1'>
             <MessageCircle size='$1' />

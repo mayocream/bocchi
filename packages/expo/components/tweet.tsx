@@ -53,6 +53,7 @@ export const TweetDialog = () => {
               </Text>
 
               <TextArea
+                fontWeight={400}
                 theme='blue'
                 placeholder='いま何してる？'
                 fontSize={16}
