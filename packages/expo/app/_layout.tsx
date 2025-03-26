@@ -8,12 +8,17 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Loading from '@/components/loading'
 import { Platform } from 'react-native'
-import FontLoader from '@/components/font-loader'
+import * as Font from 'expo-font'
 
-// only for Android
 if (Platform.OS === 'android') {
   NavigationBar.setVisibilityAsync('hidden')
   NavigationBar.setBackgroundColorAsync('#fff')
+}
+
+if (Platform.OS === 'web') {
+  Font.loadAsync({
+    NotoSansCJK: require('@/assets/fonts/NotoSansCJK.otf'),
+  })
 }
 
 const AppContent = () => {
@@ -57,22 +62,20 @@ export default function RootLayout() {
       ...defaultConfig.fonts,
       body: {
         ...defaultConfig.fonts.body,
-        fontFamily: 'NotoSansCJK',
+        family: 'NotoSansCJK',
       },
       heading: {
         ...defaultConfig.fonts.heading,
-        fontFamily: 'NotoSansCJK',
+        family: 'NotoSansCJK',
       },
     },
   })
 
   return (
-    <FontLoader>
-      <TamaguiProvider config={config}>
-        <Theme name='light'>
-          <AppContent />
-        </Theme>
-      </TamaguiProvider>
-    </FontLoader>
+    <TamaguiProvider config={config}>
+      <Theme name='light'>
+        <AppContent />
+      </Theme>
+    </TamaguiProvider>
   )
 }
