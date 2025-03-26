@@ -9,6 +9,7 @@ import {
 } from '@tamagui/lucide-icons'
 import { Pressable } from 'react-native'
 import { XStack, YStack, Text, Button, Input } from 'tamagui'
+import { TweetDialog } from './tweet'
 
 export const Topbar = () => {
   const navItems = [
@@ -96,19 +97,7 @@ export const Topbar = () => {
             />
           </XStack>
 
-          {/* Tweet button */}
-          <Button
-            backgroundColor='#1DA1F2'
-            color='white'
-            borderRadius={18}
-            height={36}
-            paddingHorizontal={16}
-            fontWeight='600'
-            fontSize={14}
-            pressStyle={{ backgroundColor: '#0c86d0' }}
-          >
-            ツイート
-          </Button>
+          <TweetDialog />
         </XStack>
       </XStack>
     </YStack>

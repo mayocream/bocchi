@@ -1,69 +1,101 @@
-import { Avatar, XStack, YStack, Text, SizableText } from 'tamagui'
-import { Heart, MessageCircle, Repeat, Share } from '@tamagui/lucide-icons'
-import { Time } from './time'
-import { useState } from 'react'
-import { Counter } from './counter'
+import React, { useState } from 'react'
+import { Dialog, YStack, XStack, Button, Text, TextArea } from 'tamagui'
+import { Feather } from '@expo/vector-icons'
 
-type TweetProps = {
-  id: number
-  user: {
-    name: string
-    username: string
-    avatar_url: string
+export const TweetDialog = () => {
+  const [open, setOpen] = useState(false)
+  const [text, setText] = useState('')
+
+  const characterLimit = 280
+  const remaining = characterLimit - text.length
+
+  const handleTweet = () => {
+    console.log('Tweeted:', text)
+    setOpen(false)
+    setText('')
   }
-  content: string
-  created_at: Date
-  likes: number
-  liked: boolean
-  retweets: number
-  retweeted: boolean
-  replies: number
-}
-
-export const Tweet = ({ tweet }: { tweet: TweetProps }) => {
-  const [liked, setLiked] = useState(tweet.liked)
-  const [retweeted, setRetweeted] = useState(tweet.retweeted)
 
   return (
-    <XStack
-      padding='$4'
-      backgroundColor='$background'
-      width={600}
-      gap='$3'
-      alignItems='flex-start'
-      borderBottomWidth='$0.25'
-      borderBottomColor='#E6E6E6'
-    >
-      <Avatar marginTop='$1.5' circular size='$5'>
-        <Avatar.Image src={tweet.user.avatar_url} />
-        <Avatar.Fallback />
-      </Avatar>
-      <YStack flex={1}>
-        <XStack gap='$1.5' alignItems='center'>
-          <Text fontWeight='bold'>{tweet.user.name}</Text>
-          <Text>@{tweet.user.username}</Text>
-          <Text>·</Text>
-          <Time date={new Date(tweet?.created_at)} />
-        </XStack>
-        <SizableText fontSize='$5'>{tweet.content}</SizableText>
-        <XStack marginTop='$2' justifyContent='space-between' userSelect='none'>
-          <XStack alignItems='center' gap='$1'>
-            <MessageCircle size='$1' />
-            <Counter count={tweet?.replies || 0} />
-          </XStack>
-          <XStack alignItems='center' gap='$1'>
-            <Repeat size='$1' />
-            <Counter count={tweet?.retweets || 0} />
-          </XStack>
-          <XStack alignItems='center' gap='$1'>
-            <Heart size='$1' />
-            <Counter count={tweet?.likes || 0} />
-          </XStack>
-          <XStack alignItems='center'>
-            <Share size='$1' />
-          </XStack>
-        </XStack>
-      </YStack>
-    </XStack>
+    <>
+      <Button
+        theme='blue'
+        backgroundColor='#1DA1F2'
+        color='white'
+        borderRadius={999}
+        height={36}
+        paddingHorizontal={20}
+        fontWeight='700'
+        fontSize={14}
+        icon={<Feather name='feather' size={16} color='white' />}
+        onPress={() => setOpen(true)}
+      >
+        Tweet
+      </Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay
+            exitStyle={{ opacity: 0 }}
+            enterStyle={{ opacity: 0 }}
+            animation='medium'
+            backgroundColor='rgba(0,0,0,0.3)'
+          />
+          <Dialog.Content
+            bordered
+            elevate
+            width={600}
+            borderRadius={16}
+            padding='$4'
+          >
+            <YStack gap='$4'>
+              <Text fontWeight='700' fontSize='$6'>
+                ツイートする
+              </Text>
+
+              <TextArea
+                theme='blue'
+                placeholder='いま何してる？'
+                fontSize={16}
+                value={text}
+                onChangeText={setText}
+                maxLength={characterLimit}
+              />
+
+              <XStack justifyContent='space-between' alignItems='center'>
+                <Text color={remaining < 0 ? 'red' : '$color'} fontSize={14}>
+                  {remaining} 文字
+                </Text>
+
+                <XStack gap='$2'>
+                  <Button
+                    theme='blue'
+                    color='#1DA1F2'
+                    fontWeight={700}
+                    borderRadius={999}
+                    borderColor='#1DA1F2'
+                    variant='outlined'
+                    onPress={() => setOpen(false)}
+                  >
+                    キャンセル
+                  </Button>
+                  <Button
+                    backgroundColor='#1DA1F2'
+                    color='white'
+                    fontWeight='700'
+                    borderRadius={999}
+                    pressStyle={{ backgroundColor: '#1991da' }}
+                    disabled={text.length === 0 || remaining < 0}
+                    opacity={text.length === 0 || remaining < 0 ? 0.6 : 1}
+                    onPress={handleTweet}
+                  >
+                    ツイート
+                  </Button>
+                </XStack>
+              </XStack>
+            </YStack>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog>
+    </>
   )
 }
