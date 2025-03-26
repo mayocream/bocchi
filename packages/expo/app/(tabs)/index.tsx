@@ -119,11 +119,16 @@ export default function Index() {
         position={position}
         onPositionChange={setPosition}
         dismissOnSnapToBottom
+        animation='medium'
       >
-        <Sheet.Overlay opacity={0.7} />
+        <Sheet.Overlay
+          animation='lazy'
+          backgroundColor='$shadow6'
+          enterStyle={{ opacity: 0 }}
+          exitStyle={{ opacity: 0 }}
+        />
+        <Sheet.Handle />
         <Sheet.Frame>
-          <Sheet.Handle />
-
           <YStack padding='$4' gap='$4'>
             <XStack justifyContent='space-between' alignItems='center'>
               <Button
