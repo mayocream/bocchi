@@ -1,6 +1,6 @@
 import { createTamagui, TamaguiProvider, Theme } from 'tamagui'
 import { defaultConfig } from '@tamagui/config/v4'
-import { router, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import * as NavigationBar from 'expo-navigation-bar'
 import { useUserStore } from '@/lib/state'
@@ -30,13 +30,9 @@ const AppContent = () => {
     } = supabase.auth.onAuthStateChange((event, session) => {
       setLoading(false)
       setUser(session?.user ?? null)
-
-      if (session === null || session.user === null) {
-        router.replace('/sign-in')
-      }
     })
 
-    return subscription.unsubscribe
+    return () => subscription.unsubscribe()
   }, [loading])
 
   if (loading) {

@@ -31,7 +31,9 @@ export default function Index() {
   }
 
   useEffect(() => {
-    getProfile()
+    if (user) {
+      getProfile()
+    }
   }, [user])
 
   const handleCreateTweet = async () => {
