@@ -3,12 +3,15 @@ import { Home, User, Bell, Search } from '@tamagui/lucide-icons'
 import { Pressable } from 'react-native'
 import { XStack, YStack, Text, Input } from 'tamagui'
 import { TweetDialog } from './tweet'
+import { router, usePathname } from 'expo-router'
 
 export const Topbar = () => {
+  const pathname = usePathname()
+
   const navItems = [
-    { icon: Home, label: 'ホーム', isActive: true },
-    { icon: Bell, label: '通知', isActive: false },
-    { icon: User, label: 'プロフィール', isActive: false },
+    { icon: Home, label: 'ホーム', path: '/' },
+    { icon: Bell, label: '通知', path: '/notifications' },
+    { icon: User, label: 'プロフィール', path: '/profile' },
   ]
 
   return (
@@ -28,23 +31,28 @@ export const Topbar = () => {
         {/* Left side - nav items */}
         <XStack flex={1} alignItems='center' gap={8}>
           {navItems.map((item, index) => (
-            <Pressable key={index}>
+            <Pressable
+              key={index}
+              onPress={() => router.push(item.path as any)}
+            >
               <XStack
                 alignItems='center'
                 justifyContent='center'
                 paddingHorizontal={12}
                 paddingVertical={12}
-                borderBottomWidth={item.isActive ? 2 : 0}
-                borderBottomColor={item.isActive ? '#1DA1F2' : 'transparent'}
+                borderBottomWidth={item.path === pathname ? 2 : 0}
+                borderBottomColor={
+                  item.path === pathname ? '#1DA1F2' : 'transparent'
+                }
               >
                 <item.icon
                   size={20}
-                  color={item.isActive ? '#1DA1F2' : '#657786'}
+                  color={item.path === pathname ? '#1DA1F2' : '#657786'}
                 />
                 <Text
                   fontSize={14}
                   fontWeight='500'
-                  color={item.isActive ? '#1DA1F2' : '#657786'}
+                  color={item.path === pathname ? '#1DA1F2' : '#657786'}
                   marginLeft={4}
                 >
                   {item.label}

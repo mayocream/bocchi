@@ -72,6 +72,7 @@ export default function TabLayout() {
               options={{
                 title: '検索',
                 tabBarLabel: '検索',
+                headerShown: Platform.OS !== 'web',
                 tabBarIcon: ({ size, color }) => (
                   <Search size={size} color={color} />
                 ),
@@ -90,6 +91,7 @@ export default function TabLayout() {
               options={{
                 title: 'プロフィール',
                 tabBarLabel: 'プロフィール',
+                headerShown: Platform.OS !== 'web',
                 tabBarIcon: ({ size, color }) => (
                   <User size={size} color={color} />
                 ),
@@ -100,6 +102,7 @@ export default function TabLayout() {
               options={{
                 title: '通知',
                 tabBarLabel: '通知',
+                headerShown: Platform.OS !== 'web',
                 tabBarIcon: ({ size, color }) => (
                   <Bell size={size} color={color} />
                 ),
