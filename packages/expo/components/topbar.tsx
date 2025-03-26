@@ -84,6 +84,7 @@ export const Topbar = () => {
             paddingHorizontal={12}
             alignItems='center'
             width={240}
+            overflow='visible'
           >
             <Search size={16} color='#657786' />
             <Input
@@ -94,6 +95,11 @@ export const Topbar = () => {
               backgroundColor='transparent'
               borderWidth={0}
               color='#14171A'
+              outlineWidth={0}
+              focusStyle={{
+                outlineWidth: 0,
+                shadowOpacity: 0,
+              }}
             />
           </XStack>
 
