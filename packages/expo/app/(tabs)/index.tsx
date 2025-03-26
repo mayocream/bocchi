@@ -86,7 +86,7 @@ export default function Index() {
 
   return (
     <XStack fullscreen>
-      <ScrollView>
+      <ScrollView $platform-web={{ alignItems: 'center' }} >
         {tweets.map((tweet) => (
           <Tweet key={tweet.id} tweet={tweet} />
         ))}

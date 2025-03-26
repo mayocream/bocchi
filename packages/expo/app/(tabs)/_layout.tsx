@@ -34,7 +34,7 @@ export default function TabLayout() {
           <Sidebar />
         </YStack>
       )}
-      <YStack flex={1} maxWidth={600}>
+      <YStack flex={1} $platform-native={{maxWidth: 600}}>
         <Tabs
           screenOptions={{
             tabBarActiveTintColor: '#1E88E5',
