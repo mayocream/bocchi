@@ -29,7 +29,7 @@ export const TweetDialog = () => {
         icon={<Feather name='feather' size={16} color='white' />}
         onPress={() => setOpen(true)}
       >
-        Tweet
+        ツイート
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>

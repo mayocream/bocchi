@@ -1,14 +1,7 @@
 import React from 'react'
-import {
-  Home,
-  User,
-  MessageCircle,
-  Bell,
-  Search,
-  Settings,
-} from '@tamagui/lucide-icons'
+import { Home, User, Bell, Search } from '@tamagui/lucide-icons'
 import { Pressable } from 'react-native'
-import { XStack, YStack, Text, Button, Input } from 'tamagui'
+import { XStack, YStack, Text, Input } from 'tamagui'
 import { TweetDialog } from './tweet'
 
 export const Topbar = () => {
