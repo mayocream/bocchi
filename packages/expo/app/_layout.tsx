@@ -7,25 +7,14 @@ import { useUserStore } from '@/lib/state'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Loading from '@/components/loading'
+import { Platform } from 'react-native'
+import FontLoader from '@/components/font-loader'
 
 // only for Android
-NavigationBar.setVisibilityAsync('hidden')
-NavigationBar.setBackgroundColorAsync('#fff')
-
-const config = createTamagui({
-  ...defaultConfig,
-  fonts: {
-    ...defaultConfig.fonts,
-    body: {
-      ...defaultConfig.fonts.body,
-      fontFamily: 'NotoSansCJK',
-    },
-    heading: {
-      ...defaultConfig.fonts.heading,
-      fontFamily: 'NotoSansCJK',
-    },
-  },
-})
+if (Platform.OS === 'android') {
+  NavigationBar.setVisibilityAsync('hidden')
+  NavigationBar.setBackgroundColorAsync('#fff')
+}
 
 const AppContent = () => {
   const { setUser } = useUserStore()
@@ -62,11 +51,28 @@ const AppContent = () => {
 }
 
 export default function RootLayout() {
+  const config = createTamagui({
+    ...defaultConfig,
+    fonts: {
+      ...defaultConfig.fonts,
+      body: {
+        ...defaultConfig.fonts.body,
+        fontFamily: 'NotoSansCJK',
+      },
+      heading: {
+        ...defaultConfig.fonts.heading,
+        fontFamily: 'NotoSansCJK',
+      },
+    },
+  })
+
   return (
-    <TamaguiProvider config={config}>
-      <Theme name='light'>
-        <AppContent />
-      </Theme>
-    </TamaguiProvider>
+    <FontLoader>
+      <TamaguiProvider config={config}>
+        <Theme name='light'>
+          <AppContent />
+        </Theme>
+      </TamaguiProvider>
+    </FontLoader>
   )
 }
