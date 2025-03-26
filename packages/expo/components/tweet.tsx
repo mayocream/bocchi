@@ -6,8 +6,8 @@ export const TweetDialog = () => {
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
 
-  const characterLimit = 280
-  const remaining = characterLimit - text.length
+  const characterLimit = 140
+  const remaining = characterLimit - text.trim().length
 
   const handleTweet = () => {
     console.log('Tweeted:', text)
@@ -84,8 +84,10 @@ export const TweetDialog = () => {
                     fontWeight='700'
                     borderRadius={999}
                     pressStyle={{ backgroundColor: '#1991da' }}
-                    disabled={text.length === 0 || remaining < 0}
-                    opacity={text.length === 0 || remaining < 0 ? 0.6 : 1}
+                    disabled={text.trim().length === 0 || remaining < 0}
+                    opacity={
+                      text.trim().length === 0 || remaining < 0 ? 0.6 : 1
+                    }
                     onPress={handleTweet}
                   >
                     ツイート
