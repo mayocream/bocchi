@@ -11,6 +11,7 @@ import * as Linking from 'expo-linking'
 import Constants from 'expo-constants'
 import { router } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
+import { Platform } from 'react-native'
 
 export default function Settings() {
   const settingsItems = [
@@ -24,19 +25,19 @@ export default function Settings() {
       icon: Shield,
       title: 'プライバシーとセキュリティ',
       description: 'パスワード、セキュリティ設定を管理',
-      action: Linking.openSettings,
+      action: Platform.OS !== 'web' ? Linking.openSettings : () => {},
     },
     {
       icon: Bell,
       title: '通知',
       description: '通知の設定を変更',
-      action: Linking.openSettings,
+      action: Platform.OS !== 'web' ? Linking.openSettings : () => {},
     },
     {
       icon: Database,
       title: 'データとストレージ',
       description: 'データ使用量、キャッシュを管理',
-      action: Linking.openSettings,
+      action: Platform.OS !== 'web' ? Linking.openSettings : () => {},
     },
     {
       icon: Bug,
