@@ -1,0 +1,41 @@
+name: Web
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - name: Install dependencies
+        run: pnpm install
+      - name: Set Expo environment variables
+        run: |-
+            echo "EXPO_PUBLIC_SUPABASE_KEY=${{ secrets.EXPO_PUBLIC_SUPABASE_KEY }}" >> packages/expo/.env
+            echo "EXPO_PUBLIC_BANGUMI_KEY=${{ secrets.EXPO_PUBLIC_BANGUMI_KEY }}" >> packages/expo/.env
+            echo "EXPO_PUBLIC_TMDB_KEY=${{ secrets.EXPO_PUBLIC_TMDB_KEY }}" >> packages/expo/.env
+      - name: Expo web build
+        run: cd packages/expo && npx expo export --platform web
+      - name: Upload static files as artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/expo/dist/
+
+  publish:
+    needs: build
+    environment:
+      name: Production
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
