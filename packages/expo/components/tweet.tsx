@@ -22,7 +22,7 @@ export const TweetDialog = () => {
     })
 
     if (error) {
-      alert('ツイートに失敗しました')
+      alert(error.message)
       return
     }
 
