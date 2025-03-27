@@ -1,9 +1,10 @@
 import React from 'react'
 import { Home, User, Bell, Search, Settings } from '@tamagui/lucide-icons'
-import { Pressable } from 'react-native'
+import { Platform, Pressable } from 'react-native'
 import { XStack, YStack, Text, Input } from 'tamagui'
 import { TweetDialog } from './tweet'
 import { router, usePathname } from 'expo-router'
+import { Image } from 'expo-image'
 
 export const Topbar = () => {
   const pathname = usePathname()
@@ -70,9 +71,14 @@ export const Topbar = () => {
           justifyContent='center'
           pointerEvents='none'
         >
-          <Text fontSize={24} color='#1DA1F2' fontWeight='bold'>
-            🐦
-          </Text>
+          <Image
+            source={require('@/assets/images/favicon.png')}
+            style={{
+              height: 32,
+              width: 32,
+              opacity: 0.76,
+            }}
+          />
         </XStack>
 
         {/* Right side - search bar and tweet button */}
