@@ -25,7 +25,7 @@ export const LoginWidget = () => {
         会話に参加
       </H3>
       <Text color='#66757f' fontSize={14} marginBottom={15}>
-        Twitterにログインして会話に参加しましょう。
+        Eki にログインして会話に参加しましょう。
       </Text>
 
       <Button
