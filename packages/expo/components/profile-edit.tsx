@@ -40,19 +40,12 @@ export const ProfileEdit = ({
   }
 
   const uploadImage = async (uri: string, path: string) => {
-    const { error } = await supabase.storage.from('static').upload(
-      path,
-      {
-        uri,
-        name: path,
-        type: 'image/jpeg',
-      } as any,
-      {
-        cacheControl: '3600',
-        upsert: true,
-        contentType: 'image/jpeg',
-      }
-    )
+    const blob = await fetch(uri).then((r) => r.blob())
+    const { error } = await supabase.storage.from('static').upload(path, blob, {
+      cacheControl: '3600',
+      upsert: true,
+      contentType: 'image/jpeg',
+    })
 
     if (error) {
       console.error('Failed to upload image:', error)
