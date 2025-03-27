@@ -1,3 +1,4 @@
+import { router } from 'expo-router'
 import { Pressable } from 'react-native'
 import { Paragraph, Text, XStack, YStack } from 'tamagui'
 
@@ -13,7 +14,7 @@ export const AboutWidget = () => {
         <Text color='#657786' fontSize={12}>
           © 2025 Mayo
         </Text>
-        <Pressable>
+        <Pressable onPress={() => router.push('/tos')}>
           <Text color='#1da1f2' fontSize={12}>
             利用規約
           </Text>
