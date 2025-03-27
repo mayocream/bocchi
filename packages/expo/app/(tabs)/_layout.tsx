@@ -3,6 +3,8 @@ import { Bell, Home, Search, Settings, User } from '@tamagui/lucide-icons'
 import { Platform } from 'react-native'
 import { Topbar } from '@/components/topbar'
 import { XStack, YStack } from 'tamagui'
+import { LoginWidget } from '@/components/login-widget'
+import { AboutWidget } from '@/components/about-widget'
 
 // Blue 50 #E3F2FD
 // 100 #BBDEFB
@@ -32,6 +34,9 @@ export default function TabLayout() {
         $platform-web={{ width: '100%' }}
         justifyContent='center'
       >
+        <YStack width={300} alignItems='center' marginVertical={10}>
+          <LoginWidget />
+        </YStack>
         <XStack
           flex={1}
           $platform-web={{
@@ -113,6 +118,9 @@ export default function TabLayout() {
             />
           </Tabs>
         </XStack>
+        <YStack width={300} alignItems='center' marginVertical={10}>
+          <AboutWidget />
+        </YStack>
       </XStack>
     </YStack>
   )
