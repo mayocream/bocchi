@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Dialog, YStack, XStack, Button, Text, TextArea } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useUserStore } from '@/lib/state'
+import { supabase } from '@/lib/supabase'
+import { alert } from '@/lib/alert'
 
 export const TweetDialog = () => {
   const { user } = useUserStore()
@@ -11,13 +13,22 @@ export const TweetDialog = () => {
   const characterLimit = 140
   const remaining = characterLimit - text.trim().length
 
-  const handleTweet = () => {
-    console.log('Tweeted:', text)
+  if (!user) return null
+
+  const handleTweet = async () => {
+    const { error } = await supabase.from('posts').insert({
+      user_id: user.id,
+      content: text,
+    })
+
+    if (error) {
+      alert('ツイートに失敗しました')
+      return
+    }
+
     setOpen(false)
     setText('')
   }
-
-  if (!user) return null
 
   return (
     <>
