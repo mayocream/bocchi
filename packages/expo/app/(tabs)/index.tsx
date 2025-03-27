@@ -42,7 +42,7 @@ export default function Index() {
   }, [])
 
   return (
-    <XStack fullscreen backgroundColor='$background' flex={1}>
+    <XStack fullscreen backgroundColor='$background' flex={1} $platform-web={{ width: '100vw', maxWidth: 'none' }}>
       <FlatList
         data={tweets}
         renderItem={({ item }) => <Post tweet={item} />}

@@ -34,7 +34,7 @@ export default function TabLayout() {
         $platform-web={{ width: '100%' }}
         justifyContent='center'
       >
-        <YStack width={300} alignItems='center' marginVertical={10}>
+        <YStack width={300} alignItems='center' marginVertical={10} $platform-web={{ position: 'fixed', transform: 'translateX(-150px) translateX(-100%)' }}>
           <LoginWidget />
         </YStack>
         <XStack
@@ -118,7 +118,7 @@ export default function TabLayout() {
             />
           </Tabs>
         </XStack>
-        <YStack width={300} alignItems='center' marginVertical={10}>
+        <YStack width={300} alignItems='center' marginVertical={10} $platform-web={{ position: 'fixed', transform: 'translateX(750px) translateX(-100%)' }}>
           <AboutWidget />
         </YStack>
       </XStack>
