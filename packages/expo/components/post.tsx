@@ -3,6 +3,8 @@ import { Heart, MessageCircle, Repeat, Share } from '@tamagui/lucide-icons'
 import { Time } from './time'
 import { useState } from 'react'
 import { Counter } from './counter'
+import { Pressable } from 'react-native'
+import * as Sharing from 'expo-sharing'
 
 type TweetProps = {
   id: number
@@ -62,7 +64,9 @@ export const Post = ({ tweet }: { tweet: TweetProps }) => {
             <Counter count={tweet?.likes || 0} />
           </XStack>
           <XStack alignItems='center'>
-            <Share size='$1' />
+            <Pressable onPress={() => Sharing.shareAsync(tweet.content)}>
+              <Share size='$1' />
+            </Pressable>
           </XStack>
         </XStack>
       </YStack>
