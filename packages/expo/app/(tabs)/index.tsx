@@ -3,6 +3,7 @@ import { Post } from '@/components/post'
 import { useEffect, useState } from 'react'
 import { alert } from '@/lib/alert'
 import { supabase } from '@/lib/supabase'
+import { FlatList } from 'react-native'
 
 export default function Index() {
   const [tweets, setTweets] = useState<any[]>([])
@@ -41,12 +42,12 @@ export default function Index() {
   }, [])
 
   return (
-    <XStack fullscreen backgroundColor='$background'>
-      <ScrollView $platform-web={{ alignItems: 'center' }}>
-        {tweets.map((tweet) => (
-          <Post key={tweet.id} tweet={tweet} />
-        ))}
-      </ScrollView>
+    <XStack fullscreen backgroundColor='$background' flex={1}>
+      <FlatList
+        data={tweets}
+        renderItem={({ item }) => <Post tweet={item} />}
+        keyExtractor={(item) => item.id}
+      />
     </XStack>
   )
 }
