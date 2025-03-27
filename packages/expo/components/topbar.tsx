@@ -5,14 +5,16 @@ import { XStack, YStack, Text, Input } from 'tamagui'
 import { TweetDialog } from './tweet'
 import { router, usePathname } from 'expo-router'
 import { Image } from 'expo-image'
+import { useUserStore } from '@/lib/state'
 
 export const Topbar = () => {
   const pathname = usePathname()
+  const { user } = useUserStore()
 
   const navItems = [
-    { icon: Home, label: 'ホーム', path: '/' },
-    { icon: Bell, label: '通知', path: '/notifications' },
-    { icon: User, label: 'プロフィール', path: '/profile' },
+    { icon: Home, label: 'ホーム', path: '/', disabled: false },
+    { icon: Bell, label: '通知', path: '/notifications', disabled: !user },
+    { icon: User, label: 'プロフィール', path: '/profile', disabled: !user },
   ]
 
   return (
@@ -31,36 +33,38 @@ export const Topbar = () => {
       >
         {/* Left side - nav items */}
         <XStack flex={1} alignItems='center' gap={8}>
-          {navItems.map((item, index) => (
-            <Pressable
-              key={index}
-              onPress={() => router.push(item.path as any)}
-            >
-              <XStack
-                alignItems='center'
-                justifyContent='center'
-                paddingHorizontal={12}
-                paddingVertical={12}
-                borderBottomWidth={item.path === pathname ? 2 : 0}
-                borderBottomColor={
-                  item.path === pathname ? '#1DA1F2' : 'transparent'
-                }
+          {navItems
+            .filter((item) => !item.disabled)
+            .map((item, index) => (
+              <Pressable
+                key={index}
+                onPress={() => router.push(item.path as any)}
               >
-                <item.icon
-                  size={20}
-                  color={item.path === pathname ? '#1DA1F2' : '#657786'}
-                />
-                <Text
-                  fontSize={14}
-                  fontWeight='500'
-                  color={item.path === pathname ? '#1DA1F2' : '#657786'}
-                  marginLeft={4}
+                <XStack
+                  alignItems='center'
+                  justifyContent='center'
+                  paddingHorizontal={12}
+                  paddingVertical={12}
+                  borderBottomWidth={item.path === pathname ? 2 : 0}
+                  borderBottomColor={
+                    item.path === pathname ? '#1DA1F2' : 'transparent'
+                  }
                 >
-                  {item.label}
-                </Text>
-              </XStack>
-            </Pressable>
-          ))}
+                  <item.icon
+                    size={20}
+                    color={item.path === pathname ? '#1DA1F2' : '#657786'}
+                  />
+                  <Text
+                    fontSize={14}
+                    fontWeight='500'
+                    color={item.path === pathname ? '#1DA1F2' : '#657786'}
+                    marginLeft={4}
+                  >
+                    {item.label}
+                  </Text>
+                </XStack>
+              </Pressable>
+            ))}
         </XStack>
 
         {/* Center - Twitter bird logo */}
@@ -109,9 +113,11 @@ export const Topbar = () => {
             />
           </XStack>
 
-          <Pressable onPress={() => router.push('/settings')}>
-            <Settings size={20} color='#657786' />
-          </Pressable>
+          {user && (
+            <Pressable onPress={() => router.push('/settings')}>
+              <Settings size={20} color='#657786' />
+            </Pressable>
+          )}
           <TweetDialog />
         </XStack>
       </XStack>
