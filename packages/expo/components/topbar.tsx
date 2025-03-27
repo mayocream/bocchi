@@ -1,6 +1,6 @@
 import React from 'react'
 import { Home, User, Bell, Search, Settings } from '@tamagui/lucide-icons'
-import { Platform, Pressable } from 'react-native'
+import { Pressable } from 'react-native'
 import { XStack, YStack, Text, Input } from 'tamagui'
 import { TweetDialog } from './tweet'
 import { router, usePathname } from 'expo-router'
@@ -92,6 +92,7 @@ export const Topbar = () => {
             alignItems='center'
             width={180}
             overflow='visible'
+            onPress={() => router.push('/search')}
           >
             <Search size={20} color='#657786' />
             <Input

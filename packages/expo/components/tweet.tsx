@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Dialog, YStack, XStack, Button, Text, TextArea } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
+import { useUserStore } from '@/lib/state'
 
 export const TweetDialog = () => {
+  const { user } = useUserStore()
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
 
@@ -14,6 +16,8 @@ export const TweetDialog = () => {
     setOpen(false)
     setText('')
   }
+
+  if (!user) return null
 
   return (
     <>
