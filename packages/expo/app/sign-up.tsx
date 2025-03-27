@@ -1,5 +1,15 @@
 import { Link, router, Stack } from 'expo-router'
-import { View, Form, Input, Button, Separator } from 'tamagui'
+import {
+  View,
+  Form,
+  Input,
+  Button,
+  Separator,
+  YStack,
+  XStack,
+  H3,
+  Text,
+} from 'tamagui'
 import { z } from 'zod'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -7,6 +17,7 @@ import { ErrorMessage } from '@/components/input'
 import { Helmet } from 'react-helmet-async'
 import { supabase } from '@/lib/supabase'
 import { Image } from 'expo-image'
+import Tagline from '@/components/tagline'
 
 const schema = z
   .object({
@@ -86,7 +97,7 @@ export default function SignUp() {
   }
 
   return (
-    <View flex={1} justifyContent='center' alignItems='center'>
+    <>
       <Helmet>
         <title>新規登録</title>
       </Helmet>
@@ -95,78 +106,148 @@ export default function SignUp() {
           title: '新規登録',
         }}
       />
-      <Image
-        source={require('../assets/images/logo.png')}
-        style={{ height: 140, width: 140 }}
-      />
-      <Form gap={10} width={300}>
-        <Controller
-          control={control}
-          render={({ field: { onChange, ...props } }) => (
-            <Input
-              onChangeText={onChange}
-              placeholder='ユーザー名'
-              {...props}
+      <XStack
+        fullscreen
+        flex={1}
+        justifyContent='center'
+        alignItems='center'
+        backgroundColor='$background'
+      >
+        <Tagline />
+        <YStack width={600} justifyContent='center' alignItems='center'>
+          <YStack width={350} alignItems='center' padding={20}>
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={{ height: 80, width: 80, marginBottom: 15 }}
             />
-          )}
-          name='username'
-        />
-        <ErrorMessage name='username' errors={errors} />
 
-        <Controller
-          control={control}
-          render={({ field: { onChange, ...props } }) => (
-            <Input
-              onChangeText={onChange}
-              placeholder='メールアドレス'
-              keyboardType='email-address'
-              {...props}
-            />
-          )}
-          name='email'
-        />
-        <ErrorMessage name='email' errors={errors} />
+            <H3 fontWeight={600} color='#292f33' marginBottom={8}>
+              アカウントを作成
+            </H3>
 
-        <Controller
-          control={control}
-          render={({ field: { onChange, ...props } }) => (
-            <Input
-              onChangeText={onChange}
-              placeholder='パスワード'
-              secureTextEntry
-              {...props}
-            />
-          )}
-          name='password'
-        />
-        <ErrorMessage name='password' errors={errors} />
+            <Text color='#66757f' fontSize={14} marginBottom={20}>
+              Eki に登録して会話に参加しましょう。
+            </Text>
 
-        <Controller
-          control={control}
-          render={({ field: { onChange, ...props } }) => (
-            <Input
-              onChangeText={onChange}
-              placeholder='パスワードの確認'
-              secureTextEntry
-              {...props}
-            />
-          )}
-          name='passwordConfirmation'
-        />
-        <ErrorMessage name='passwordConfirmation' errors={errors} />
+            <Form gap={12} width='100%'>
+              <Controller
+                control={control}
+                render={({ field: { onChange, ...props } }) => (
+                  <Input
+                    onChangeText={onChange}
+                    placeholder='ユーザー名'
+                    borderColor='#e1e8ed'
+                    borderRadius={4}
+                    height={40}
+                    fontSize={14}
+                    {...props}
+                  />
+                )}
+                name='username'
+              />
+              <ErrorMessage name='username' errors={errors} />
 
-        <Form.Trigger asChild>
-          <Button onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
-            新規登録
-          </Button>
-        </Form.Trigger>
+              <Controller
+                control={control}
+                render={({ field: { onChange, ...props } }) => (
+                  <Input
+                    onChangeText={onChange}
+                    placeholder='メールアドレス'
+                    keyboardType='email-address'
+                    borderColor='#e1e8ed'
+                    borderRadius={4}
+                    height={40}
+                    fontSize={14}
+                    {...props}
+                  />
+                )}
+                name='email'
+              />
+              <ErrorMessage name='email' errors={errors} />
 
-        <Separator marginVertical='$2' />
+              <Controller
+                control={control}
+                render={({ field: { onChange, ...props } }) => (
+                  <Input
+                    onChangeText={onChange}
+                    placeholder='パスワード'
+                    secureTextEntry
+                    borderColor='#e1e8ed'
+                    borderRadius={4}
+                    height={40}
+                    fontSize={14}
+                    {...props}
+                  />
+                )}
+                name='password'
+              />
+              <ErrorMessage name='password' errors={errors} />
 
-        <Link href='/sign-in' replace asChild>
-          <Button variant='outlined'>ログイン</Button>
-        </Link>
-      </Form>
-    </View>
+              <Controller
+                control={control}
+                render={({ field: { onChange, ...props } }) => (
+                  <Input
+                    onChangeText={onChange}
+                    placeholder='パスワードの確認'
+                    secureTextEntry
+                    borderColor='#e1e8ed'
+                    borderRadius={4}
+                    height={40}
+                    fontSize={14}
+                    {...props}
+                  />
+                )}
+                name='passwordConfirmation'
+              />
+              <ErrorMessage name='passwordConfirmation' errors={errors} />
+
+              <Form.Trigger asChild>
+                <Button
+                  onPress={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                  backgroundColor='#1da1f2'
+                  color='#fff'
+                  fontWeight={600}
+                  fontSize={14}
+                  borderRadius={100}
+                  height={36}
+                  marginTop={10}
+                  hoverStyle={{ backgroundColor: '#0c85d0' }}
+                >
+                  新規登録
+                </Button>
+              </Form.Trigger>
+
+              <XStack
+                justifyContent='space-between'
+                alignItems='center'
+                marginVertical={15}
+              >
+                <YStack height={1} backgroundColor='#e1e8ed' flex={1} />
+                <Text color='#657786' fontSize={12} paddingHorizontal={10}>
+                  または
+                </Text>
+                <YStack height={1} backgroundColor='#e1e8ed' flex={1} />
+              </XStack>
+
+              <Button
+                onPress={() => router.push('/sign-in')}
+                variant='outlined'
+                backgroundColor='#fff'
+                color='#1da1f2'
+                borderWidth={1}
+                borderColor='#1da1f2'
+                fontWeight={600}
+                fontSize={14}
+                borderRadius={100}
+                height={36}
+              >
+                ログイン
+              </Button>
+            </Form>
+          </YStack>
+        </YStack>
+      </XStack>
+    </>
   )
 }
