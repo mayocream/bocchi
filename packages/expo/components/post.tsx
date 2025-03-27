@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Counter } from './counter'
 import { Pressable } from 'react-native'
 import * as Sharing from 'expo-sharing'
+import { AnimatedLike } from './like'
 
 type TweetProps = {
   id: number
@@ -60,7 +61,7 @@ export const Post = ({ tweet }: { tweet: TweetProps }) => {
             <Counter count={tweet?.retweets || 0} />
           </XStack>
           <XStack alignItems='center' gap='$1'>
-            <Heart size='$1' />
+            <AnimatedLike />
             <Counter count={tweet?.likes || 0} />
           </XStack>
           <XStack alignItems='center'>
