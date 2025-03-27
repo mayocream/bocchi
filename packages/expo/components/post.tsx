@@ -64,7 +64,7 @@ export const Post = ({ tweet }: { tweet: TweetProps }) => {
             <Counter count={tweet?.likes || 0} />
           </XStack>
           <XStack alignItems='center'>
-            <Pressable onPress={() => Sharing.shareAsync(tweet.content)}>
+            <Pressable onPress={() => Sharing.shareAsync(`posts/${tweet.id}`)}>
               <Share size='$1' />
             </Pressable>
           </XStack>
