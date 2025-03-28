@@ -29,18 +29,13 @@ export default function TabLayout() {
           <Topbar />
         </XStack>
       )}
-      <XStack
-        flex={1}
-        $platform-web={{ width: '100%' }}
-        justifyContent='center'
-      >
+      <XStack flex={1} justifyContent='center' gap='$2'>
         <YStack
-          width={300}
+          maxWidth={300}
           alignItems='center'
           marginVertical={10}
           $platform-web={{
-            position: 'fixed',
-            transform: 'translateX(-150px) translateX(-100%)',
+            position: 'sticky',
           }}
         >
           <LoginWidget />
@@ -127,12 +122,10 @@ export default function TabLayout() {
           </Tabs>
         </XStack>
         <YStack
-          width={300}
-          alignItems='center'
+          maxWidth={300}
           marginVertical={10}
           $platform-web={{
-            position: 'fixed',
-            transform: 'translateX(750px) translateX(-100%)',
+            position: 'sticky',
           }}
         >
           <AboutWidget />
