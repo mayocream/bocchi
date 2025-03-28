@@ -77,10 +77,7 @@ export default function TvShow() {
     <ScrollView backgroundColor='#f5f8fa'>
       <Stack.Screen
         options={{
-          title: data?.name,
-          headerStyle: { backgroundColor: '#1DA1F2' },
-          headerTintColor: '#ffffff',
-          headerBackVisible: true,
+          headerShown: false,
         }}
       />
 
@@ -107,22 +104,18 @@ export default function TvShow() {
       >
         {/* Show info */}
         <XStack padding='$4' gap='$4' alignItems='flex-start'>
-          <Avatar circular size='$9' backgroundColor='white'>
-            <Avatar.Image
-              source={{ uri: `https://tmdb.org/t/p/w780${data?.poster_path}` }}
-            />
-            <Avatar.Fallback backgroundColor='#1DA1F2' />
-          </Avatar>
+          <Image
+            source={{ uri: `https://tmdb.org/t/p/w780${data?.poster_path}` }}
+            width={200}
+            height={200 * 1.5}
+            borderRadius={4}
+          />
 
           <YStack flex={1}>
             <SizableText size='$6' fontWeight='bold' color='#14171a'>
               {data?.name}
             </SizableText>
-            <SizableText size='$3' color='#657786' marginBottom='$2'>
-              @
-              {data?.original_name?.replace(/\s+/g, '_').toLowerCase() ||
-                data?.name?.replace(/\s+/g, '_').toLowerCase()}
-            </SizableText>
+
             {data?.tagline && (
               <SizableText color='#14171a'>{data.tagline}</SizableText>
             )}
@@ -279,51 +272,6 @@ export default function TvShow() {
             ? '日本語'
             : data?.original_language}
         </SizableText>
-
-        {/* Twitter engagement buttons */}
-        <Separator marginTop='$2' marginBottom='$2' backgroundColor='#e1e8ed' />
-        <XStack justifyContent='space-between'>
-          <Button unstyled flexDirection='row' alignItems='center' gap='$2'>
-            <MessageCircle size={18} color='#657786' />
-            <SizableText color='#657786' size='$3'>
-              {data?.vote_count || 24}
-            </SizableText>
-          </Button>
-
-          <Button
-            unstyled
-            flexDirection='row'
-            alignItems='center'
-            gap='$2'
-            onPress={() => setRetweeted(!retweeted)}
-          >
-            <Repeat size={18} color={retweeted ? '#17BF63' : '#657786'} />
-            <SizableText color={retweeted ? '#17BF63' : '#657786'} size='$3'>
-              {retweeted
-                ? (data?.number_of_seasons || 2) + 1
-                : data?.number_of_seasons || 2}
-            </SizableText>
-          </Button>
-
-          <Button
-            unstyled
-            flexDirection='row'
-            alignItems='center'
-            gap='$2'
-            onPress={() => setLiked(!liked)}
-          >
-            <Heart
-              size={18}
-              color={liked ? '#E0245E' : '#657786'}
-              fill={liked ? '#E0245E' : 'none'}
-            />
-            <SizableText color={liked ? '#E0245E' : '#657786'} size='$3'>
-              {liked
-                ? Math.round(data?.vote_average * 100) + 1
-                : Math.round(data?.vote_average * 100) || 75}
-            </SizableText>
-          </Button>
-        </XStack>
       </YStack>
 
       {/* Cast & Crew as Follows/Following */}
@@ -341,8 +289,8 @@ export default function TvShow() {
             キャスト
           </SizableText>
           <XStack flexWrap='wrap' gap='$4'>
-            {credits.cast.slice(0, 5).map((person) => (
-              <YStack key={person.id} alignItems='center' width={70}>
+            {credits.cast.map((person) => (
+              <YStack key={person.id} alignItems='center' width={67}>
                 <Avatar circular size='$6' backgroundColor='#e1e8ed'>
                   {person.profile_path ? (
                     <Avatar.Image
@@ -374,19 +322,6 @@ export default function TvShow() {
               </YStack>
             ))}
           </XStack>
-
-          {credits.cast.length > 5 && (
-            <Button
-              marginTop='$3'
-              backgroundColor='#fff'
-              color='#1DA1F2'
-              borderColor='#1DA1F2'
-              borderWidth={1}
-              borderRadius='$full'
-            >
-              すべて表示
-            </Button>
-          )}
         </YStack>
       )}
 
@@ -473,19 +408,6 @@ export default function TvShow() {
               </XStack>
             </YStack>
           ))}
-
-          {similar.results.length > 3 && (
-            <Button
-              marginTop='$2'
-              backgroundColor='#fff'
-              color='#1DA1F2'
-              borderColor='#1DA1F2'
-              borderWidth={1}
-              borderRadius='$full'
-            >
-              もっと見る
-            </Button>
-          )}
         </YStack>
       )}
     </ScrollView>
