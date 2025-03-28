@@ -25,6 +25,9 @@ import {
   TrendingUp,
   Tv,
   Users,
+  Film,
+  Briefcase,
+  X,
 } from '@tamagui/lucide-icons'
 
 export default function TvShow() {
@@ -32,6 +35,7 @@ export default function TvShow() {
   const [data, setData] = useState<any>(null)
   const [credits, setCredits] = useState<any>(null)
   const [similar, setSimilar] = useState<any>(null)
+  const [images, setImages] = useState<any>(null)
   const [reviewStatus, setReviewStatus] = useState<REVIEW_STATUS | null>(null)
   const [liked, setLiked] = useState(false)
   const [retweeted, setRetweeted] = useState(false)
@@ -46,6 +50,9 @@ export default function TvShow() {
 
     // Get similar shows
     tmdb(`/tv/${id}/similar`, { language: 'ja-JP' }).then(setSimilar)
+
+    // Get images
+    tmdb(`/tv/${id}/images`).then(setImages)
   }, [id])
 
   // Format date to Twitter style
@@ -112,13 +119,44 @@ export default function TvShow() {
           />
 
           <YStack flex={1}>
-            <SizableText size='$6' fontWeight='bold' color='#14171a'>
-              {data?.name}
-            </SizableText>
+            {/* Show logo */}
+            {images?.logos && images.logos.length > 0 && (
+              <Image
+                source={{
+                  uri: `https://tmdb.org/t/p/w780${images.logos[0].file_path}`,
+                }}
+                width={200}
+                height='100%'
+                aspectRatio={images.logos[0]?.aspect_ratio}
+                borderRadius={4}
+                marginBottom='$2'
+              />
+            )}
+
+            {!images?.logos && (
+              <SizableText size='$6' fontWeight='bold' color='#14171a'>
+                {data?.name}
+              </SizableText>
+            )}
 
             {data?.tagline && (
               <SizableText color='#14171a'>{data.tagline}</SizableText>
             )}
+
+            {/* Show logo if available */}
+            {data?.networks &&
+              data.networks.length > 0 &&
+              data.networks[0].logo_path && (
+                <Image
+                  source={{
+                    uri: `https://tmdb.org/t/p/w154${data.networks[0].logo_path}`,
+                  }}
+                  width={80}
+                  height={30}
+                  resizeMode='contain'
+                  marginTop='$2'
+                />
+              )}
 
             {/* Twitter bio-like metadata */}
             <XStack marginTop='$2' flexWrap='wrap' gap='$3'>
@@ -274,6 +312,127 @@ export default function TvShow() {
         </SizableText>
       </YStack>
 
+      {/* All Crew */}
+      {credits?.crew && credits.crew.length > 0 && (
+        <YStack
+          backgroundColor='white'
+          padding='$4'
+          margin='$4'
+          marginTop='$2'
+          borderRadius={4}
+          borderWidth={1}
+          borderColor='#e1e8ed'
+        >
+          <SizableText fontWeight='bold' color='#14171a' marginBottom='$3'>
+            スタッフ
+          </SizableText>
+
+          {/* Group crew by department */}
+          {Object.entries(
+            credits.crew.reduce((acc, person) => {
+              if (!acc[person.department]) {
+                acc[person.department] = []
+              }
+              acc[person.department].push(person)
+              return acc
+            }, {})
+          ).map(([department, people]: any) => (
+            <YStack key={department} marginBottom='$4'>
+              <SizableText color='#14171a' fontWeight='600' marginVertical='$2'>
+                {department}
+              </SizableText>
+              <XStack flexWrap='wrap' gap='$4'>
+                {people.map((person) => (
+                  <YStack
+                    key={`${person.id}-${person.job}`}
+                    alignItems='center'
+                    width={67}
+                  >
+                    <SizableText
+                      size='$2'
+                      color='#14171a'
+                      textAlign='center'
+                      marginTop='$1'
+                      numberOfLines={1}
+                    >
+                      {person.name}
+                    </SizableText>
+                    <SizableText
+                      size='$1'
+                      color='#657786'
+                      textAlign='center'
+                      numberOfLines={2}
+                    >
+                      {person.job}
+                    </SizableText>
+                  </YStack>
+                ))}
+              </XStack>
+            </YStack>
+          ))}
+        </YStack>
+      )}
+
+      {/* Production Companies */}
+      {data?.production_companies && data.production_companies.length > 0 && (
+        <YStack
+          backgroundColor='white'
+          padding='$4'
+          margin='$4'
+          marginTop='$2'
+          borderRadius={4}
+          borderWidth={1}
+          borderColor='#e1e8ed'
+        >
+          <SizableText fontWeight='bold' color='#14171a' marginBottom='$3'>
+            制作会社
+          </SizableText>
+          <XStack flexWrap='wrap' gap='$4'>
+            {data.production_companies.map((company) => (
+              <YStack key={company.id} alignItems='center' width={80}>
+                <YStack
+                  height={60}
+                  width={80}
+                  alignItems='center'
+                  justifyContent='center'
+                >
+                  {company.logo_path ? (
+                    <Image
+                      source={{
+                        uri: `https://tmdb.org/t/p/w154${company.logo_path}`,
+                      }}
+                      width={70}
+                      height={50}
+                      resizeMode='contain'
+                    />
+                  ) : (
+                    <XStack
+                      width={50}
+                      height={50}
+                      backgroundColor='#e1e8ed'
+                      alignItems='center'
+                      justifyContent='center'
+                      borderRadius='$2'
+                    >
+                      <Briefcase size={24} color='#657786' />
+                    </XStack>
+                  )}
+                </YStack>
+                <SizableText
+                  size='$2'
+                  color='#14171a'
+                  textAlign='center'
+                  marginTop='$1'
+                  numberOfLines={2}
+                >
+                  {company.name}
+                </SizableText>
+              </YStack>
+            ))}
+          </XStack>
+        </YStack>
+      )}
+
       {/* Cast & Crew as Follows/Following */}
       {credits?.cast && credits.cast.length > 0 && (
         <YStack
@@ -321,7 +480,7 @@ export default function TvShow() {
                   size='$1'
                   color='#657786'
                   textAlign='center'
-                  numberOfLines={1}
+                  numberOfLines={2}
                 >
                   {person.character}
                 </SizableText>
