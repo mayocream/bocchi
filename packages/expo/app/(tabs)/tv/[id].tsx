@@ -156,7 +156,7 @@ export default function TvShow() {
                   source={{
                     uri: `https://tmdb.org/t/p/w154${data.networks[0].logo_path}`,
                   }}
-                  width={50}
+                  width={80}
                   height={30}
                   resizeMode='contain'
                   marginTop='$2'
