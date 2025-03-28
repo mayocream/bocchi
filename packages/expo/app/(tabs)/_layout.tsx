@@ -31,7 +31,7 @@ export default function TabLayout() {
       )}
       <XStack flex={1} justifyContent='center' gap='$2'>
         <YStack
-          maxWidth={300}
+          width={300}
           alignItems='center'
           marginVertical={10}
           $platform-web={{
@@ -122,7 +122,7 @@ export default function TabLayout() {
           </Tabs>
         </XStack>
         <YStack
-          maxWidth={300}
+          width={300}
           marginVertical={10}
           $platform-web={{
             position: 'sticky',

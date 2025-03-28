@@ -5,8 +5,7 @@ import { Paragraph, Text, XStack, YStack } from 'tamagui'
 export const AboutWidget = () => {
   return (
     <YStack
-      flex={1}
-      maxWidth={275}
+      width={275}
       borderColor='#e1e8ed'
       padding={15}
       marginBottom={12}
