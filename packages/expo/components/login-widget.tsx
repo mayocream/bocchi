@@ -22,7 +22,7 @@ export const LoginWidget = () => {
       shadowRadius={3}
     >
       <H3 fontWeight={600} color='#292f33' marginBottom={8}>
-        会話に参加
+        好きを言葉に
       </H3>
       <Text color='#66757f' fontSize={14} marginBottom={15}>
         Eki にログインして会話に参加しましょう。
