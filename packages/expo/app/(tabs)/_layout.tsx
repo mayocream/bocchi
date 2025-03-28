@@ -41,12 +41,19 @@ export default function TabLayout() {
           $platform-web={{
             position: 'fixed',
             transform: 'translateX(-150px) translateX(-100%)',
-            zIndex: 9,
           }}
         >
           <LoginWidget />
         </YStack>
-        <XStack flex={1}>
+        <XStack
+          flex={1}
+          $platform-web={{
+            maxWidth: 600,
+            borderRightWidth: 1,
+            borderLeftWidth: 1,
+            borderColor: '#E1E8ED',
+          }}
+        >
           <Tabs
             screenOptions={{
               tabBarActiveTintColor: '#1E88E5',
@@ -126,7 +133,6 @@ export default function TabLayout() {
           $platform-web={{
             position: 'fixed',
             transform: 'translateX(750px) translateX(-100%)',
-            zIndex: 9,
           }}
         >
           <AboutWidget />
