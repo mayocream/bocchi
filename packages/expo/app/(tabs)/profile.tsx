@@ -45,14 +45,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <Stack
-      flex={1}
-      backgroundColor='$background'
-      $platform-web={{
-        maxwidth: '600px',
-        transform: 'translateX(calc(50vw - 300px))',
-      }}
-    >
+    <Stack flex={1} backgroundColor='$background'>
       <YStack>
         <Image
           source={{ uri: profile.banner_url || undefined }}

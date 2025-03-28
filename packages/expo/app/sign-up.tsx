@@ -114,7 +114,7 @@ export default function SignUp() {
         backgroundColor='$background'
       >
         <Tagline />
-        <YStack width={600} justifyContent='center' alignItems='center'>
+        <YStack width={400} justifyContent='center' alignItems='center'>
           <YStack width={350} alignItems='center' padding={20}>
             <Image
               source={require('../assets/images/logo.png')}

@@ -23,30 +23,17 @@ import { AboutWidget } from '@/components/about-widget'
 
 export default function TabLayout() {
   return (
-    <YStack fullscreen backgroundColor='$background'>
+    <YStack fullscreen backgroundColor='$background' minHeight='100vh'>
       {Platform.OS === 'web' && (
         <XStack width='100%' justifyContent='center'>
           <Topbar />
         </XStack>
       )}
-      <XStack
-        flex={1}
-        $platform-web={{ width: '100%' }}
-        justifyContent='center'
-      >
-        <YStack
-          width={300}
-          alignItems='center'
-          marginVertical={10}
-          $platform-web={{
-            position: 'fixed',
-            transform: 'translateX(-150px) translateX(-100%)',
-            zIndex: 9,
-          }}
-        >
+      <XStack flex={1} justifyContent='space-between'>
+        <YStack maxWidth={300} alignItems='center' marginVertical={10}>
           <LoginWidget />
         </YStack>
-        <XStack flex={1}>
+        <XStack width={600} flex={1}>
           <Tabs
             screenOptions={{
               tabBarActiveTintColor: '#1E88E5',
@@ -119,16 +106,7 @@ export default function TabLayout() {
             />
           </Tabs>
         </XStack>
-        <YStack
-          width={300}
-          alignItems='center'
-          marginVertical={10}
-          $platform-web={{
-            position: 'fixed',
-            transform: 'translateX(750px) translateX(-100%)',
-            zIndex: 9,
-          }}
-        >
+        <YStack maxWidth={300} alignItems='center' justifyContent='center'>
           <AboutWidget />
         </YStack>
       </XStack>
