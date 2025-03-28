@@ -4,13 +4,7 @@ import { Paragraph, Text, XStack, YStack } from 'tamagui'
 
 export const AboutWidget = () => {
   return (
-    <YStack
-      maxWidth={275}
-      borderColor='#e1e8ed'
-      padding={15}
-      marginBottom={12}
-      flex={1}
-    >
+    <YStack width={275} borderColor='#e1e8ed' padding={15} marginBottom={12}>
       <Paragraph color='#66757f' fontSize={14} lineHeight={18}>
         信じる心があなたの魔法
       </Paragraph>

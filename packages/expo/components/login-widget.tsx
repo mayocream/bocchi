@@ -10,7 +10,7 @@ export const LoginWidget = () => {
 
   return (
     <YStack
-      maxWidth={275}
+      width={275}
       borderRadius={6}
       borderWidth={1}
       borderColor='#e1e8ed'

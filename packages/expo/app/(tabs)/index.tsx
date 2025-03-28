@@ -1,4 +1,4 @@
-import { XStack, YStack } from 'tamagui'
+import { XStack } from 'tamagui'
 import { Post } from '@/components/post'
 import { useEffect, useState } from 'react'
 import { alert } from '@/lib/alert'
@@ -42,10 +42,17 @@ export default function Index() {
   }, [])
 
   return (
-    <YStack fullscreen backgroundColor='$background' flex={1}>
-      {tweets.map((tweet) => (
-        <Post key={tweet.id} tweet={tweet} />
-      ))}
-    </YStack>
+    <XStack
+      fullscreen
+      backgroundColor='$background'
+      flex={1}
+      $platform-web={{ width: '100vw', maxWidth: 'none' }}
+    >
+      <FlatList
+        data={tweets}
+        renderItem={({ item }) => <Post tweet={item} />}
+        keyExtractor={(item) => item.id}
+      />
+    </XStack>
   )
 }

@@ -62,7 +62,7 @@ export default function SignIn() {
         backgroundColor='$background'
       >
         <Tagline />
-        <XStack width={400} justifyContent='center'>
+        <XStack width={600} justifyContent='center'>
           <YStack width={350} alignItems='center' padding={20}>
             <Image
               source={require('../assets/images/logo.png')}

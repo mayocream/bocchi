@@ -40,6 +40,7 @@ export const Post = ({ tweet }: { tweet: TweetProps }) => {
         borderRightWidth: 1,
         borderLeftWidth: 1,
         borderColor: '#E6E6E6',
+        transform: 'translateX(calc(50vw - 300px))',
       }}
     >
       <Avatar marginTop='$1.5' circular size='$5'>

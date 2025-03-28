@@ -19,9 +19,7 @@ export const Topbar = () => {
 
   return (
     <YStack
-      flex={1}
-      minWidth={800}
-      maxWidth={1200}
+      width={1200}
       backgroundColor='white'
       borderBottomWidth={1}
       borderBottomColor='#E1E8ED'
