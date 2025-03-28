@@ -57,7 +57,6 @@ export default function Search() {
       setResult(page === 1 ? filteredResults : [...result, ...filteredResults])
     } catch (error) {
       console.error('Error searching anime:', error)
-      alert('アニメの検索中にエラーが発生しました')
     } finally {
       setLoading(false)
     }
