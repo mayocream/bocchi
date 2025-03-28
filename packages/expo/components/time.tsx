@@ -11,7 +11,7 @@ const formatDistance = (date: Date): string => {
   if (diff < oneDay) {
     return formatDistanceToNow(date, { locale: ja }).replace('約', '')
   } else {
-    return format(date, 'PPP', { locale: ja })
+    return format(date, 'PPP', { locale: ja }).replace('2025年', '')
   }
 }
 
