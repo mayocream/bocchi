@@ -52,7 +52,9 @@ export default function TvShow() {
     tmdb(`/tv/${id}/similar`, { language: 'ja-JP' }).then(setSimilar)
 
     // Get images
-    tmdb(`/tv/${id}/images`).then(setImages)
+    tmdb(`/tv/${id}/images`, { include_image_language: 'ja,null' }).then(
+      setImages
+    )
   }, [id])
 
   // Format date to Twitter style
@@ -125,15 +127,18 @@ export default function TvShow() {
                 source={{
                   uri: `https://tmdb.org/t/p/w780${images.logos[0].file_path}`,
                 }}
-                width={200}
-                height='100%'
-                aspectRatio={images.logos[0]?.aspect_ratio}
+                width={300}
+                height={150}
+                resizeMode='contain'
                 borderRadius={4}
                 marginBottom='$2'
+                shadowColor='rgba(0, 0, 0, 0.1)'
+                shadowOffset={{ width: 0, height: 0.5 }}
+                shadowOpacity={0.4}
               />
             )}
 
-            {!images?.logos && (
+            {images?.logos.length === 0 && (
               <SizableText size='$6' fontWeight='bold' color='#14171a'>
                 {data?.name}
               </SizableText>
@@ -151,7 +156,7 @@ export default function TvShow() {
                   source={{
                     uri: `https://tmdb.org/t/p/w154${data.networks[0].logo_path}`,
                   }}
-                  width={80}
+                  width={50}
                   height={30}
                   resizeMode='contain'
                   marginTop='$2'

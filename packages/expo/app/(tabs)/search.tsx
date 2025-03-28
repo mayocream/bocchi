@@ -23,6 +23,7 @@ export default function Search() {
   const [result, setResult] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
 
   async function searchAnime(query, page) {
     if (loading) return
@@ -48,12 +49,16 @@ export default function Search() {
       const endpoint = query.trim() ? '/search/tv' : '/discover/tv'
       const response = await tmdb(endpoint, params)
 
-      // Filter out results without poster
+      // filter results to include only anime
       const filteredResults = response.results.filter(
-        (item) => item.poster_path
+        (item) =>
+          item.poster_path &&
+          item.genre_ids.includes(16) &&
+          item.original_language.startsWith('ja')
       )
 
       setCurrentPage(page)
+      setTotalPages(response.total_pages)
       setResult(page === 1 ? filteredResults : [...result, ...filteredResults])
     } catch (error) {
       console.error('Error searching anime:', error)
@@ -156,6 +161,7 @@ export default function Search() {
         keyExtractor={(item) => item.id.toString()}
         numColumns={3}
         onEndReached={() => {
+          if (loading || currentPage >= totalPages) return
           searchAnime(searchText, currentPage + 1)
         }}
         onEndReachedThreshold={0.5}
