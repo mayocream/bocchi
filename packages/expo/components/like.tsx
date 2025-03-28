@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withDelay,
+  withSequence,
   interpolate,
   Easing,
   runOnJS,
@@ -16,10 +17,11 @@ export const AnimatedLike = ({ size = 20 }) => {
   const heartSize = size
   const ringSize = size
   const ringBorderWidth = size * 0.09 // ~1.5px when size is 16
-  const particlesContainerSize = size * 1.5 // 24px when size is 16
+  const particlesContainerSize = size * 1 // 24px when size is 16
 
   const [liked, setLiked] = useState(false)
   const [showRing, setShowRing] = useState(false)
+  const [showHeart, setShowHeart] = useState(true) // Control heart visibility
   const animation = useSharedValue(0)
 
   // Animation to control ring appearance
@@ -27,6 +29,9 @@ export const AnimatedLike = ({ size = 20 }) => {
 
   // Animation to control particles
   const particleAnimation = useSharedValue(0)
+
+  // Heart transformation animation
+  const heartTransform = useSharedValue(0)
 
   const handlePress = () => {
     const newLikedState = !liked
@@ -37,58 +42,73 @@ export const AnimatedLike = ({ size = 20 }) => {
       animation.value = 0
       ringAnimation.value = 0
       particleAnimation.value = 0
+      heartTransform.value = 0
 
-      // Start sequence:
-      // 1. Heart shrinks
-      animation.value = withTiming(
-        0.5,
-        {
+      // Heart to ring transformation sequence
+      heartTransform.value = withSequence(
+        // 1. Heart shrinks initially
+        withTiming(0.3, {
           duration: 150,
           easing: Easing.bezierFn(0.2, 0, 0.3, 1),
-        },
-        () => {
-          // Callback: show ring and start ring animation
-          runOnJS(setShowRing)(true)
-          ringAnimation.value = withTiming(1, {
-            duration: 300,
-            easing: Easing.bezierFn(0.2, 1, 0.3, 1),
-          })
+        }),
+        // 2. Heart morphs into ring (shrink further and fade out heart)
+        withTiming(
+          1,
+          {
+            duration: 200,
+            easing: Easing.bezierFn(0.2, 0, 0.3, 1),
+          },
+          () => {
+            // Once heart has morphed to ring, show ring
+            runOnJS(setShowRing)(true)
+            runOnJS(setShowHeart)(false) // Hide heart during ring animation
 
-          // 2. Trigger particle animation with slight delay
-          particleAnimation.value = withDelay(
-            100,
-            withTiming(1, {
-              duration: 450,
-              easing: Easing.bezierFn(0.1, 0.8, 0.2, 1),
-            })
-          )
+            // Start ring animation after heart disappears
+            ringAnimation.value = withTiming(
+              1,
+              {
+                duration: 300,
+                easing: Easing.bezierFn(0.2, 1, 0.3, 1),
+              },
+              () => {
+                // After ring animation completes, show heart again and particles
+                runOnJS(setShowHeart)(true)
 
-          // 3. Scale heart back up
-          animation.value = withDelay(
-            250,
-            withTiming(1, {
-              duration: 300,
-              easing: Easing.bezierFn(0.2, 1, 0.3, 1),
-            })
-          )
-        }
+                // Trigger particle animation
+                particleAnimation.value = withTiming(1, {
+                  duration: 450,
+                  easing: Easing.bezierFn(0.1, 0.8, 0.2, 1),
+                })
+
+                // Scale heart back in
+                animation.value = withTiming(1, {
+                  duration: 300,
+                  easing: Easing.bezierFn(0.2, 1, 0.3, 1),
+                })
+              }
+            )
+          }
+        )
       )
     } else {
       // Reset everything on unlike
       setShowRing(false)
+      setShowHeart(true)
       animation.value = withTiming(0, { duration: 200 })
       ringAnimation.value = 0
       particleAnimation.value = 0
+      heartTransform.value = 0
     }
   }
 
-  // Heart animation style
+  // Heart animation style for re-appearance
   const heartStyle = useAnimatedStyle(() => ({
-    opacity: liked ? interpolate(animation.value, [0, 0.5, 1], [1, 0.3, 1]) : 1,
     transform: [
       {
         scale: liked
-          ? interpolate(animation.value, [0, 0.5, 0.8, 1], [1, 0.8, 1.2, 1])
+          ? animation.value === 0
+            ? interpolate(heartTransform.value, [0, 0.5, 1], [1, 0.5, 0.1])
+            : interpolate(animation.value, [0, 0.5, 0.8, 1], [0.5, 0.9, 1.2, 1])
           : 1,
       },
     ],
@@ -96,10 +116,10 @@ export const AnimatedLike = ({ size = 20 }) => {
 
   // Ring animation style
   const ringStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(ringAnimation.value, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
+    opacity: interpolate(ringAnimation.value, [0, 0.2, 0.8, 1], [1, 1, 1, 0]),
     transform: [
       {
-        scale: interpolate(ringAnimation.value, [0, 1], [0.5, 1.5]),
+        scale: interpolate(ringAnimation.value, [0, 1], [0.8, 1.5]),
       },
     ],
   }))
@@ -127,6 +147,8 @@ export const AnimatedLike = ({ size = 20 }) => {
       style={{
         justifyContent: 'center',
         alignItems: 'center',
+        width: particlesContainerSize,
+        height: particlesContainerSize,
       }}
       onPress={handlePress}
     >
@@ -149,13 +171,15 @@ export const AnimatedLike = ({ size = 20 }) => {
       )}
 
       {/* Heart */}
-      <Animated.View style={heartStyle}>
-        <Heart
-          size={heartSize}
-          fill={liked ? '#E0245E' : 'none'}
-          color={liked ? '#E0245E' : '#536471'}
-        />
-      </Animated.View>
+      {showHeart && (
+        <Animated.View style={heartStyle}>
+          <Heart
+            size={heartSize}
+            fill={liked ? '#E0245E' : 'none'}
+            color={liked ? '#E0245E' : '#536471'}
+          />
+        </Animated.View>
+      )}
 
       {/* Particles */}
       {liked && (
