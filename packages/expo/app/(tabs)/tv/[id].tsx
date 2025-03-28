@@ -291,7 +291,13 @@ export default function TvShow() {
           <XStack flexWrap='wrap' gap='$4'>
             {credits.cast.map((person) => (
               <YStack key={person.id} alignItems='center' width={67}>
-                <Avatar circular size='$6' backgroundColor='#e1e8ed'>
+                <Avatar
+                  circular
+                  size='$6'
+                  backgroundColor='#e1e8ed'
+                  borderColor='#e1e8ed'
+                  borderWidth={0.5}
+                >
                   {person.profile_path ? (
                     <Avatar.Image
                       source={{
