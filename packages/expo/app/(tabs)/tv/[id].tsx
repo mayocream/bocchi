@@ -14,7 +14,7 @@ import {
   Image,
   Paragraph,
 } from 'tamagui'
-import { REVIEW_STATUS } from '@/lib/types'
+import { WATCH_STATUS } from '@/lib/types'
 import {
   Calendar,
   Clock,
@@ -29,16 +29,17 @@ import {
   Briefcase,
   X,
 } from '@tamagui/lucide-icons'
+import { supabase } from '@/lib/supabase'
+import { useUserStore } from '@/lib/state'
 
 export default function TvShow() {
+  const { user } = useUserStore()
   const { id } = useLocalSearchParams<{ id: string }>()
   const [data, setData] = useState<any>(null)
   const [credits, setCredits] = useState<any>(null)
   const [similar, setSimilar] = useState<any>(null)
   const [images, setImages] = useState<any>(null)
-  const [reviewStatus, setReviewStatus] = useState<REVIEW_STATUS | null>(null)
-  const [liked, setLiked] = useState(false)
-  const [retweeted, setRetweeted] = useState(false)
+  const [watchStatus, setWatchStatus] = useState<WATCH_STATUS | null>(null)
 
   // Load TV show data and additional details
   useEffect(() => {
@@ -55,6 +56,23 @@ export default function TvShow() {
     tmdb(`/tv/${id}/images`, { include_image_language: 'ja,null' }).then(
       setImages
     )
+  }, [id])
+
+  // Load watch status
+  useEffect(() => {
+    supabase
+      .from('watch_status')
+      .select()
+      .eq('tmdb_id', id)
+      .eq('user_id', user?.id)
+      .limit(1)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          console.log('Watch status:', data)
+          setWatchStatus(data.status as WATCH_STATUS)
+        }
+      })
   }, [id])
 
   // Format date to Twitter style
@@ -202,45 +220,57 @@ export default function TvShow() {
         </XStack>
 
         {/* Twitter follow button style toggle */}
-        <YStack padding='$4' paddingTop={0}>
-          <ToggleGroup
-            type='single'
-            orientation='horizontal'
-            disableDeactivation
-            backgroundColor='white'
-            borderColor='#aab8c2'
-            borderWidth={1}
-            borderRadius='$full'
-            onValueChange={(value) => setReviewStatus(value as REVIEW_STATUS)}
-          >
-            {[
-              REVIEW_STATUS.TODO,
-              REVIEW_STATUS.READING,
-              REVIEW_STATUS.READ,
-            ].map((type) => (
-              <ToggleGroup.Item
-                key={type}
-                value={type}
-                backgroundColor={
-                  type === reviewStatus ? '#1DA1F2' : 'transparent'
-                }
-                flex={1}
-                paddingVertical='$2'
-                borderRadius='$full'
-              >
-                <Text
-                  textAlign='center'
-                  color={type === reviewStatus ? 'white' : '#657786'}
-                  fontWeight={type === reviewStatus ? 'bold' : 'normal'}
+        {user && (
+          <YStack padding='$4' paddingTop={0}>
+            <ToggleGroup
+              type='single'
+              orientation='horizontal'
+              disableDeactivation
+              borderColor='#aab8c2'
+              borderWidth={1}
+              borderRadius='$full'
+              onValueChange={(value) => {
+                setWatchStatus(value as WATCH_STATUS)
+                console.log('Watch status:', value)
+                supabase.from('watch_status').insert({
+                  user_id: user?.id,
+                  tmdb_id: id,
+                  status: value,
+                })
+              }}
+            >
+              {[
+                WATCH_STATUS.WANT,
+                WATCH_STATUS.WATCHING,
+                WATCH_STATUS.WATCHED,
+              ].map((type) => (
+                <ToggleGroup.Item
+                  key={type}
+                  value={type}
+                  backgroundColor={
+                    type === watchStatus ? '#1DA1F2' : 'transparent'
+                  }
+                  flex={1}
+                  paddingVertical='$2'
+                  borderRadius='$full'
+                  focusStyle={{
+                    backgroundColor: '#1DA1F2',
+                  }}
                 >
-                  {type === REVIEW_STATUS.TODO && '見たい'}
-                  {type === REVIEW_STATUS.READING && '見てる'}
-                  {type === REVIEW_STATUS.READ && '見た'}
-                </Text>
-              </ToggleGroup.Item>
-            ))}
-          </ToggleGroup>
-        </YStack>
+                  <Text
+                    textAlign='center'
+                    color={type === watchStatus ? 'white' : '#657786'}
+                    fontWeight={type === watchStatus ? 'bold' : 'normal'}
+                  >
+                    {type === WATCH_STATUS.WANT && '見たい'}
+                    {type === WATCH_STATUS.WATCHING && '見てる'}
+                    {type === WATCH_STATUS.WATCHED && '見た'}
+                  </Text>
+                </ToggleGroup.Item>
+              ))}
+            </ToggleGroup>
+          </YStack>
+        )}
       </YStack>
 
       {/* Main Tweet-like Card */}

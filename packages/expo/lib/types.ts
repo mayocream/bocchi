@@ -1,5 +1,5 @@
-export enum REVIEW_STATUS {
-  READ = 'read',
-  READING = 'reading',
-  TODO = 'todo',
+export enum WATCH_STATUS {
+  WATCHED = 'watched',
+  WATCHING = 'watching',
+  WANT = 'want',
 }
