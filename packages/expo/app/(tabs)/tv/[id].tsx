@@ -258,6 +258,10 @@ export default function TvShow() {
                   flex={1}
                   paddingVertical='$2'
                   borderRadius='$full'
+                  hoverStyle={{
+                    backgroundColor:
+                      type === watchStatus ? '#1DA1F2' : '#e1e8ed',
+                  }}
                   focusStyle={{
                     backgroundColor: '#1DA1F2',
                   }}
