@@ -55,7 +55,7 @@ export default function Search() {
         (item) =>
           item.poster_path &&
           item.genre_ids.includes(16) &&
-          item.original_language.startsWith('ja')
+          item.original_language.startsWith('ja'),
       )
 
       setCurrentPage(page)
@@ -130,7 +130,7 @@ export default function Search() {
 
   return (
     <Stack flex={1} backgroundColor='$background'>
-      <YStack>
+      <YStack height='100%'>
         {/* Search */}
         <XStack padding='$3' gap='$2'>
           <Input
@@ -156,7 +156,7 @@ export default function Search() {
           </Button>
         </XStack>
 
-        <YStack>
+        <YStack height='calc(100% - 70px)'>
           {/* Results */}
           <FlashList
             estimatedItemSize={200}
