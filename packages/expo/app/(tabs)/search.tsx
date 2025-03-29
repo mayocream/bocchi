@@ -11,7 +11,7 @@ import {
 import { FlatList } from 'react-native'
 import { router } from 'expo-router'
 import { tmdb } from '@/lib/tmdb'
-import { alert } from '@/lib/alert'
+import { FlashList } from '@shopify/flash-list'
 import { Image } from 'expo-image'
 import { Star } from '@tamagui/lucide-icons'
 
@@ -155,7 +155,8 @@ export default function Search() {
       </XStack>
 
       {/* Results */}
-      <FlatList
+      <FlashList
+        estimatedItemSize={200}
         data={result}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
@@ -164,7 +165,7 @@ export default function Search() {
           if (loading || currentPage >= totalPages) return
           searchAnime(searchText, currentPage + 1)
         }}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.05}
         ListFooterComponent={loading ? <Spinner /> : null}
         ListEmptyComponent={
           <YStack height={200} justifyContent='center' alignItems='center'>
@@ -172,6 +173,7 @@ export default function Search() {
           </YStack>
         }
         contentContainerStyle={{ padding: 4 }}
+        showsVerticalScrollIndicator={false}
       />
     </YStack>
   )

@@ -43,9 +43,13 @@ export default function Index() {
 
   return (
     <YStack backgroundColor='$background' flex={1}>
-      {tweets.map((tweet) => (
-        <Post tweet={tweet} key={tweet.id} />
-      ))}
+      <FlatList
+        data={tweets}
+        renderItem={({ item }) => <Post tweet={item} />}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 16 }}
+        showsVerticalScrollIndicator={false}
+      />
     </YStack>
   )
 }
