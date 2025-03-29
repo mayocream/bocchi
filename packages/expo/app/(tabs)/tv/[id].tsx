@@ -65,6 +65,7 @@ export default function TvShow() {
       .select()
       .eq('tmdb_id', id)
       .eq('user_id', user?.id)
+      .order('created_at', { ascending: false })
       .limit(1)
       .single()
       .then(({ data }) => {
@@ -231,12 +232,16 @@ export default function TvShow() {
               borderRadius='$full'
               onValueChange={(value) => {
                 setWatchStatus(value as WATCH_STATUS)
-                console.log('Watch status:', value)
-                supabase.from('watch_status').insert({
-                  user_id: user?.id,
-                  tmdb_id: id,
-                  status: value,
-                })
+                supabase
+                  .from('watch_status')
+                  .insert({
+                    user_id: user?.id,
+                    tmdb_id: id,
+                    status: value,
+                  })
+                  .then((res) => {
+                    console.info('Inserted watch status:', res)
+                  })
               }}
             >
               {[
