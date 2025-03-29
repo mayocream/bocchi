@@ -12,7 +12,6 @@ import {
 import { FlatList } from 'react-native'
 import { router } from 'expo-router'
 import { tmdb } from '@/lib/tmdb'
-import { FlashList } from '@shopify/flash-list'
 import { Image } from 'expo-image'
 import { Star } from '@tamagui/lucide-icons'
 
@@ -55,7 +54,7 @@ export default function Search() {
         (item) =>
           item.poster_path &&
           item.genre_ids.includes(16) &&
-          item.original_language.startsWith('ja'),
+          item.original_language.startsWith('ja')
       )
 
       setCurrentPage(page)
@@ -130,56 +129,50 @@ export default function Search() {
 
   return (
     <Stack flex={1} backgroundColor='$background'>
-      <YStack height='100%'>
-        {/* Search */}
-        <XStack padding='$3' gap='$2'>
-          <Input
-            flex={1}
-            placeholder='作品を検索'
-            theme='blue'
-            borderRadius='$10'
-            paddingLeft='$3'
-            onChangeText={setSearchText}
-            onSubmitEditing={() => {
-              setCurrentPage(1)
-              searchAnime(searchText, 1)
-            }}
-          />
-          <Button
-            theme='blue'
-            onPress={() => {
-              setCurrentPage(1)
-              searchAnime(searchText, 1)
-            }}
-          >
-            検索
-          </Button>
-        </XStack>
+      {/* Search */}
+      <XStack padding='$3' gap='$2'>
+        <Input
+          flex={1}
+          placeholder='作品を検索'
+          theme='blue'
+          borderRadius='$10'
+          paddingLeft='$3'
+          onChangeText={setSearchText}
+          onSubmitEditing={() => {
+            setCurrentPage(1)
+            searchAnime(searchText, 1)
+          }}
+        />
+        <Button
+          theme='blue'
+          onPress={() => {
+            setCurrentPage(1)
+            searchAnime(searchText, 1)
+          }}
+        >
+          検索
+        </Button>
+      </XStack>
 
-        <YStack height='calc(100% - 70px)'>
-          {/* Results */}
-          <FlashList
-            estimatedItemSize={200}
-            data={result}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-            numColumns={3}
-            onEndReached={() => {
-              if (loading || currentPage >= totalPages) return
-              searchAnime(searchText, currentPage + 1)
-            }}
-            onEndReachedThreshold={0.05}
-            ListFooterComponent={loading ? <Spinner /> : null}
-            ListEmptyComponent={
-              <YStack height={200} justifyContent='center' alignItems='center'>
-                <SizableText>結果がありません</SizableText>
-              </YStack>
-            }
-            contentContainerStyle={{ padding: 4 }}
-            showsVerticalScrollIndicator={false}
-          />
-        </YStack>
-      </YStack>
+      {/* Results */}
+      <FlatList
+        data={result}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={3}
+        onEndReached={() => {
+          if (loading || currentPage >= totalPages) return
+          searchAnime(searchText, currentPage + 1)
+        }}
+        onEndReachedThreshold={0.05}
+        ListFooterComponent={loading ? <Spinner /> : null}
+        ListEmptyComponent={
+          <YStack height={200} justifyContent='center' alignItems='center'>
+            <SizableText>結果がありません</SizableText>
+          </YStack>
+        }
+        showsVerticalScrollIndicator={false}
+      />
     </Stack>
   )
 }

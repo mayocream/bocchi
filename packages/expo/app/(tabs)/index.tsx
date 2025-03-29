@@ -43,15 +43,13 @@ export default function Index() {
 
   return (
     <Stack flex={1} backgroundColor='$background'>
-      <YStack>
-        <FlatList
-          data={tweets}
-          renderItem={({ item }) => <Post tweet={item} />}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16 }}
-          showsVerticalScrollIndicator={false}
-        />
-      </YStack>
+      <FlatList
+        data={tweets}
+        renderItem={({ item }) => <Post tweet={item} />}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 16 }}
+        showsVerticalScrollIndicator={false}
+      />
     </Stack>
   )
 }
