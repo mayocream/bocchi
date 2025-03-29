@@ -45,7 +45,10 @@ export default function ProfilePage() {
   }
 
   return (
-    <Stack flex={1} backgroundColor='$background'>
+    <ScrollView
+      backgroundColor='$background'
+      showsVerticalScrollIndicator={false}
+    >
       <Image
         source={{ uri: profile.banner_url || undefined }}
         width='100%'
@@ -162,6 +165,6 @@ export default function ProfilePage() {
           />
         </Sheet.Frame>
       </Sheet>
-    </Stack>
+    </ScrollView>
   )
 }

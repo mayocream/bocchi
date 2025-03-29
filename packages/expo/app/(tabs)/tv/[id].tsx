@@ -102,7 +102,7 @@ export default function TvShow() {
   }
 
   return (
-    <YStack backgroundColor='#f5f8fa'>
+    <ScrollView backgroundColor='#f5f8fa' showsVerticalScrollIndicator={false}>
       <Stack.Screen
         options={{
           headerShown: false,
@@ -620,6 +620,6 @@ export default function TvShow() {
           ))}
         </YStack>
       )}
-    </YStack>
+    </ScrollView>
   )
 }
