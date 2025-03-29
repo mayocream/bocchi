@@ -294,7 +294,7 @@ export default function TvShow() {
       >
         {/* Show metadata */}
         <XStack gap='$4' marginBottom='$2' flexWrap='wrap'>
-          {data?.episode_run_time && data.episode_run_time.length > 0 && (
+          {data?.episode_run_time?.length > 0 && (
             <YStack>
               <SizableText color='#657786'>放送時間</SizableText>
               <XStack alignItems='center' gap='$1'>
@@ -306,7 +306,7 @@ export default function TvShow() {
             </YStack>
           )}
 
-          {data?.number_of_episodes && (
+          {data?.number_of_episodes !== undefined && (
             <YStack>
               <SizableText color='#657786'>エピソード数</SizableText>
               <SizableText fontWeight='500' color='#14171a'>
@@ -315,7 +315,7 @@ export default function TvShow() {
             </YStack>
           )}
 
-          {data?.number_of_seasons && (
+          {data?.number_of_seasons !== undefined && (
             <YStack>
               <SizableText color='#657786'>シーズン数</SizableText>
               <SizableText fontWeight='500' color='#14171a'>
@@ -324,7 +324,7 @@ export default function TvShow() {
             </YStack>
           )}
 
-          {data?.popularity && (
+          {data?.popularity !== undefined && (
             <YStack>
               <SizableText color='#657786'>人気度</SizableText>
               <XStack alignItems='center' gap='$1'>
@@ -338,7 +338,7 @@ export default function TvShow() {
         </XStack>
 
         {/* Overview */}
-        {data?.overview && (
+        {data?.overview !== undefined && (
           <YStack gap='$2' marginTop='$2'>
             <SizableText color='#14171a' fontWeight='400' lineHeight={22}>
               {data.overview}
@@ -357,7 +357,7 @@ export default function TvShow() {
       </YStack>
 
       {/* All Crew */}
-      {credits?.crew && credits.crew.length > 0 && (
+      {credits?.crew.length > 0 && (
         <YStack
           backgroundColor='white'
           padding='$4'
@@ -418,67 +418,68 @@ export default function TvShow() {
       )}
 
       {/* Production Companies */}
-      {data?.production_companies && data.production_companies.length > 0 && (
-        <YStack
-          backgroundColor='white'
-          padding='$4'
-          margin='$4'
-          marginTop='$2'
-          borderRadius={4}
-          borderWidth={1}
-          borderColor='#e1e8ed'
-        >
-          <SizableText fontWeight='bold' color='#14171a' marginBottom='$3'>
-            制作会社
-          </SizableText>
-          <XStack flexWrap='wrap' gap='$4'>
-            {data.production_companies.map((company) => (
-              <YStack key={company.id} alignItems='center' width={80}>
-                <YStack
-                  height={60}
-                  width={80}
-                  alignItems='center'
-                  justifyContent='center'
-                >
-                  {company.logo_path ? (
-                    <Image
-                      source={{
-                        uri: `https://tmdb.org/t/p/w154${company.logo_path}`,
-                      }}
-                      width={70}
-                      height={50}
-                      resizeMode='contain'
-                    />
-                  ) : (
-                    <XStack
-                      width={50}
-                      height={50}
-                      backgroundColor='#e1e8ed'
-                      alignItems='center'
-                      justifyContent='center'
-                      borderRadius='$2'
-                    >
-                      <Briefcase size={24} color='#657786' />
-                    </XStack>
-                  )}
+      {data?.production_companies !== undefined &&
+        data.production_companies.length > 0 && (
+          <YStack
+            backgroundColor='white'
+            padding='$4'
+            margin='$4'
+            marginTop='$2'
+            borderRadius={4}
+            borderWidth={1}
+            borderColor='#e1e8ed'
+          >
+            <SizableText fontWeight='bold' color='#14171a' marginBottom='$3'>
+              制作会社
+            </SizableText>
+            <XStack flexWrap='wrap' gap='$4'>
+              {data.production_companies.map((company) => (
+                <YStack key={company.id} alignItems='center' width={80}>
+                  <YStack
+                    height={60}
+                    width={80}
+                    alignItems='center'
+                    justifyContent='center'
+                  >
+                    {company.logo_path ? (
+                      <Image
+                        source={{
+                          uri: `https://tmdb.org/t/p/w154${company.logo_path}`,
+                        }}
+                        width={70}
+                        height={50}
+                        resizeMode='contain'
+                      />
+                    ) : (
+                      <XStack
+                        width={50}
+                        height={50}
+                        backgroundColor='#e1e8ed'
+                        alignItems='center'
+                        justifyContent='center'
+                        borderRadius='$2'
+                      >
+                        <Briefcase size={24} color='#657786' />
+                      </XStack>
+                    )}
+                  </YStack>
+                  <SizableText
+                    size='$2'
+                    color='#14171a'
+                    textAlign='center'
+                    marginTop='$1'
+                    numberOfLines={2}
+                  >
+                    {company.name}
+                  </SizableText>
                 </YStack>
-                <SizableText
-                  size='$2'
-                  color='#14171a'
-                  textAlign='center'
-                  marginTop='$1'
-                  numberOfLines={2}
-                >
-                  {company.name}
-                </SizableText>
-              </YStack>
-            ))}
-          </XStack>
-        </YStack>
-      )}
+              ))}
+            </XStack>
+          </YStack>
+        )}
 
       {/* Cast & Crew as Follows/Following */}
-      {credits?.cast && credits.cast.length > 0 && (
+      {credits?.cast.length > 0 && (
         <YStack
           backgroundColor='white'
           padding='$4'
@@ -535,7 +536,7 @@ export default function TvShow() {
       )}
 
       {/* Genres as hashtags */}
-      {data?.genres && data.genres.length > 0 && (
+      {data?.genres.length > 0 && (
         <YStack
           backgroundColor='white'
           padding='$4'
@@ -567,7 +568,7 @@ export default function TvShow() {
       )}
 
       {/* Similar shows as "You might like" */}
-      {similar?.results && similar.results.length > 0 && (
+      {similar?.results.length > 0 && (
         <YStack
           backgroundColor='white'
           padding='$4'
