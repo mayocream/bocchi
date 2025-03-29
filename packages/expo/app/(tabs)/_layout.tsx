@@ -46,6 +46,7 @@ export default function TabLayout() {
             position='fixed'
             transform='translateX(calc(-50% - 300px))'
             marginTop={10}
+            alignItems='center'
           >
             <LoginWidget />
           </YStack>
@@ -61,6 +62,7 @@ export default function TabLayout() {
             position='fixed'
             transform='translateX(calc(50% + 300px))'
             marginTop={10}
+            alignItems='center'
           >
             <AboutWidget />
           </YStack>
