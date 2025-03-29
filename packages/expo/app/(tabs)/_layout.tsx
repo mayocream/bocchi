@@ -56,6 +56,10 @@ export default function TabLayout() {
                 height: 54,
                 display: Platform.OS === 'web' ? 'none' : undefined,
               },
+              sceneStyle: {
+                overflowY: 'scroll',
+                overflowX: 'hidden',
+              },
             }}
           >
             <Tabs.Screen
