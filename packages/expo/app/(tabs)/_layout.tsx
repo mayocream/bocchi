@@ -1,6 +1,6 @@
 import { Stack, Tabs } from 'expo-router'
 import { Bell, Home, Search, Settings, User } from '@tamagui/lucide-icons'
-import { Platform } from 'react-native'
+import { Platform, useWindowDimensions } from 'react-native'
 import { Topbar } from '@/components/topbar'
 import { XStack, YStack } from 'tamagui'
 import { LoginWidget } from '@/components/login-widget'
@@ -25,23 +25,43 @@ import { AboutWidget } from '@/components/about-widget'
 export default function TabLayout() {
   if (Platform.OS === 'web') {
     return (
-      <YStack backgroundColor='$background' minHeight='100vh'>
-        <XStack width='100%' justifyContent='center'>
+      <YStack backgroundColor='$background' minHeight='100vh' flex={1}>
+        <XStack
+          width='100%'
+          height={50}
+          justifyContent='center'
+          position='fixed'
+          top={0}
+          left={0}
+          right={0}
+          zIndex={9}
+          backgroundColor='$background'
+        >
           <Topbar />
         </XStack>
-        <XStack width='100%' justifyContent='center' gap='$2' flex={1}>
-          {/* Left sidebar */}
-          <YStack width={300} alignItems='center' marginVertical={10}>
+
+        <XStack flex={1} justifyContent='center' marginTop={50}>
+          <YStack
+            width={300}
+            position='fixed'
+            transform='translateX(calc(-50% - 300px))'
+            marginTop={10}
+          >
             <LoginWidget />
           </YStack>
 
-          {/* Main content */}
+          {/* Main content - scrollable */}
           <YStack flex={1} maxWidth={600}>
             <Stack screenOptions={{ headerShown: false }} />
           </YStack>
 
-          {/* Right sidebar */}
-          <YStack width={300} marginVertical={10}>
+          {/* Right sidebar - fixed position */}
+          <YStack
+            width={300}
+            position='fixed'
+            transform='translateX(calc(50% + 300px))'
+            marginTop={10}
+          >
             <AboutWidget />
           </YStack>
         </XStack>
@@ -57,10 +77,6 @@ export default function TabLayout() {
           tabBarActiveTintColor: '#1E88E5',
           tabBarStyle: {
             height: 54,
-          },
-          sceneStyle: {
-            overflowY: 'scroll',
-            overflowX: 'hidden',
           },
         }}
       >

@@ -97,7 +97,7 @@ export default function SignUp() {
   }
 
   return (
-    <>
+    <YStack>
       <Helmet>
         <title>新規登録</title>
       </Helmet>
@@ -247,6 +247,6 @@ export default function SignUp() {
           </YStack>
         </YStack>
       </XStack>
-    </>
+    </YStack>
   )
 }

@@ -46,7 +46,7 @@ export default function SignIn() {
   }
 
   return (
-    <>
+    <YStack>
       <Helmet>
         <title>ログイン</title>
       </Helmet>
@@ -162,6 +162,6 @@ export default function SignIn() {
           </YStack>
         </XStack>
       </XStack>
-    </>
+    </YStack>
   )
 }

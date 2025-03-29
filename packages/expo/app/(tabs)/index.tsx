@@ -42,14 +42,7 @@ export default function Index() {
   }, [])
 
   return (
-    <YStack
-      fullscreen
-      backgroundColor='$background'
-      flex={1}
-      borderLeftWidth={1}
-      borderRightWidth={1}
-      borderColor='$borderColor'
-    >
+    <YStack backgroundColor='$background' flex={1}>
       {tweets.map((tweet) => (
         <Post tweet={tweet} key={tweet.id} />
       ))}

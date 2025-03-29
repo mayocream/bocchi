@@ -32,9 +32,10 @@ export const Post = ({ tweet }: { tweet: TweetProps }) => {
       padding='$4'
       backgroundColor='$background'
       gap='$3'
-      alignItems='flex-start'
-      borderBottomWidth='$0.25'
-      borderBottomColor='#E6E6E6'
+      borderBottomWidth={0.9}
+      borderLeftWidth={1}
+      borderRightWidth={1}
+      borderColor='$borderColor'
     >
       <Avatar marginTop='$1.5' circular size='$5'>
         <Avatar.Image src={tweet.user.avatar_url} />
