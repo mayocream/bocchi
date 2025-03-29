@@ -1,22 +1,10 @@
 import { Stack } from 'expo-router'
 import React from 'react'
-import { ScrollView, StatusBar, Platform } from 'react-native'
-import {
-  Button,
-  H1,
-  H3,
-  Paragraph,
-  Text,
-  XStack,
-  YStack,
-  Separator,
-  Theme,
-  Image,
-} from 'tamagui'
+import { H1, H3, Paragraph, Text, XStack, YStack, Separator } from 'tamagui'
 
 export default function ToS() {
   return (
-    <ScrollView>
+    <YStack>
       <Stack.Screen
         options={{
           headerTitle: '利用規約',
@@ -216,6 +204,6 @@ export default function ToS() {
           </YStack>
         </YStack>
       </YStack>
-    </ScrollView>
+    </YStack>
   )
 }
