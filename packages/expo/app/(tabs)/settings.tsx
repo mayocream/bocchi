@@ -49,7 +49,7 @@ export default function Settings() {
   ]
 
   return (
-    <YStack padding='$4' backgroundColor='$background' fullscreen>
+    <YStack padding='$4' backgroundColor='$background' >
       <YGroup bordered>
         {settingsItems.map((item, index) => (
           <YGroup.Item key={index}>

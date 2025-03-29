@@ -128,7 +128,7 @@ export default function Search() {
   }
 
   return (
-    <YStack fullscreen backgroundColor='$background'>
+    <YStack  backgroundColor='$background'>
       {/* Search */}
       <XStack padding='$3' gap='$2'>
         <Input

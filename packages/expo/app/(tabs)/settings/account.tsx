@@ -22,7 +22,7 @@ export default function Account() {
   }
 
   return (
-    <YStack fullscreen backgroundColor='$background' padding='$4' gap='$4'>
+    <YStack  backgroundColor='$background' padding='$4' gap='$4'>
       <Stack.Screen
         options={{
           title: 'アカウント',

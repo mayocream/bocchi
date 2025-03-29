@@ -23,7 +23,7 @@ import { AboutWidget } from '@/components/about-widget'
 
 export default function TabLayout() {
   return (
-    <YStack fullscreen backgroundColor='$background'>
+    <YStack backgroundColor='$background' height='100vh'>
       {Platform.OS === 'web' && (
         <XStack width='100%' justifyContent='center'>
           <Topbar />

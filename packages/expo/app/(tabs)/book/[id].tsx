@@ -26,7 +26,7 @@ export default function Tv() {
   const imageWidth = screenWidth * 0.45
 
   return (
-    <YStack fullscreen backgroundColor='$background'>
+    <YStack  backgroundColor='$background'>
       <Stack.Screen
         options={{
           title: data?.volumeInfo?.title,
