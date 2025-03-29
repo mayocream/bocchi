@@ -27,6 +27,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="eki"/>
         <data android:scheme="ki.e"/>
+        <data android:scheme="exp+eki"/>
       </intent-filter>
     </activity>
   </application>

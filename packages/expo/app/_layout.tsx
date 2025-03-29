@@ -52,20 +52,13 @@ const AppContent = () => {
 }
 
 export default function RootLayout() {
-  const config = createTamagui({
-    ...defaultConfig,
-    fonts: {
-      ...defaultConfig.fonts,
-      body: {
-        ...defaultConfig.fonts.body,
-        family: 'NotoSansCJK',
-      },
-      heading: {
-        ...defaultConfig.fonts.heading,
-        family: 'NotoSansCJK',
-      },
-    },
-  })
+  const tamaguiConfig = defaultConfig
+  if (Platform.OS === 'web') {
+    tamaguiConfig.fonts.body.family = 'NotoSansCJK'
+    tamaguiConfig.fonts.heading.family = 'NotoSansCJK'
+  }
+
+  const config = createTamagui(tamaguiConfig)
 
   return (
     <TamaguiProvider config={config}>
