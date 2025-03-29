@@ -12,6 +12,19 @@ export default function Root({ children }: { children: React.ReactNode }) {
           name='viewport'
           content='width=device-width, initial-scale=1, shrink-to-fit=no'
         />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              html, body {
+                min-height: 100%;
+              }
+              #root {
+                display: flex;
+                flex: 1;
+              }
+            `,
+          }}
+        />
       </head>
       <body>{children}</body>
     </html>

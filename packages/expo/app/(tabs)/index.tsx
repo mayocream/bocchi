@@ -1,4 +1,4 @@
-import { XStack, YStack } from 'tamagui'
+import { Stack, XStack, YStack } from 'tamagui'
 import { Post } from '@/components/post'
 import { useEffect, useState } from 'react'
 import { alert } from '@/lib/alert'
@@ -42,14 +42,16 @@ export default function Index() {
   }, [])
 
   return (
-    <YStack backgroundColor='$background' flex={1}>
-      <FlatList
-        data={tweets}
-        renderItem={({ item }) => <Post tweet={item} />}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16 }}
-        showsVerticalScrollIndicator={false}
-      />
-    </YStack>
+    <Stack flex={1} backgroundColor='$background'>
+      <YStack>
+        <FlatList
+          data={tweets}
+          renderItem={({ item }) => <Post tweet={item} />}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ padding: 16 }}
+          showsVerticalScrollIndicator={false}
+        />
+      </YStack>
+    </Stack>
   )
 }
