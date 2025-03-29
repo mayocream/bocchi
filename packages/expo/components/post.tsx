@@ -31,7 +31,6 @@ export const Post = ({ tweet }: { tweet: TweetProps }) => {
     <XStack
       padding='$4'
       backgroundColor='$background'
-      width={600}
       gap='$3'
       alignItems='flex-start'
       borderBottomWidth='$0.25'
