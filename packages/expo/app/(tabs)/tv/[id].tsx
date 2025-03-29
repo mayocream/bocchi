@@ -113,7 +113,7 @@ export default function TvShow() {
       <YStack backgroundColor='#1DA1F2' height={150}>
         {data?.backdrop_path && (
           <Image
-            source={{ uri: `https://tmdb.org/t/p/w780${data?.backdrop_path}` }}
+            source={{ uri: `https://tmdb.org/t/p/w1280${data?.backdrop_path}` }}
             width='100%'
             height={150}
             opacity={0.8}
@@ -133,7 +133,7 @@ export default function TvShow() {
         {/* Show info */}
         <XStack padding='$4' gap='$4' alignItems='flex-start'>
           <Image
-            source={{ uri: `https://tmdb.org/t/p/w780${data?.poster_path}` }}
+            source={{ uri: `https://tmdb.org/t/p/w1280${data?.poster_path}` }}
             width={200}
             height={200 * 1.5}
             borderRadius={4}
@@ -144,7 +144,7 @@ export default function TvShow() {
             {images?.logos && images.logos.length > 0 && (
               <Image
                 source={{
-                  uri: `https://tmdb.org/t/p/w780${images.logos[0].file_path}`,
+                  uri: `https://tmdb.org/t/p/w1280${images.logos[0].file_path}`,
                 }}
                 width={300}
                 height={150}
@@ -173,7 +173,7 @@ export default function TvShow() {
               data.networks[0].logo_path && (
                 <Image
                   source={{
-                    uri: `https://tmdb.org/t/p/w154${data.networks[0].logo_path}`,
+                    uri: `https://tmdb.org/t/p/w1280${data.networks[0].logo_path}`,
                   }}
                   width={80}
                   height={30}

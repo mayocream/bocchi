@@ -74,7 +74,7 @@ export default function Search() {
 
   function renderItem({ item }) {
     const posterUrl = item.poster_path
-      ? `https://image.tmdb.org/t/p/w780${item.poster_path}`
+      ? `https://image.tmdb.org/t/p/w1280${item.poster_path}`
       : null
 
     return (
