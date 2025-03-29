@@ -4,33 +4,27 @@ import { useEffect, useState } from 'react'
 import {
   YStack,
   XStack,
-  Separator,
   SizableText,
   ToggleGroup,
   Text,
   Avatar,
   ScrollView,
-  Button,
-  Image,
   Paragraph,
 } from 'tamagui'
 import { WATCH_STATUS } from '@/lib/types'
 import {
   Calendar,
   Clock,
-  Heart,
-  MessageCircle,
-  Repeat,
   Star,
   TrendingUp,
   Tv,
   Users,
-  Film,
   Briefcase,
-  X,
 } from '@tamagui/lucide-icons'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/lib/state'
+import { Image } from 'expo-image'
+import { ImageViewer } from '@/components/image-viewer'
 
 export default function TvShow() {
   const { user } = useUserStore()
@@ -114,15 +108,18 @@ export default function TvShow() {
         {data?.backdrop_path && (
           <Image
             source={{ uri: `https://tmdb.org/t/p/w1280${data?.backdrop_path}` }}
-            width='100%'
-            height={150}
-            opacity={0.8}
+            style={{
+              width: '100%',
+              height: 150,
+              opacity: 0.8,
+            }}
           />
         )}
       </YStack>
 
       {/* Profile Card */}
       <YStack
+        opacity={0.93}
         backgroundColor='white'
         borderRadius={4}
         margin='$4'
@@ -132,12 +129,16 @@ export default function TvShow() {
       >
         {/* Show info */}
         <XStack padding='$4' gap='$4' alignItems='flex-start'>
-          <Image
-            source={{ uri: `https://tmdb.org/t/p/w1280${data?.poster_path}` }}
-            width={200}
-            height={200 * 1.5}
-            borderRadius={4}
-          />
+          <XStack flex={1} width='40%'>
+            <ImageViewer
+              source={{ uri: `https://tmdb.org/t/p/w1280${data?.poster_path}` }}
+              style={{
+                borderRadius: 1,
+                width: '100%',
+                aspectRatio: 1 / 1.5,
+              }}
+            />
+          </XStack>
 
           <YStack flex={1}>
             {/* Show logo */}
@@ -146,14 +147,15 @@ export default function TvShow() {
                 source={{
                   uri: `https://tmdb.org/t/p/w1280${images.logos[0].file_path}`,
                 }}
-                width={300}
-                height={150}
+                style={{
+                  height: 100,
+                  width: '100%',
+                  borderRadius: 4,
+                  shadowColor: 'rgba(0, 0, 0, 0.1)',
+                  shadowOffset: { width: 0, height: 0.5 },
+                  shadowOpacity: 0.4,
+                }}
                 resizeMode='contain'
-                borderRadius={4}
-                marginBottom='$2'
-                shadowColor='rgba(0, 0, 0, 0.1)'
-                shadowOffset={{ width: 0, height: 0.5 }}
-                shadowOpacity={0.4}
               />
             )}
 
@@ -175,15 +177,17 @@ export default function TvShow() {
                   source={{
                     uri: `https://tmdb.org/t/p/w1280${data.networks[0].logo_path}`,
                   }}
-                  width={80}
-                  height={30}
+                  style={{
+                    width: 80,
+                    height: 30,
+                    marginTop: 8,
+                  }}
                   resizeMode='contain'
-                  marginTop='$2'
                 />
               )}
 
             {/* Twitter bio-like metadata */}
-            <XStack marginTop='$2' flexWrap='wrap' gap='$3'>
+            <XStack marginTop='$2' flexWrap='wrap' gap='$2'>
               {data?.status && (
                 <XStack alignItems='center' gap='$1'>
                   <Tv size={14} color='#657786' />
@@ -446,8 +450,10 @@ export default function TvShow() {
                         source={{
                           uri: `https://tmdb.org/t/p/w154${company.logo_path}`,
                         }}
-                        width={70}
-                        height={50}
+                        style={{
+                          width: 70,
+                          height: 50,
+                        }}
                         resizeMode='contain'
                       />
                     ) : (
