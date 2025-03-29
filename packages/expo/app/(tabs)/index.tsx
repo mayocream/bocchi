@@ -3,7 +3,7 @@ import { Post } from '@/components/post'
 import { useEffect, useState } from 'react'
 import { alert } from '@/lib/alert'
 import { supabase } from '@/lib/supabase'
-import { FlashList } from '@shopify/flash-list'
+import { FlatList } from 'react-native'
 
 export default function Index() {
   const [tweets, setTweets] = useState<any[]>([])
@@ -71,8 +71,7 @@ export default function Index() {
 
   return (
     <Stack flex={1} backgroundColor='$background'>
-      <FlashList
-        estimatedItemSize={200}
+      <FlatList
         data={tweets}
         renderItem={({ item }) => <Post tweet={item} />}
         keyExtractor={(item) => item.id}
