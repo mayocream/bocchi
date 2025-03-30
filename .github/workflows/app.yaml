@@ -32,6 +32,7 @@ jobs:
         run: eas build --platform ios --local --non-interactive --output ${{ github.workspace }}/app-release.ipa
 
       - name: Submit
+        working-directory: packages/expo
         run: eas submit --platform ios --path ${{ github.workspace }}/app-release.ipa --non-interactive
 
       - name: Upload IPA artifact
