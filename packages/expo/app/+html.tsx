@@ -12,6 +12,9 @@ export default function Root({ children }: { children: React.ReactNode }) {
           name='viewport'
           content='width=device-width, initial-scale=1, shrink-to-fit=no'
         />
+        <title>Eki</title>
+        <meta property='og:title' content='Eki' />
+        <meta property='og:description' content='好きを言葉に' />
         <style
           dangerouslySetInnerHTML={{
             __html: `
