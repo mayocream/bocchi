@@ -45,7 +45,6 @@ const AppContent = () => {
       </Helmet>
       <Stack>
         <Stack.Screen name='(app)' options={{ headerShown: false }} />
-        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
       </Stack>
     </HelmetProvider>
   )

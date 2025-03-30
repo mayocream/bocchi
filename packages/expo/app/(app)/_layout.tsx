@@ -62,12 +62,6 @@ export default function AppLayout() {
     <WebLayout>
       <Stack>
         <Stack.Screen
-          name='(app)'
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
           name='(tabs)'
           options={{
             headerShown: false,
