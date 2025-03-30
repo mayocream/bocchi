@@ -4,25 +4,12 @@ import { useEffect, useState } from 'react'
 import { alert } from '@/lib/alert'
 import { supabase } from '@/lib/supabase'
 import { FlatList } from 'react-native'
+import Loading from '@/components/loading'
+import { getProfile } from '@/lib/cache'
 
 export default function Index() {
   const [tweets, setTweets] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-
-  const loadProfile = async (id: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select()
-      .eq('user_id', id)
-      .single()
-
-    if (error) {
-      alert(error.message)
-      return
-    }
-
-    return data
-  }
 
   const loadTweets = async () => {
     const { data, error } = await supabase
@@ -36,7 +23,7 @@ export default function Index() {
     }
 
     for (const tweet of data) {
-      const user = await loadProfile(tweet.user_id)
+      const user = await getProfile(tweet.user_id)
       tweet.user = user
     }
 
@@ -55,7 +42,7 @@ export default function Index() {
           table: 'posts',
         },
         (payload) => {
-          loadProfile(payload.new.user_id).then((user) => {
+          getProfile(payload.new.user_id).then((user) => {
             payload.new.user = user
             setTweets((prev) => [payload.new, ...prev])
           })
@@ -68,6 +55,10 @@ export default function Index() {
     loadTweets()
     listenChanges()
   }, [])
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <Stack flex={1} backgroundColor='$background'>
