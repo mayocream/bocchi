@@ -1,5 +1,5 @@
 import { tmdb } from '@/lib/tmdb'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
 import {
   YStack,
@@ -25,6 +25,7 @@ import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/lib/state'
 import { Image } from 'expo-image'
 import { ImageViewer } from '@/components/image-viewer'
+import { Pressable } from 'react-native'
 
 export default function TvShow() {
   const { user } = useUserStore()
@@ -155,7 +156,7 @@ export default function TvShow() {
                   shadowOffset: { width: 0, height: 0.5 },
                   shadowOpacity: 0.4,
                 }}
-                resizeMode='contain'
+                contentFit='contain'
               />
             )}
 
@@ -182,7 +183,7 @@ export default function TvShow() {
                     height: 30,
                     marginTop: 8,
                   }}
-                  resizeMode='contain'
+                  contentFit='contain'
                 />
               )}
 
@@ -454,7 +455,7 @@ export default function TvShow() {
                           width: 70,
                           height: 50,
                         }}
-                        resizeMode='contain'
+                        contentFit='contain'
                       />
                     ) : (
                       <XStack
@@ -589,41 +590,48 @@ export default function TvShow() {
             おすすめの番組
           </SizableText>
 
-          {similar.results.slice(0, 3).map((show) => (
-            <YStack key={show.id} marginBottom='$3'>
-              <XStack gap='$3'>
-                <Avatar size='$5' borderRadius='$2'>
-                  {show.poster_path ? (
-                    <Avatar.Image
-                      source={{
-                        uri: `https://tmdb.org/t/p/w185${show.poster_path}`,
-                      }}
-                    />
-                  ) : (
-                    <Avatar.Fallback backgroundColor='#1DA1F2' />
-                  )}
-                </Avatar>
+          {similar.results
+            .filter((show) => show.genre_ids.includes(16))
+            .map((show) => (
+              <Pressable
+                onPress={() => router.push(`/tv/${show.id}`)}
+                key={show.id}
+              >
+                <YStack marginBottom='$3'>
+                  <XStack gap='$3'>
+                    <Avatar size='$5' borderRadius='$2'>
+                      {show.poster_path ? (
+                        <Avatar.Image
+                          source={{
+                            uri: `https://tmdb.org/t/p/w154${show.poster_path}`,
+                          }}
+                        />
+                      ) : (
+                        <Avatar.Fallback backgroundColor='#1DA1F2' />
+                      )}
+                    </Avatar>
 
-                <YStack flex={1}>
-                  <SizableText fontWeight='bold' color='#14171a'>
-                    {show.name}
-                  </SizableText>
-                  <SizableText size='$2' color='#657786'>
-                    {formatDate(show.first_air_date)} •{' '}
-                    {formatRating(show.vote_average)}
-                  </SizableText>
-                  <Paragraph
-                    size='$2'
-                    color='#14171a'
-                    numberOfLines={2}
-                    marginTop='$1'
-                  >
-                    {show.overview}
-                  </Paragraph>
+                    <YStack flex={1}>
+                      <SizableText fontWeight='bold' color='#14171a'>
+                        {show.name}
+                      </SizableText>
+                      <SizableText size='$2' color='#657786'>
+                        {formatDate(show.first_air_date)} •{' '}
+                        {formatRating(show.vote_average)}
+                      </SizableText>
+                      <Paragraph
+                        size='$2'
+                        color='#14171a'
+                        numberOfLines={2}
+                        marginTop='$1'
+                      >
+                        {show.overview}
+                      </Paragraph>
+                    </YStack>
+                  </XStack>
                 </YStack>
-              </XStack>
-            </YStack>
-          ))}
+              </Pressable>
+            ))}
         </YStack>
       )}
     </ScrollView>
