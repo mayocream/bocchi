@@ -25,7 +25,7 @@ jobs:
 
       - name: EAS Update
         working-directory: packages/expo
-        run: eas update --branch main --non-interactive
+        run: eas update --branch main --non-interactive --auto
 
       - name: Build iOS app
         working-directory: packages/expo
