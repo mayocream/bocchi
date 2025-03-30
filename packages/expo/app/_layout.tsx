@@ -14,7 +14,6 @@ import { LoginWidget } from '@/components/login-widget'
 import { AboutWidget } from '@/components/about-widget'
 
 if (Platform.OS === 'android') {
-  NavigationBar.setVisibilityAsync('hidden')
   NavigationBar.setBackgroundColorAsync('#fff')
 }
 

@@ -1,4 +1,4 @@
-import { Stack, XStack, YStack } from 'tamagui'
+import { Stack } from 'tamagui'
 import { Post } from '@/components/post'
 import { useEffect, useState } from 'react'
 import { alert } from '@/lib/alert'

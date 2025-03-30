@@ -1,10 +1,7 @@
-import { Stack, Tabs } from 'expo-router'
+import { Tabs } from 'expo-router'
 import { Bell, Home, Search, Settings, User } from '@tamagui/lucide-icons'
-import { Platform, useWindowDimensions } from 'react-native'
-import { Topbar } from '@/components/topbar'
-import { XStack, YStack } from 'tamagui'
-import { LoginWidget } from '@/components/login-widget'
-import { AboutWidget } from '@/components/about-widget'
+import { YStack } from 'tamagui'
+import { Platform } from 'react-native'
 
 // Blue colors
 // Blue 50 #E3F2FD
@@ -23,7 +20,6 @@ import { AboutWidget } from '@/components/about-widget'
 // A700 #2962FF
 
 export default function TabLayout() {
-  // Native layout with tabs
   return (
     <YStack backgroundColor='$background' flex={1}>
       <Tabs
@@ -31,6 +27,7 @@ export default function TabLayout() {
           tabBarActiveTintColor: '#1E88E5',
           tabBarStyle: {
             height: 54,
+            display: Platform.OS === 'web' ? 'none' : undefined,
           },
         }}
       >
