@@ -51,7 +51,7 @@ jobs:
 
       - name: Submit
         working-directory: packages/expo
-        run: eas submit --platform ios --path ${{ github.workspace }}/app-release.ipa --non-interactive
+        run: eas submit --platform ios --path ${{ github.workspace }}/app-release.ipa --non-interactive --no-wait
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
