@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase'
 import Loading from '@/components/loading'
 import { Platform } from 'react-native'
 import * as Font from 'expo-font'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 if (Platform.OS === 'android') {
   NavigationBar.setBackgroundColorAsync('#fff')
@@ -39,14 +40,16 @@ const AppContent = () => {
   }
 
   return (
-    <HelmetProvider>
-      <Helmet>
-        <title>Eki</title>
-      </Helmet>
-      <Stack>
-        <Stack.Screen name='(app)' options={{ headerShown: false }} />
-      </Stack>
-    </HelmetProvider>
+    <SafeAreaView>
+      <HelmetProvider>
+        <Helmet>
+          <title>Eki</title>
+        </Helmet>
+        <Stack>
+          <Stack.Screen name='(app)' options={{ headerShown: false }} />
+        </Stack>
+      </HelmetProvider>
+    </SafeAreaView>
   )
 }
 
