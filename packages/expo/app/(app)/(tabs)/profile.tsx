@@ -8,7 +8,6 @@ import {
   Button,
   Avatar,
   Sheet,
-  Stack,
 } from 'tamagui'
 import { Counter } from '@/components/counter'
 import { useState, useEffect } from 'react'
@@ -56,7 +55,7 @@ export default function ProfilePage() {
         backgroundColor='#E6E6E6'
       />
 
-      <Stack>
+      <YStack>
         <Avatar
           size='$10'
           position='absolute'
@@ -72,7 +71,7 @@ export default function ProfilePage() {
           />
           <Avatar.Fallback backgroundColor='#A0D7FF' />
         </Avatar>
-      </Stack>
+      </YStack>
 
       <YStack padding='$4'>
         <XStack justifyContent='flex-end' alignItems='center'>

@@ -29,6 +29,7 @@ export default function TabLayout() {
             height: 54,
             display: Platform.OS === 'web' ? 'none' : undefined,
           },
+          headerShown: false,
         }}
       >
         <Tabs.Screen
