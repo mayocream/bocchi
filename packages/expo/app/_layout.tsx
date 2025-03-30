@@ -40,7 +40,14 @@ const AppContent = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <>
+      <SafeAreaView
+        edges={['top']}
+        style={{
+          flex: 0,
+          backgroundColor: '#fff',
+        }}
+      />
       <HelmetProvider>
         <Helmet>
           <title>Eki</title>
@@ -49,7 +56,14 @@ const AppContent = () => {
           <Stack.Screen name='(app)' options={{ headerShown: false }} />
         </Stack>
       </HelmetProvider>
-    </SafeAreaView>
+      <SafeAreaView
+        edges={['bottom']}
+        style={{
+          backgroundColor: '#fff',
+          flex: 0,
+        }}
+      />
+    </>
   )
 }
 
