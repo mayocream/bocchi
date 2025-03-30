@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase'
 import Loading from '@/components/loading'
 import { Platform } from 'react-native'
 import * as Font from 'expo-font'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
 if (Platform.OS === 'android') {
   NavigationBar.setBackgroundColorAsync('#fff')
@@ -40,7 +40,7 @@ const AppContent = () => {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <HelmetProvider>
         <Helmet>
           <title>Eki</title>
@@ -75,10 +75,12 @@ export default function RootLayout() {
   const config = createTamagui(tamaguiConfig)
 
   return (
-    <TamaguiProvider config={config}>
-      <Theme name='light'>
-        <AppContent />
-      </Theme>
-    </TamaguiProvider>
+    <SafeAreaProvider>
+      <TamaguiProvider config={config}>
+        <Theme name='light'>
+          <AppContent />
+        </Theme>
+      </TamaguiProvider>
+    </SafeAreaProvider>
   )
 }
