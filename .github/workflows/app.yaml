@@ -45,10 +45,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: EAS Update
-        working-directory: packages/expo
-        run: eas update --branch main --non-interactive --auto
-
       - name: Build iOS app
         working-directory: packages/expo
         run: eas build --platform ios --local --non-interactive --output ${{ github.workspace }}/app-release.ipa
