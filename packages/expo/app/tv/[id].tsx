@@ -25,7 +25,7 @@ import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/lib/state'
 import { Image } from 'expo-image'
 import { ImageViewer } from '@/components/image-viewer'
-import { Pressable } from 'react-native'
+import { Platform, Pressable } from 'react-native'
 
 export default function TvShow() {
   const { user } = useUserStore()
@@ -130,19 +130,19 @@ export default function TvShow() {
       >
         {/* Show info */}
         <XStack padding='$4' gap='$4' alignItems='flex-start'>
-          <XStack flex={1} width='40%' $platform-web={{ height: 350 }}>
+          <XStack flex={1} width='40%' $platform-web={{ height: 300 }}>
             <ImageViewer
               source={{ uri: `https://tmdb.org/t/p/w1280${data?.poster_path}` }}
               style={{
                 borderRadius: 1,
                 width: '100%',
-                height: '100%',
+                height: Platform.OS === 'web' ? '100%' : undefined,
                 aspectRatio: 1 / 1.5,
               }}
             />
           </XStack>
 
-          <YStack flex={1}>
+          <YStack flex={1} width='60%'>
             {/* Show logo */}
             {images?.logos.length > 0 && (
               <Image
@@ -153,8 +153,6 @@ export default function TvShow() {
                   height: 100,
                   width: '100%',
                   borderRadius: 4,
-                  // @ts-ignore
-                  boxShadow: '0 0 4px rgba(0, 0, 0, 0.1)',
                 }}
                 contentFit='contain'
               />
