@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: macos-latest
@@ -33,14 +37,6 @@ jobs:
           key: ${{ runner.os }}-expo-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-expo-
-
-      - name: Cache Pods
-        uses: actions/cache@v3
-        with:
-          path: packages/expo/ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
 
       - name: Install dependencies
         run: pnpm install
