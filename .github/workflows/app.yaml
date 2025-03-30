@@ -45,17 +45,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: EAS Update
-        working-directory: packages/expo
-        run: eas update --branch main --non-interactive --auto
-
       - name: Build iOS app
         working-directory: packages/expo
-        run: eas build --platform ios --local --non-interactive --output ${{ github.workspace }}/app-release.ipa
-
-      - name: Submit
-        working-directory: packages/expo
-        run: eas submit --platform ios --path ${{ github.workspace }}/app-release.ipa --non-interactive
+        run: eas build --platform ios --local --non-interactive --auto-submit --output ${{ github.workspace }}/app-release.ipa
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
