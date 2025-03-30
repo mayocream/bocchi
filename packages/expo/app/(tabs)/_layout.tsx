@@ -23,54 +23,6 @@ import { AboutWidget } from '@/components/about-widget'
 // A700 #2962FF
 
 export default function TabLayout() {
-  if (Platform.OS === 'web') {
-    return (
-      <YStack backgroundColor='$background' minHeight='100vh' flex={1}>
-        <XStack
-          width='100%'
-          height={50}
-          justifyContent='center'
-          position='fixed'
-          top={0}
-          left={0}
-          right={0}
-          zIndex={9}
-          backgroundColor='$background'
-        >
-          <Topbar />
-        </XStack>
-
-        <XStack flex={1} justifyContent='center' marginTop={50}>
-          <YStack
-            width={300}
-            position='fixed'
-            transform='translateX(calc(-50% - 300px))'
-            marginTop={10}
-            alignItems='center'
-          >
-            <LoginWidget />
-          </YStack>
-
-          {/* Main content - scrollable */}
-          <YStack flex={1} maxWidth={600}>
-            <Stack screenOptions={{ headerShown: false }} />
-          </YStack>
-
-          {/* Right sidebar - fixed position */}
-          <YStack
-            width={300}
-            position='fixed'
-            transform='translateX(calc(50% + 300px))'
-            marginTop={10}
-            alignItems='center'
-          >
-            <AboutWidget />
-          </YStack>
-        </XStack>
-      </YStack>
-    )
-  }
-
   // Native layout with tabs
   return (
     <YStack backgroundColor='$background' flex={1}>

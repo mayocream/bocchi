@@ -130,12 +130,13 @@ export default function TvShow() {
       >
         {/* Show info */}
         <XStack padding='$4' gap='$4' alignItems='flex-start'>
-          <XStack flex={1} width='40%'>
+          <XStack flex={1} width='40%' $platform-web={{ height: 350 }}>
             <ImageViewer
               source={{ uri: `https://tmdb.org/t/p/w1280${data?.poster_path}` }}
               style={{
                 borderRadius: 1,
                 width: '100%',
+                height: '100%',
                 aspectRatio: 1 / 1.5,
               }}
             />
@@ -143,7 +144,7 @@ export default function TvShow() {
 
           <YStack flex={1}>
             {/* Show logo */}
-            {images?.logos && images.logos.length > 0 && (
+            {images?.logos.length > 0 && (
               <Image
                 source={{
                   uri: `https://tmdb.org/t/p/w1280${images.logos[0].file_path}`,
@@ -152,9 +153,8 @@ export default function TvShow() {
                   height: 100,
                   width: '100%',
                   borderRadius: 4,
-                  shadowColor: 'rgba(0, 0, 0, 0.1)',
-                  shadowOffset: { width: 0, height: 0.5 },
-                  shadowOpacity: 0.4,
+                  // @ts-ignore
+                  boxShadow: '0 0 4px rgba(0, 0, 0, 0.1)',
                 }}
                 contentFit='contain'
               />

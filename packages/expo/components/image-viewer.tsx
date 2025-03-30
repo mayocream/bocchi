@@ -10,7 +10,7 @@ export const ImageViewer: React.FC<{
   return (
     <>
       <TouchableOpacity onPress={() => setVisible(true)}>
-        <Image source={source} style={style} />
+        <Image source={source} style={style} contentFit='contain' />
       </TouchableOpacity>
       <Modal visible={visible} transparent animationType='fade'>
         <TouchableOpacity
