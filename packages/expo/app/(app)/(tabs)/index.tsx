@@ -12,13 +12,21 @@ export default function Index() {
   const [loading, setLoading] = useState(true)
 
   const loadTweets = async () => {
+    const lastId = tweets.length > 0 ? tweets[tweets.length - 1].id : 999999999
+
     const { data, error } = await supabase
       .from('posts')
       .select()
-      .order('created_at', { ascending: false })
+      .lt('id', lastId)
+      .order('id', { ascending: false })
+      .limit(10)
 
     if (error) {
       alert(error.message)
+      return
+    }
+
+    if (data.length === 0) {
       return
     }
 
@@ -28,11 +36,11 @@ export default function Index() {
     }
 
     setLoading(false)
-    setTweets(data)
+    setTweets((prev) => [...prev, ...data])
   }
 
-  const listenChanges = async () => {
-    await supabase
+  const listenChanges = () => {
+    supabase
       .channel('schema-db-changes')
       .on(
         'postgres_changes',
@@ -56,7 +64,7 @@ export default function Index() {
     listenChanges()
   }, [])
 
-  if (loading) {
+  if (loading && tweets.length === 0) {
     return <Loading />
   }
 
@@ -67,6 +75,8 @@ export default function Index() {
         renderItem={({ item }) => <Post tweet={item} />}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        onEndReachedThreshold={0.5}
+        onEndReached={loadTweets}
       />
     </Stack>
   )
