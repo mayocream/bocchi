@@ -25,4 +25,10 @@ jobs:
 
       - name: Build iOS app
         working-directory: packages/expo
-        run: eas build --platform ios --local --non-interactive
+        run: eas build --platform ios --local --non-interactive --output ${{ github.workspace }}/app-release.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: ${{ github.workspace }}/app-release.ipa
