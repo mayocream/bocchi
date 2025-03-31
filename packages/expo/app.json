@@ -57,6 +57,7 @@
     "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/8ecd78a4-73b7-4e1f-a866-18c84ec82c25"
-    }
+    },
+    "owner": "mayocream"
   }
 }
