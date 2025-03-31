@@ -29,12 +29,13 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Cache Expo modules
+      - name: Cache iOS Build
         uses: actions/cache@v3
         with:
           path: |
-            ~/.expo
-          key: ${{ runner.os }}-expo-${{ hashFiles('**/pnpm-lock.yaml') }}
+            packages/expo/ios/build
+            packages/expo/ios/Pods
+          key: ${{ runner.os }}-expo-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-expo-
 
