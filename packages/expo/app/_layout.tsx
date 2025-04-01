@@ -1,5 +1,5 @@
 import { createTamagui, TamaguiProvider, Theme } from 'tamagui'
-import { defaultConfig, fonts } from '@tamagui/config/v4'
+import { defaultConfig } from '@tamagui/config/v4'
 import { Stack } from 'expo-router'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import * as NavigationBar from 'expo-navigation-bar'

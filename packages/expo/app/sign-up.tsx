@@ -1,15 +1,5 @@
-import { Link, router, Stack } from 'expo-router'
-import {
-  View,
-  Form,
-  Input,
-  Button,
-  Separator,
-  YStack,
-  XStack,
-  H3,
-  Text,
-} from 'tamagui'
+import { router, Stack } from 'expo-router'
+import { Form, Input, Button, YStack, XStack, H3, Text } from 'tamagui'
 import { z } from 'zod'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
