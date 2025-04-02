@@ -22,7 +22,9 @@ jobs:
         run: bun install
 
       - name: Build Project
+        working-directory: packages/expo
         run: bunx expo export -p web
 
       - name: Deploy Project Artifacts to Vercel
+        working-directory: packages/expo
         run: bun vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
