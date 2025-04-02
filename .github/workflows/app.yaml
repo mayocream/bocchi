@@ -11,12 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          cache: 'pnpm'
+      - uses: oven-sh/setup-bun@v2
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
@@ -26,7 +21,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm install
+        run: bun install
 
       - name: Build iOS app
         working-directory: packages/expo

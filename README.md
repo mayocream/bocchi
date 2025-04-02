@@ -2,8 +2,7 @@
 
 ## Development
 
-- Node.js 23
-- Pnpm
+- Bun
 
 ### Android SDK
 
@@ -20,15 +19,9 @@ Then, add set `ANDROID_HOME` to `~/Android/sdk` in your `.bashrc` or `.zshrc`, a
 ### Dependencies
 
 ```bash
-pnpm install
+bun install
 ```
 
 ### WSL
 
 Please refer to [Running a local Expo development environment in Windows Subsystem for Linux (WSL)](https://github.com/expo/fyi/blob/main/wsl.md) for setting up WSL.
-
-### Android Emulator
-
-```bash
-pnpm android
-```
