@@ -74,7 +74,7 @@ export default function SignIn() {
             </H3>
 
             <Text color='#66757f' fontSize={14} marginBottom={20}>
-              Eki にログインして会話に参加しましょう。
+              Bocchi にログインして会話に参加しましょう。
             </Text>
 
             <Form gap={12} width='100%'>

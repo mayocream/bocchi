@@ -50,7 +50,7 @@ const AppContent = () => {
       />
       <HelmetProvider>
         <Helmet>
-          <title>Eki</title>
+          <title>Bocchi</title>
         </Helmet>
         <Stack>
           <Stack.Screen name='(app)' options={{ headerShown: false }} />

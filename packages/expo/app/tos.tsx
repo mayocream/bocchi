@@ -51,7 +51,7 @@ export default function ToS() {
 
           <YStack padding={20} gap={20}>
             <Paragraph color='#66757f' fontSize={15} lineHeight={22}>
-              Eki（以下「当サービス」）をご利用いただきありがとうございます。以下の利用規約をよくお読みください。
+              Bocchi（以下「当サービス」）をご利用いただきありがとうございます。以下の利用規約をよくお読みください。
               当サービスを利用することにより、以下の条件に同意したものとみなされます。
             </Paragraph>
 

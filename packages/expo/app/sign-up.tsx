@@ -115,7 +115,7 @@ export default function SignUp() {
             </H3>
 
             <Text color='#66757f' fontSize={14} marginBottom={20}>
-              Eki に登録して会話に参加しましょう。
+              Bocchi に登録して会話に参加しましょう。
             </Text>
 
             <Form gap={12} width='100%'>
