@@ -28,7 +28,7 @@ jobs:
         run: bunx expo export -p web
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: packages/expo/dist
           name: dist
