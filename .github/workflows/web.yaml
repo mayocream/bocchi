@@ -5,10 +5,6 @@ on:
     branches:
       - main
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,10 +17,19 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
+      - name: Pull environment variables
+        working-directory: packages/expo
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: bun eas env:pull --environment production
+
       - name: Build Project
         working-directory: packages/expo
         run: bunx expo export -p web
 
       - name: Deploy Project Artifacts to Vercel
         working-directory: packages/expo
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: bun vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
