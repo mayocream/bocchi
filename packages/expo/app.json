@@ -37,7 +37,15 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-image-picker"
+      "expo-image-picker",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "mayocream",
+          "project": "bocchi",
+          "url": "https://sentry.io/"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
