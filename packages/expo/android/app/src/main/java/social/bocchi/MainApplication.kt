@@ -1,4 +1,4 @@
-package ki.e
+package social.bocchi
 
 import android.app.Application
 import android.content.res.Configuration

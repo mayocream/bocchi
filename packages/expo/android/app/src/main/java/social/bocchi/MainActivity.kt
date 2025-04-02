@@ -1,4 +1,4 @@
-package ki.e
+package social.bocchi
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
