@@ -100,7 +100,8 @@ export default function TvShow() {
     <ScrollView backgroundColor='#f5f8fa' showsVerticalScrollIndicator={false}>
       <Stack.Screen
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: data?.name,
         }}
       />
 
