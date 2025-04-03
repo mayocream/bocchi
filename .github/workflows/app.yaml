@@ -51,6 +51,9 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
+      - name: Install dependencies
+        run: bun install
+
       - name: Submit
         working-directory: packages/expo
         run: eas submit --platform android --path ${{ github.workspace }}}/app/release.apk --non-interactive
