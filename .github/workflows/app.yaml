@@ -58,4 +58,4 @@ jobs:
 
       - name: Submit
         working-directory: packages/expo
-        run: eas submit --platform android --path ${{ github.workspace }}}/app/release.apk --non-interactive
+        run: eas submit --platform android --path ${{ github.workspace }}/app/release.apk --non-interactive
