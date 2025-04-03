@@ -37,7 +37,7 @@ export const TweetDialog = () => {
         backgroundColor='#1DA1F2'
         color='white'
         borderRadius={999}
-        height={36}
+        height={40}
         paddingHorizontal={20}
         fontWeight='700'
         fontSize={14}

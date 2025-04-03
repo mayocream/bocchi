@@ -1,6 +1,6 @@
 import { AboutWidget } from '@/components/about-widget'
 import { LoginWidget } from '@/components/login-widget'
-import { Topbar } from '@/components/topbar'
+import { Sidebar } from '@/components/sidebar'
 import { Stack } from 'expo-router'
 import { Platform } from 'react-native'
 import { XStack, YStack } from 'tamagui'
@@ -12,21 +12,7 @@ const WebLayout = ({ children }) => {
 
   return (
     <YStack backgroundColor='$background' minHeight='100vh' flex={1}>
-      <XStack
-        width='100%'
-        height={50}
-        justifyContent='center'
-        position='fixed'
-        top={0}
-        left={0}
-        right={0}
-        zIndex={9}
-        backgroundColor='$background'
-      >
-        <Topbar />
-      </XStack>
-
-      <XStack flex={1} justifyContent='center' marginTop={50}>
+      <XStack flex={1} justifyContent='center'>
         <YStack
           width={300}
           position='fixed'
@@ -34,7 +20,7 @@ const WebLayout = ({ children }) => {
           marginTop={10}
           alignItems='center'
         >
-          <LoginWidget />
+          <Sidebar />
         </YStack>
 
         {/* Main content - scrollable */}
