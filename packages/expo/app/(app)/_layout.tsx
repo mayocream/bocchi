@@ -21,6 +21,7 @@ const WebLayout = ({ children }) => {
           alignItems='center'
         >
           <Sidebar />
+          <LoginWidget />
         </YStack>
 
         {/* Main content - scrollable */}

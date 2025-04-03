@@ -1,6 +1,6 @@
 import { useUserStore } from '@/lib/state'
 import { router } from 'expo-router'
-import { Button, H3, Text, XStack, YStack } from 'tamagui'
+import { Button, Text, XStack, YStack } from 'tamagui'
 
 export const LoginWidget = () => {
   const { user } = useUserStore()
@@ -10,7 +10,7 @@ export const LoginWidget = () => {
 
   return (
     <YStack
-      width={275}
+      width={250}
       borderRadius={6}
       borderWidth={1}
       borderColor='#e1e8ed'
@@ -21,11 +21,8 @@ export const LoginWidget = () => {
       shadowOpacity={0.05}
       shadowRadius={3}
     >
-      <H3 fontWeight={600} color='#292f33' marginBottom={8}>
-        好きを言葉に
-      </H3>
       <Text color='#66757f' fontSize={14} marginBottom={15}>
-        Eki にログインして会話に参加しましょう。
+        Bocchi にログインして会話に参加しましょう。
       </Text>
 
       <Button

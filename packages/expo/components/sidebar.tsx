@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Home, User, Bell, Search, Settings } from '@tamagui/lucide-icons'
+import React from 'react'
+import { Home, User, Search, Settings } from '@tamagui/lucide-icons'
 import { Pressable } from 'react-native'
 import { XStack, YStack, Text } from 'tamagui'
 import { TweetDialog } from './tweet'
