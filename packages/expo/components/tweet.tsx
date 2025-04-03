@@ -50,10 +50,16 @@ export const TweetDialog = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <Dialog.Portal>
           <Dialog.Overlay
-            exitStyle={{ opacity: 0 }}
-            enterStyle={{ opacity: 0 }}
-            animation='medium'
-            backgroundColor='rgba(0,0,0,0.3)'
+            key='overlay'
+            animation='quick'
+            opacity={0.5}
+            enterStyle={{
+              opacity: 0,
+            }}
+            exitStyle={{
+              opacity: 0,
+            }}
+            backgroundColor='rgba(0,0,0,0.5)'
           />
           <Dialog.Content
             bordered
@@ -61,6 +67,26 @@ export const TweetDialog = () => {
             width={600}
             borderRadius={16}
             padding='$4'
+            animation={{
+              type: 'spring',
+              damping: 18,
+              stiffness: 250,
+              mass: 1,
+              restSpeed: 0.001,
+            }}
+            enterStyle={{
+              opacity: 0,
+              scale: 0.96,
+              y: 15,
+            }}
+            exitStyle={{
+              opacity: 0,
+              scale: 0.95,
+              y: 10,
+            }}
+            scale={1}
+            y={0}
+            opacity={1}
           >
             <YStack gap='$4'>
               <Text fontWeight='700' fontSize='$6'>
