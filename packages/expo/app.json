@@ -45,7 +45,9 @@
           "project": "bocchi",
           "url": "https://sentry.io/"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
