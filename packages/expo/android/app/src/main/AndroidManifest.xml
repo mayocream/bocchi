@@ -28,7 +28,6 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="bocchi"/>
-        <data android:scheme="social.bocchi"/>
         <data android:scheme="exp+bocchi"/>
       </intent-filter>
     </activity>
