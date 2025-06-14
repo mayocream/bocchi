@@ -50,7 +50,8 @@
       "expo-web-browser"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "buildCacheProvider": "eas"
     },
     "extra": {
       "router": {
