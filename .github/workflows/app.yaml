@@ -29,7 +29,6 @@ jobs:
         run: bun install
 
       - name: Build iOS app
-        working-directory: packages/expo
         run: eas build --platform ios --local --non-interactive --output ${{ github.workspace }}/release.ipa
 
       - name: Upload IPA artifact
@@ -62,5 +61,4 @@ jobs:
         run: bun install
 
       - name: Submit
-        working-directory: packages/expo
         run: eas submit --platform ios --path ${{ github.workspace }}/app/release.ipa --non-interactive

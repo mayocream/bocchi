@@ -18,19 +18,17 @@ jobs:
         run: bun install
 
       - name: Pull environment variables
-        working-directory: packages/expo
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: bun eas env:pull --environment production
 
       - name: Build Project
-        working-directory: packages/expo
         run: bunx expo export -p web
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          path: packages/expo/dist
+          path: dist
           name: dist
 
   publish:
