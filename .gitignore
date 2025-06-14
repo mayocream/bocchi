@@ -47,7 +47,3 @@ app-example
 
 # Dataset
 data/
-
-# Prebuild
-android/
-ios/
