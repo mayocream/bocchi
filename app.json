@@ -17,6 +17,7 @@
     },
     "android": {
       "package": "social.bocchi",
+      "edgeToEdgeEnabled": true,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
