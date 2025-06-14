@@ -2,7 +2,6 @@ import { createTamagui, TamaguiProvider, Theme } from 'tamagui'
 import { defaultConfig } from '@tamagui/config/v4'
 import { Stack } from 'expo-router'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
-import * as NavigationBar from 'expo-navigation-bar'
 import { useUserStore } from '@/lib/state'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -13,10 +12,6 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from '@sentry/react-native'
 import { isRunningInExpoGo } from 'expo'
 import { useNavigationContainerRef } from 'expo-router'
-
-if (Platform.OS === 'android') {
-  NavigationBar.setBackgroundColorAsync('#fff')
-}
 
 if (Platform.OS === 'web') {
   Font.loadAsync({
