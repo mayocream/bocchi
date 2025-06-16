@@ -1,8 +1,12 @@
 # Bocchi
 
+ひとりぼっち東京。
+
 ## Development
 
 - Bun
+
+Please follow [the instructions](https://docs.expo.dev/get-started/set-up-your-environment/?mode=development-build&buildEnv=local) to setup your environment for local development builds.
 
 ### Android SDK
 
