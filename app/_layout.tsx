@@ -3,15 +3,22 @@ import { defaultConfig } from '@tamagui/config/v4'
 import { Stack } from 'expo-router'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { useUserStore } from '@/lib/state'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import Loading from '@/components/loading'
-import { Platform } from 'react-native'
+import { Platform, View } from 'react-native'
 import * as Font from 'expo-font'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from '@sentry/react-native'
 import { isRunningInExpoGo } from 'expo'
 import { useNavigationContainerRef } from 'expo-router'
+import * as SplashScreen from 'expo-splash-screen'
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync()
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+})
 
 if (Platform.OS === 'web') {
   Font.loadAsync({
@@ -20,26 +27,37 @@ if (Platform.OS === 'web') {
 }
 
 const AppContent = () => {
+  const [appIsReady, setAppIsReady] = useState(false)
   const { user, setUser } = useUserStore()
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      setLoading(false)
+      setAppIsReady(true)
       setUser(session?.user ?? null)
     })
 
     return () => subscription.unsubscribe()
   }, [setUser])
 
-  if (loading) {
-    return <Loading />
+  const onLayoutRootView = useCallback(() => {
+    if (appIsReady) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `setAppIsReady`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      SplashScreen.hide()
+    }
+  }, [appIsReady])
+
+  if (!appIsReady) {
+    return null
   }
 
   return (
-    <>
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <SafeAreaView
         edges={['top']}
         style={{
@@ -69,7 +87,7 @@ const AppContent = () => {
           flex: 0,
         }}
       />
-    </>
+    </View>
   )
 }
 

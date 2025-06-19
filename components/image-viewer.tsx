@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Image, ImageStyle } from 'expo-image'
-import { Modal, StyleProp, TouchableOpacity, Dimensions } from 'react-native'
+import { Modal, StyleProp, TouchableOpacity } from 'react-native'
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
