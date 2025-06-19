@@ -66,7 +66,7 @@ export default function SignIn() {
               ログイン
             </H3>
 
-            <Text color='#66757f' fontSize={14} marginBottom={20}>
+            <Text color='#66757f' marginBottom={20}>
               Bocchi にログインして会話に参加しましょう。
             </Text>
 
@@ -82,7 +82,6 @@ export default function SignIn() {
                     borderColor='#e1e8ed'
                     borderRadius={4}
                     height={40}
-                    fontSize={14}
                     {...props}
                   />
                 )}
@@ -101,7 +100,6 @@ export default function SignIn() {
                     borderColor='#e1e8ed'
                     borderRadius={4}
                     height={40}
-                    fontSize={14}
                     {...props}
                   />
                 )}
@@ -116,7 +114,6 @@ export default function SignIn() {
                   backgroundColor='#1da1f2'
                   color='#fff'
                   fontWeight={600}
-                  fontSize={14}
                   borderRadius={100}
                   height={36}
                   marginTop={10}
@@ -132,7 +129,7 @@ export default function SignIn() {
                 marginVertical={15}
               >
                 <YStack height={1} backgroundColor='#e1e8ed' flex={1} />
-                <Text color='#657786' fontSize={12} paddingHorizontal={10}>
+                <Text color='#657786' paddingHorizontal={10}>
                   または
                 </Text>
                 <YStack height={1} backgroundColor='#e1e8ed' flex={1} />
@@ -146,7 +143,6 @@ export default function SignIn() {
                 borderWidth={1}
                 borderColor='#1da1f2'
                 fontWeight={600}
-                fontSize={14}
                 borderRadius={100}
                 height={36}
                 hoverStyle={{ backgroundColor: '#e8f5fe' }}

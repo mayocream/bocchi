@@ -9,11 +9,7 @@ export const ErrorMessage = ({
   errors: FieldErrors
 }) => {
   if (errors[name]) {
-    return (
-      <Text fontSize={12} color='#FF5252'>
-        {errors[name]?.message}
-      </Text>
-    )
+    return <Text color='#FF5252'>{errors[name]?.message}</Text>
   }
   return null
 }

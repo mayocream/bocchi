@@ -107,7 +107,7 @@ export default function SignUp() {
               アカウントを作成
             </H3>
 
-            <Text color='#66757f' fontSize={14} marginBottom={20}>
+            <Text color='#66757f' marginBottom={20}>
               Bocchi に登録して会話に参加しましょう。
             </Text>
 
@@ -122,7 +122,6 @@ export default function SignUp() {
                     borderColor='#e1e8ed'
                     borderRadius={4}
                     height={40}
-                    fontSize={14}
                     {...props}
                   />
                 )}
@@ -141,7 +140,6 @@ export default function SignUp() {
                     borderColor='#e1e8ed'
                     borderRadius={4}
                     height={40}
-                    fontSize={14}
                     {...props}
                   />
                 )}
@@ -160,7 +158,6 @@ export default function SignUp() {
                     borderColor='#e1e8ed'
                     borderRadius={4}
                     height={40}
-                    fontSize={14}
                     {...props}
                   />
                 )}
@@ -179,7 +176,6 @@ export default function SignUp() {
                     borderColor='#e1e8ed'
                     borderRadius={4}
                     height={40}
-                    fontSize={14}
                     {...props}
                   />
                 )}
@@ -194,7 +190,6 @@ export default function SignUp() {
                   backgroundColor='#1da1f2'
                   color='#fff'
                   fontWeight={600}
-                  fontSize={14}
                   borderRadius={100}
                   height={36}
                   marginTop={10}
@@ -210,7 +205,7 @@ export default function SignUp() {
                 marginVertical={15}
               >
                 <YStack height={1} backgroundColor='#e1e8ed' flex={1} />
-                <Text color='#657786' fontSize={12} paddingHorizontal={10}>
+                <Text color='#657786' paddingHorizontal={10}>
                   または
                 </Text>
                 <YStack height={1} backgroundColor='#e1e8ed' flex={1} />
@@ -224,7 +219,6 @@ export default function SignUp() {
                 borderWidth={1}
                 borderColor='#1da1f2'
                 fontWeight={600}
-                fontSize={14}
                 borderRadius={100}
                 height={36}
               >
