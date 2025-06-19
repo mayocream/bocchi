@@ -1,7 +1,8 @@
 import { AboutWidget } from '@/components/about-widget'
 import { LoginWidget } from '@/components/login-widget'
 import { Sidebar } from '@/components/sidebar'
-import { Stack } from 'expo-router'
+import { useUserStore } from '@/lib/state'
+import { Redirect, Stack } from 'expo-router'
 import { Platform } from 'react-native'
 import { XStack, YStack } from 'tamagui'
 
@@ -45,6 +46,12 @@ const WebLayout = ({ children }) => {
 }
 
 export default function AppLayout() {
+  const { user } = useUserStore()
+
+  if (!user) {
+    return <Redirect href='/sign-in' />
+  }
+
   return (
     <WebLayout>
       <Stack>
