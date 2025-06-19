@@ -153,7 +153,7 @@ export default function ProfilePage() {
           exitStyle={{ opacity: 0 }}
         />
         <Sheet.Handle />
-        <Sheet.Frame>
+        <Sheet.Frame flex={1} minHeight={600}>
           <ProfileEdit
             profile={profile}
             close={() => {
