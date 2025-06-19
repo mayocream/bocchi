@@ -20,7 +20,7 @@ if (Platform.OS === 'web') {
 }
 
 const AppContent = () => {
-  const { setUser } = useUserStore()
+  const { user, setUser } = useUserStore()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -52,7 +52,14 @@ const AppContent = () => {
           <title>Bocchi</title>
         </Helmet>
         <Stack>
-          <Stack.Screen name='(app)' options={{ headerShown: false }} />
+          <Stack.Protected guard={!user}>
+            <Stack.Screen name='sign-in' />
+            <Stack.Screen name='sign-up' />
+            <Stack.Screen name='tos' />
+          </Stack.Protected>
+          <Stack.Protected guard={!!user}>
+            <Stack.Screen name='(app)' options={{ headerShown: false }} />
+          </Stack.Protected>
         </Stack>
       </HelmetProvider>
       <SafeAreaView

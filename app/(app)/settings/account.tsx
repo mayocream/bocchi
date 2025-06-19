@@ -3,7 +3,7 @@ import { LogOut, CheckCircle, AlertCircle, Mail } from '@tamagui/lucide-icons'
 import { supabase } from '@/lib/supabase'
 import { useUserStore } from '@/lib/state'
 import { alert } from '@/lib/alert'
-import { router, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 
 export default function Account() {
   const { user } = useUserStore()
