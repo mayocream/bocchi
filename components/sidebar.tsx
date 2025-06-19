@@ -14,7 +14,6 @@ export const Sidebar = () => {
   const navItems = [
     { icon: Home, label: 'ホーム', path: '/', disabled: false },
     { icon: Search, label: '検索', path: '/search', disabled: false },
-    // { icon: Bell, label: '通知', path: '/notifications', disabled: !user },
     { icon: User, label: 'プロフィール', path: '/profile', disabled: !user },
     { icon: Settings, label: '設定', path: '/settings', disabled: !user },
   ]
