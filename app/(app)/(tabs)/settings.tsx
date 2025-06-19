@@ -6,6 +6,7 @@ import {
   User,
   Database,
   ChevronRight,
+  Github,
 } from '@tamagui/lucide-icons'
 import * as Linking from 'expo-linking'
 import Constants from 'expo-constants'
@@ -40,11 +41,20 @@ export default function Settings() {
       action: Platform.OS !== 'web' ? Linking.openSettings : () => {},
     },
     {
+      icon: Github,
+      title: 'GitHub',
+      description: 'プロジェクトのGitHubリポジトリ',
+      action: () =>
+        WebBrowser.openBrowserAsync('https://github.com/mayocream/bocchi'),
+    },
+    {
       icon: Bug,
       title: 'バグを報告',
       description: '問題を報告する',
       action: () =>
-        WebBrowser.openBrowserAsync('https://forms.gle/6EHsmT6D1pXsYkzd7'),
+        WebBrowser.openBrowserAsync(
+          'https://github.com/mayocream/bocchi/issues/new'
+        ),
     },
   ]
 
