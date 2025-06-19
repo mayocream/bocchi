@@ -1,5 +1,5 @@
 import { Avatar, XStack, YStack, Text, SizableText } from 'tamagui'
-import { Heart, MessageCircle, Repeat, Share } from '@tamagui/lucide-icons'
+import { MessageCircle, Repeat, Share } from '@tamagui/lucide-icons'
 import { Time } from './time'
 import { useState } from 'react'
 import { Counter } from './counter'
