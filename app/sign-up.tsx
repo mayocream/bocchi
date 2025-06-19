@@ -7,7 +7,6 @@ import { ErrorMessage } from '@/components/input'
 import { Helmet } from 'react-helmet-async'
 import { supabase } from '@/lib/supabase'
 import { Image } from 'expo-image'
-import Tagline from '@/components/tagline'
 
 const schema = z
   .object({
@@ -87,7 +86,7 @@ export default function SignUp() {
   }
 
   return (
-    <YStack>
+    <YStack fullscreen backgroundColor='#fff'>
       <Helmet>
         <title>新規登録</title>
       </Helmet>
@@ -96,17 +95,11 @@ export default function SignUp() {
           title: '新規登録',
         }}
       />
-      <XStack
-        flex={1}
-        justifyContent='center'
-        alignItems='center'
-        backgroundColor='$background'
-      >
-        <Tagline />
+      <XStack justifyContent='center' alignItems='center'>
         <YStack width={600} justifyContent='center' alignItems='center'>
           <YStack width={350} alignItems='center' padding={20}>
             <Image
-              source={require('../assets/images/logo.png')}
+              source={require('@/assets/images/logo.png')}
               style={{ height: 80, width: 80, marginBottom: 15 }}
             />
 
@@ -123,6 +116,7 @@ export default function SignUp() {
                 control={control}
                 render={({ field: { onChange, ...props } }) => (
                   <Input
+                    backgroundColor='#fff'
                     onChangeText={onChange}
                     placeholder='ユーザー名'
                     borderColor='#e1e8ed'
@@ -140,6 +134,7 @@ export default function SignUp() {
                 control={control}
                 render={({ field: { onChange, ...props } }) => (
                   <Input
+                    backgroundColor='#fff'
                     onChangeText={onChange}
                     placeholder='メールアドレス'
                     keyboardType='email-address'
@@ -158,6 +153,7 @@ export default function SignUp() {
                 control={control}
                 render={({ field: { onChange, ...props } }) => (
                   <Input
+                    backgroundColor='#fff'
                     onChangeText={onChange}
                     placeholder='パスワード'
                     secureTextEntry
@@ -176,6 +172,7 @@ export default function SignUp() {
                 control={control}
                 render={({ field: { onChange, ...props } }) => (
                   <Input
+                    backgroundColor='#fff'
                     onChangeText={onChange}
                     placeholder='パスワードの確認'
                     secureTextEntry

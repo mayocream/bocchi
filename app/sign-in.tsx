@@ -7,7 +7,6 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { Form, Input, Button, XStack, YStack, H3, Text } from 'tamagui'
 import { z } from 'zod'
 import { Image } from 'expo-image'
-import Tagline from '@/components/tagline'
 
 const schema = z.object({
   email: z.string().email('メールアドレスが無効です'),
@@ -46,7 +45,7 @@ export default function SignIn() {
   }
 
   return (
-    <YStack>
+    <YStack fullscreen backgroundColor='#fff'>
       <Helmet>
         <title>ログイン</title>
       </Helmet>
@@ -55,17 +54,11 @@ export default function SignIn() {
           title: 'ログイン',
         }}
       />
-      <XStack
-        flex={1}
-        justifyContent='center'
-        alignItems='center'
-        backgroundColor='$background'
-      >
-        <Tagline />
-        <XStack width={600} justifyContent='center'>
+      <XStack justifyContent='center' alignItems='center'>
+        <YStack width={600} justifyContent='center' alignItems='center'>
           <YStack width={350} alignItems='center' padding={20}>
             <Image
-              source={require('../assets/images/logo.png')}
+              source={require('@/assets/images/logo.png')}
               style={{ height: 80, width: 80, marginBottom: 15 }}
             />
 
@@ -82,6 +75,7 @@ export default function SignIn() {
                 control={control}
                 render={({ field: { onChange, ...props } }) => (
                   <Input
+                    backgroundColor='#fff'
                     placeholder='メールアドレス'
                     keyboardType='email-address'
                     onChangeText={onChange}
@@ -100,6 +94,7 @@ export default function SignIn() {
                 control={control}
                 render={({ field: { onChange, ...props } }) => (
                   <Input
+                    backgroundColor='#fff'
                     placeholder='パスワード'
                     secureTextEntry
                     onChangeText={onChange}
@@ -160,7 +155,7 @@ export default function SignIn() {
               </Button>
             </Form>
           </YStack>
-        </XStack>
+        </YStack>
       </XStack>
     </YStack>
   )
