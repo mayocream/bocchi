@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router'
-import { Bell, Home, Search, Settings, User } from '@tamagui/lucide-icons'
+import { Home, Search, Settings, User } from '@tamagui/lucide-icons'
 import { YStack } from 'tamagui'
 import { Platform } from 'react-native'
 
@@ -56,14 +56,6 @@ export default function TabLayout() {
             title: 'プロフィール',
             tabBarLabel: 'プロフィール',
             tabBarIcon: ({ size, color }) => <User size={size} color={color} />,
-          }}
-        />
-        <Tabs.Screen
-          name='notifications'
-          options={{
-            title: '通知',
-            tabBarLabel: '通知',
-            tabBarIcon: ({ size, color }) => <Bell size={size} color={color} />,
           }}
         />
         <Tabs.Screen
