@@ -47,3 +47,8 @@ app-example
 
 # Dataset
 data/
+
+# CNG
+# refer: https://docs.expo.dev/workflow/continuous-native-generation/
+android/
+ios/
