@@ -53,7 +53,7 @@ export default function Settings() {
       description: '問題を報告する',
       action: () =>
         WebBrowser.openBrowserAsync(
-          'https://github.com/mayocream/bocchi/issues/new'
+          'https://github.com/mayocream/bocchi/issues'
         ),
     },
   ]
